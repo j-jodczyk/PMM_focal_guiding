@@ -390,7 +390,11 @@ public:
         return partialSumResponsibility;
     }
 
-
+    // todo:
+    // Try to build this (it won't so fix till it builds)
+    // Adding logging so I know what's happening
+    // integrate it further to the system
+    // start sample collection -- octree
 
     template<typename TSampleContainer>
     Scalar fit(TSampleContainer& samples) {
