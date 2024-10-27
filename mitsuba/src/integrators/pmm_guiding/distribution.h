@@ -2,9 +2,9 @@
 
 #include "eigen_boost_serialization.h"
 
-#include <Eigen/Core>
-#include <Eigen/Dense>
-#include <Eigen/StdVector>
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/StdVector>
 
 namespace pmm {
 
@@ -15,7 +15,7 @@ public:
     using Matrixd = Eigen::Matrix<Scalar, t_dims, t_dims>;
 
     virtual ~Distribution() {}
-    virtual Vectord sample(const std::function<Scalar()>& rng) const = 0;
+    // virtual Vectord sample(const std::function<Scalar()>& rng) const = 0;
     virtual Scalar pdf(const Vectord& sample) const = 0;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -30,8 +30,8 @@ THE SOFTWARE.
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/array.hpp>
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Sparse>
 
 namespace boost{namespace serialization{
     template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>

@@ -24,6 +24,7 @@
 #endif
 
 #include "distribution.h"
+#include "util.h"
 
 #define FAIL_ON_ZERO_CDF 0
 #define USE_MAX_KEEP 0
@@ -49,6 +50,7 @@ public:
     using Matrixd = Eigen::Matrix<Scalar, t_dims, t_dims>;
 
     using Responsibilities = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, t_components, Eigen::Dynamic>;
+    using SampleVector = Eigen::Matrix<Scalar, t_dims, Eigen::Dynamic>;
 
     GaussianMixtureModel() :
         m_components(t_components),
@@ -60,28 +62,9 @@ public:
 #endif
     }
 
-    Vectord sample(const std::function<Scalar()>& rng) const {
-        size_t component_i = sampleDiscreteCdf(std::begin(m_cdf), std::begin(m_cdf) + m_lastIdx, rng());
-        return m_components[component_i].sample(rng);
-    }
-
-    Scalar surfacePdf(const Vectord& sample) const {
-        Scalar pdfAccum = 0.f;
-        for(size_t component_i = 0; component_i < m_lastIdx; ++component_i) {
-            if(m_weights[component_i] != 0) {
-                pdfAccum += m_weights[component_i] * m_components[component_i].pdf(sample);
-            }
-        }
-        return m_normalization * pdfAccum / m_surfacesize_tegral;
-    }
-
-    Scalar surfacePdf(const Vectord& sample, Scalar heuristicPdf) {
-        return (1 - m_heuristicWeight) * surfacePdf(sample) + m_heuristicWeight * heuristicPdf;
-    }
-
     Scalar pdf(const Vectord& sample) const {
         Scalar pdfAccum = 0.f;
-        for(size_t component_i = 0; component_i < m_lastIdx; ++component_i) {
+        for(size_t component_i = 0; component_i < m_numComponents; ++component_i) {
             if(m_weights[component_i] != 0) {
                 pdfAccum += m_weights[component_i] * m_components[component_i].pdf(sample);
             }
@@ -91,103 +74,6 @@ public:
 
     pmm::alignedVector<Component>& components() { return m_components; }
     pmm::alignedVector<Scalar>& weights() { return m_weights; }
-
-    void setMixtureThreshold(Scalar mixtureThreshold) { m_mixtureThreshold = mixtureThreshold; }
-
-    size_t nComponents() const { return m_lastIdx; }
-    void setNComponents(size_t lastIdx) {m_lastIdx = lastIdx;}
-
-    Scalar heuristicWeight() const { return m_heuristicWeight; }
-    void setHeuristicWeight(Scalar weight) { m_heuristicWeight = weight; }
-
-    Scalar normalization() const { return m_normalization; }
-    void setNormalization(Scalar normalization) { m_normalization = normalization; }
-
-    Scalar surfacesize_tegral() const { return m_surfacesize_tegral; }
-    void setSurfacesize_tegral(Scalar surfacesize_tegral) { m_surfacesize_tegral = surfacesize_tegral; }
-
-    Scalar surfaceArea() const { return m_surfaceArea; }
-    void setSurfaceArea(Scalar surfaceArea) { m_surfaceArea = surfaceArea; }
-
-    Scalar modelError() const { return m_modelError; }
-    void setModelError(Scalar modelError) { m_modelError = modelError; }
-
-    void posteriorAndLog(
-        const Vectord& sample,
-        bool useHeuristic,
-        Scalar heuristicPdf,
-        Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& pdf,
-        Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& posterior,
-        Eigen::Matrix<Scalar, Component::t_josize_tTangentDims, Eigen::Dynamic>& tangentVectors,
-        Scalar& heuristicPosterior
-    ) const {
-        heuristicPosterior = 0.f;
-        typename Component::Josize_tTangentVectord tangent;
-        for(size_t component_i = 0; component_i < m_lastIdx; ++component_i) {
-            pdf(component_i) = m_components[component_i].pdfAndLog(sample, tangent);
-            if(!std::isfinite(pdf(component_i))) {
-                std::cerr << "Infinite pdf: " << pdf(component_i) << ".\n";
-            }
-            posterior(component_i) = m_weights[component_i] * pdf(component_i);
-            tangentVectors.col(component_i) = tangent;
-        }
-
-        Scalar sum = posterior.sum();
-        if(useHeuristic) {
-            sum = (1 - m_heuristicWeight) * sum + m_heuristicWeight * heuristicPdf;
-        }
-
-        const Scalar invSum = 1 / sum;
-        if(std::isfinite(invSum)) {
-            posterior *= invSum;
-            if(useHeuristic) {
-                posterior *= (1.f - m_heuristicWeight);
-                heuristicPosterior = m_heuristicWeight * heuristicPdf * invSum;
-                pdf = m_heuristicWeight * heuristicPdf + (1.f - m_heuristicWeight) * pdf.array();
-            }
-        } else {
-            std::cerr << "Infinite or nan posterior sum = 1.f / " << sum << ", " << pdf.sum() << "\n";
-            Scalar weightSum = 0.f;
-            for(size_t component_i = 0; component_i < m_lastIdx; ++component_i) {
-                weightSum += m_weights[component_i];
-            }
-            posterior.setZero();
-            pdf.setZero();
-            heuristicPosterior = 0.f;
-        }
-    }
-
-    void posterior(
-        const Vectord& sample,
-        bool useHeuristic,
-        Scalar heuristicPdf,
-        Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& posterior,
-        Scalar& heuristicPosterior
-    ) const {
-        heuristicPosterior = 0.f;
-        for(size_t component_i = 0; component_i < m_lastIdx; ++component_i) {
-            Scalar pdf = m_components[component_i].pdf(sample);
-            posterior(component_i) = m_weights[component_i] * pdf;
-        }
-
-        Scalar sum = posterior.sum();
-        if(useHeuristic) {
-            sum = (1 - m_heuristicWeight) * sum + m_heuristicWeight * heuristicPdf;
-        }
-
-        const Scalar invSum = 1 / sum;
-        if(std::isfinite(invSum)) {
-            posterior *= invSum;
-            if(useHeuristic) {
-                posterior *= (1.f - m_heuristicWeight);
-                heuristicPosterior = m_heuristicWeight * heuristicPdf * invSum;
-            }
-        } else {
-            std::cerr << "Infinite or nan posterior sum = 1.f / " << sum << "\n";
-            posterior.setZero();
-            heuristicPosterior = 0.f;
-        }
-    }
 
     void save(const std::string& filename) const {
         // make an archive
@@ -203,20 +89,51 @@ public:
         ia >> BOOST_SERIALIZATION_NVP(*this);
     }
 
+    Vectord getComponentMean(size_t k) {
+        return m_components[k].getMean();
+    }
+
+    Matrixd getComponentCovariance(size_t k) {
+        return m_components[k].getCovariance();
+    }
+
+    /** Written primarily for testing program, might be better to later initialize with the first couple of samples */
+    void initialize(SampleVector& samples) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> sampleDist(0, samples.cols() - 1);
+        std::uniform_real_distribution<Scalar_t> weightDist(0.1, 1.0);
+
+        Scalar_t weight_sum = 0.0;
+
+        for (size_t k = 0; k < t_components; ++k) {
+            m_components[k].setMean(samples.col(sampleDist(gen)));
+            m_components[k].setCovariance(Matrixd::Identity() * weightDist(gen));
+
+            m_weights[k] = weightDist(gen);
+            weight_sum += m_weights[k];
+        }
+
+        for (auto& weight : m_weights) {
+            weight /= weight_sum;
+        }
+    }
+
     template<typename TInIterator>
     Scalar calculateResponsibilitesForSample(TInIterator& sample, size_t i, Responsibilities& responsibilities) {
         Scalar partialSumResponsibility{0.0f};
 
-        for (size_t k = 0; k < m_lastIdx; ++k) {
+        for (size_t k = 0; k < m_numComponents; ++k) {
             Scalar pdfValue = m_components[k].pdf(sample);
             responsibilities(k, i) = m_weights[k] * pdfValue;
-            partialSumResponsibility += responsibilities[k];
+            partialSumResponsibility += responsibilities(k, i);
         }
 
-        float mixturePDF = sum(partialSumResponsibility);
+        // float mixturePDF = sum(partialSumResponsibility); -- uncomment for SIMD (to be implemented)
+        float mixturePDF = partialSumResponsibility;
         const float invMixturePDF = 1.0f/mixturePDF;
 
-        for(size_t k = 0; k < m_lastIdx; ++k)
+        for(size_t k = 0; k < m_numComponents; ++k)
             responsibilities(k, i) *= invMixturePDF;
 
 #ifdef MITSUBA_LOGGING
@@ -229,8 +146,6 @@ public:
     // integrate it further to the system
     // start sample collection -- octree
 
-    using SampleVector = Eigen::Matrix<Scalar, t_dims, Eigen::Dynamic>;
-
     Scalar fit(SampleVector& samples) {
 #ifdef MITSUBA_LOGGING
         Log(EInfo, "Begining to fit samples.");
@@ -238,6 +153,7 @@ public:
         size_t numSamples = samples.size();
         Scalar logLikelihood = 0;
         Responsibilities responsibilities(t_components, numSamples);
+        responsibilities.setZero();
 
 #ifdef MITSUBA_LOGGING
         Log(EInfo, "Performing E-step of EM algorithm.");
@@ -245,8 +161,7 @@ public:
         for (size_t col = 0; col < samples.cols(); ++col) {
             const Vectord sample = samples.col(col);
 
-            Scalar partialLogLikelihood = responsibilities.setZero();
-            calculateResponsibilitesForSample(sample, col, responsibilities); // todo: refactoring idea: move to a class, similarly to vmm
+            Scalar partialLogLikelihood = calculateResponsibilitesForSample(sample, col, responsibilities); // todo: refactoring idea: move to a class, similarly to vmm
 
             logLikelihood += std::log(partialLogLikelihood);
         }
@@ -254,7 +169,7 @@ public:
 #ifdef MITSUBA_LOGGING
         Log(EInfo, "Performing M-step of EM algorithm.");
 #endif
-        for (size_t k = 0; k < m_components; ++k) { // M-step -- todo: modularize
+        for (size_t k = 0; k < t_components; ++k) { // M-step -- todo: modularize
             Scalar responsibilitySum = responsibilities.row(k).sum();
             m_weights[k] = responsibilitySum / numSamples;
 
@@ -283,6 +198,18 @@ public:
         return logLikelihood;
     }
 
+    /* Vestion with repetition until max iterations */
+    void fit(SampleVector& samples, int maxIterations, Scalar tolerance = 1e-6) {
+        Scalar logLikelihood = 0;
+        Scalar previousLogLikelihood = -std::numeric_limits<Scalar>::infinity();
+        for (int iter = 0; iter < maxIterations; ++iter) {
+            logLikelihood = fit(samples);
+            if (std::abs(logLikelihood - previousLogLikelihood) < tolerance)
+                break;
+            previousLogLikelihood = logLikelihood;
+        }
+    }
+
 
 private:
     friend class boost::serialization::access;
@@ -290,7 +217,7 @@ private:
     void serialize(Archive & ar, const size_t version) {
         ar  & m_components;
         ar  & m_weights;
-        ar  & m_lastIdx;
+        ar  & m_numComponents;
         ar  & m_heuristicWeight;
         if(version > 0) {
             ar  & m_normalization;
@@ -300,7 +227,7 @@ private:
     pmm::alignedVector<Component> m_components;
     pmm::alignedVector<Scalar> m_weights;
     pmm::alignedVector<Scalar> m_cdf;
-    size_t m_lastIdx = 0;
+    size_t m_numComponents = t_components;
 
     Scalar m_heuristicWeight = 0.5f;
     Scalar m_mixtureThreshold = 0.f; // 1.f / (Scalar) t_components;
