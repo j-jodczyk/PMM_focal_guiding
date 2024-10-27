@@ -8,11 +8,11 @@
 
 namespace pmm {
 
-template<int t_dimentions, typename Scalar>
+template<int t_dims, typename Scalar>
 class Distribution {
 public:
-    using Vectord = Eigen::Matrix<Scalar, t_dimentions, 1>;
-    using Matrixd = Eigen::Matrix<Scalar, t_dimentions, t_dimentions>;
+    using Vectord = Eigen::Matrix<Scalar, t_dims, 1>;
+    using Matrixd = Eigen::Matrix<Scalar, t_dims, t_dims>;
 
     virtual ~Distribution() {}
     virtual Vectord sample(const std::function<Scalar()>& rng) const = 0;

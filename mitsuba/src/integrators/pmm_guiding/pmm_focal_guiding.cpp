@@ -1,9 +1,19 @@
 #include <mitsuba/render/scene.h>
+#include <mitsuba/core/statistics.h>
+
+#include "gaussian_mixture_model.h"
+
 
 MTS_NAMESPACE_BEGIN
 
+static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage);
+
 /* Based on MIPathTracer */
 class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
+public:
+    PMMFocalGuidingIntegrator(const Properties &props)
+        : MonteCarloIntegrator(props) { }
+
     PMMFocalGuidingIntegrator(Stream *stream, InstanceManager *manager)
         : MonteCarloIntegrator(stream, manager) { }
 
@@ -14,8 +24,6 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
         RayDifferential ray(r);
         Spectrum Li(0.0f);
         bool scattered = false;
-
-        GuidingField m_guidingField;
 
         /* Perform the first ray intersection (or ignore if the
            intersection has already been provided). */
