@@ -1,5 +1,6 @@
 #include <mitsuba/render/scene.h>
 #include <mitsuba/core/statistics.h>
+#include <mitsuba/core/logger.h>
 
 #include "gaussian_mixture_model.h"
 

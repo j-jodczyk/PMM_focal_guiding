@@ -19,6 +19,10 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
+#ifdef MITSUBA_LOGGING
+#include <mitsuba/core/logger.h>
+#endif
+
 #include "distribution.h"
 
 #define FAIL_ON_ZERO_CDF 0
@@ -50,7 +54,11 @@ public:
         m_components(t_components),
         m_weights(t_components),
         m_cdf(t_components)
-    { }
+    {
+#ifdef MITSUBA_LOGGING
+        Log(EInfo, "Created GMM with %i components", t_components);
+#endif
+    }
 
     Vectord sample(const std::function<Scalar()>& rng) const {
         size_t component_i = sampleDiscreteCdf(std::begin(m_cdf), std::begin(m_cdf) + m_lastIdx, rng());
@@ -122,7 +130,6 @@ public:
             }
             posterior(component_i) = m_weights[component_i] * pdf(component_i);
             tangentVectors.col(component_i) = tangent;
-            // pdf(component_i) /= m_surfacesize_tegral;
         }
 
         Scalar sum = posterior.sum();
@@ -196,7 +203,6 @@ public:
         ia >> BOOST_SERIALIZATION_NVP(*this);
     }
 
-    /** Performs E step of EM algorithm for a single sample */
     template<typename TInIterator>
     Scalar calculateResponsibilitesForSample(TInIterator& sample, size_t i, Responsibilities& responsibilities) {
         Scalar partialSumResponsibility{0.0f};
@@ -213,22 +219,30 @@ public:
         for(size_t k = 0; k < m_lastIdx; ++k)
             responsibilities(k, i) *= invMixturePDF;
 
+#ifdef MITSUBA_LOGGING
+        Log(EInfo, "Finished calculating responsibilities for %i sample.", i);
+#endif
         return partialSumResponsibility;
     }
 
     // todo:
-    // Adding logging so I know what's happening
     // integrate it further to the system
     // start sample collection -- octree
 
     using SampleVector = Eigen::Matrix<Scalar, t_dims, Eigen::Dynamic>;
 
     Scalar fit(SampleVector& samples) {
+#ifdef MITSUBA_LOGGING
+        Log(EInfo, "Begining to fit samples.");
+#endif
         size_t numSamples = samples.size();
         Scalar logLikelihood = 0;
         Responsibilities responsibilities(t_components, numSamples);
 
-        for (size_t col = 0; col < samples.cols(); ++col) { // performing E-step
+#ifdef MITSUBA_LOGGING
+        Log(EInfo, "Performing E-step of EM algorithm.");
+#endif
+        for (size_t col = 0; col < samples.cols(); ++col) {
             const Vectord sample = samples.col(col);
 
             Scalar partialLogLikelihood = responsibilities.setZero();
@@ -237,6 +251,9 @@ public:
             logLikelihood += std::log(partialLogLikelihood);
         }
 
+#ifdef MITSUBA_LOGGING
+        Log(EInfo, "Performing M-step of EM algorithm.");
+#endif
         for (size_t k = 0; k < m_components; ++k) { // M-step -- todo: modularize
             Scalar responsibilitySum = responsibilities.row(k).sum();
             m_weights[k] = responsibilitySum / numSamples;
@@ -259,6 +276,9 @@ public:
             m_components[k].setCovariance(newCovariance);
         }
 
+#ifdef MITSUBA_LOGGING
+        Log(EInfo, "Finished fitting samples.");
+#endif
         // todo: check for convergence outside of function (?)
         return logLikelihood;
     }
