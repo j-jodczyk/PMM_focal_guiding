@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <random>
 
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/vector.hpp>
