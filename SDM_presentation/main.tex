@@ -65,12 +65,20 @@ dr inż. Łukasz Dąbała}
 \frame{\tableofcontents\frametitle{Plan prezentacji}}
 
 \section{Śledzenie promieni}
+
 \begin{frame}
-\frametitle{Śledzenie promieni \it{ang. Ray tracing}}
+\frametitle{Fotorealiztyczny rendering}
 \begin{itemize}
     \item Rendering to proces generacji obrazu z modelu za pomocą programu komputerowego.
     \item Celem fotorealistycznego renderingu jest stworzenie obrazu, który jest nie do odróżnienia od zdjęcia.
-    \item Wykorzystuje się model światła w postaci cząsteczki poruszające się po promieniach.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Śledzenie promieni \it{ang. Ray tracing}}
+\begin{itemize}
+    \item Aby generować realistyczne obrazy, potrzebna jest jak najlepsza symulacja fizyki światła i jego interakcji z materią.
+    \item Wykorzystuje się do niej model światła w postaci cząsteczki poruszające się po promieniach.
     \item Algorytm śledzenia promieni opiera się na podążaniu ścieżką promienia światła przez scenę.
 \end{itemize}
 \end{frame}
@@ -96,9 +104,18 @@ dr inż. Łukasz Dąbała}
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Radiancja}
+    \begin{itemize}
+        \item Światło, które dociera do kamery z danego punktu, jest sumą światła emitowanego przez obiekt i światła przez niego odbitego.
+        \item Ta idea sformalizowana jest przez równanie renderingu, które mierzy światło w odniesieniu do radiancji.
+        \item Radiancja jest jednostką radiometryczną wyrażającą strumień promieniowania na jednostkę powierzchni z kąta bryłowego.
+        \item Mówi nam, ile światła dociera do naszego oka (lub kamery) z danego miejsca i kierunku, określając, jak jasne i szczegółowe wydają się rzeczy.
+        \item Radiancja pozostaje stała wzdłuż promienia światła.
+    \end{itemize}
+\end{frame}
+
 \begin{frame}{Równianie renderingu}
-Do określenia ilości światła wychodzącego z danego punktu w danym kierunku służy równanie renderingu:
-$$ L_o(x, \omega_o) = L_e + L_r $$
+$$ L_o(x, \omega_o) = L_e(x, \omega_o) + L_r(x, \omega_o) $$
 gdzie
 \begin{itemize}
     \item $L_e$ to światło emitowane przez obiekt,
@@ -120,7 +137,7 @@ $$ f_r(x, \omega_i \rightarrow \omega_o) $$
 \end{frame}
 
 \begin{frame}{Światło odbite}
-    $$ L_r = \int_{\Omega}f_r(x, \omega_i \rightarrow \omega_o)L_i(x, \omega_i)cos\delta d\omega $$
+    $$ L_r(x, \omega_o) = \int_{\Omega}f_r(x, \omega_i \rightarrow \omega_o)L_i(x, \omega_i)cos\delta d\omega $$
 gdzie
 \begin{itemize}
     \item $\Omega$ to półkula wszystkich kierunków przychodzących do punktu,
@@ -134,6 +151,7 @@ gdzie
 \begin{frame}{Monte Carlo}
     \begin{itemize}
         \item Równanie renderingu wymaga uwzględnienia nieskończonej liczby możliwych interakcji światła z powierzchniami sceny.
+        \item Rozwiązanie tego równania nie jest możliwe, z wyjątkiem najprostrzych scen.
         \item W praktyce przybliża się je przy pomocy Monte Carlo.
     \end{itemize}
 \end{frame}
@@ -144,7 +162,8 @@ $$
 gdzie
 \begin{itemize}
     \item N to liczba próbek,
-    \item $p(\omega_i)$ to funkcja gęstości prawdopodobieństwa (PDF, \it{ang. Probability Density Function}) \normalfont kierunku próbkowania
+    \item $p(\omega_i)$ to funkcja gęstości prawdopodobieństwa (PDF, \it{ang. Probability Density Function}) \normalfont wybrania kierunku $\omega_i$
+    \item ułamek $\frac{f_r(x, \omega_i, \omega_o) \, L_i(x, \omega_i) \, cos\delta}{p(\omega_i)}$ waży każdą próbkę w oparciu o jej udział w radiancji.
 \end{itemize}
 \end{frame}
 
@@ -161,6 +180,7 @@ gdzie
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{img/PDF.png}
+    \caption{Przykładowy rozkład PDF}
     \label{fig:enter-label}
 \end{figure}
 \end{frame}
@@ -248,13 +268,12 @@ gdzie
 %
 
 \begin{frame}{Przestrzenna funkcja gęstości próbkowania}
-Rath i in.\footfullcite{Focal_Guiding} zaproponowali nowatorską metodę path guidingu przeznaczoną do obsługi efektów ogniskowych.
+Rath i in.\footcite{Focal_Guiding} zaproponowali nowatorską metodę path guidingu przeznaczoną do obsługi efektów ogniskowych.
     \begin{itemize}
         \item Alternatywa do bezpośredniego uczenia się kierunkowego rozkładu lokalnego.
         \item Uczenie się globalnego rozkładu ognisk w przestrzeni.
         \item Próbkowanie punktów i wyliczanie z nich następnego kierunku ścieżki:
         $$ w_o = \frac{y-x}{||y-x||} $$
-        % todo: wkleić figure 3 z rath%
     \end{itemize}
 \end{frame}
 
@@ -289,7 +308,6 @@ Rath i in.\footfullcite{Focal_Guiding} zaproponowali nowatorską metodę path gu
     \item Reprezentacja funkcji wkładu punktu jako adaptacyjne drzewo ósemkowe.
     \item Przy każdej ścieżce zliczanie jej wkładu w każdy liść drzewa.
     \item Dzielenie i scalanie węzłów drzewa w zależności od wartości funkcji.
-    % todo: obrazek
 \end{itemize}
 \end{frame}
 
@@ -305,8 +323,15 @@ Rath i in.\footfullcite{Focal_Guiding} zaproponowali nowatorską metodę path gu
 \section{Plan pracy}
 \begin{frame}{Perspektywa poprawy}
 \begin{itemize}
-    \item Jako że funkcja wkładu punktu jest ciągła, można spróbować oszacować ją za pomocą mieszaniny rozkładów Gaussa. \item Potencjalnie może to poprawić obsługę efektów ogniskowych oraz zmniejszyć ilość potrzebnych próbek.
+    \item Jako że funkcja wkładu punktu jest ciągła, można spróbować oszacować ją za pomocą mieszaniny rozkładów Gaussa.
+    \item Potencjalnie może to poprawić obsługę efektów ogniskowych oraz zmniejszyć ilość potrzebnych próbek.
 \end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{img/descrite_vs_continuous.png}
+    \caption{Ciągła i dyskretna reprezentacja funkcji wkładu punktu\footcite{Focal_Guiding}}
+    \label{fig:enter-label}
+\end{figure}
 \end{frame}
 
 \begin{frame}{Plan pracy}
