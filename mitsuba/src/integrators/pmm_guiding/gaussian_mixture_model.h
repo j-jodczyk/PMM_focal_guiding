@@ -30,7 +30,7 @@
 #define FAIL_ON_ZERO_CDF 0
 #define USE_MAX_KEEP 0
 
-namespace pmm {
+namespace pmm_focal {
 
 template<typename T>
 using alignedVector = std::vector<T, Eigen::aligned_allocator<T>>;
@@ -73,8 +73,8 @@ public:
         return pdfAccum;
     }
 
-    pmm::alignedVector<Component>& components() { return m_components; }
-    pmm::alignedVector<Scalar>& weights() { return m_weights; }
+    pmm_focal::alignedVector<Component>& components() { return m_components; }
+    pmm_focal::alignedVector<Scalar>& weights() { return m_weights; }
 
     void save(const std::string& filename) const {
         // make an archive
@@ -225,9 +225,9 @@ private:
         }
     }
 
-    pmm::alignedVector<Component> m_components;
-    pmm::alignedVector<Scalar> m_weights;
-    pmm::alignedVector<Scalar> m_cdf;
+    pmm_focal::alignedVector<Component> m_components;
+    pmm_focal::alignedVector<Scalar> m_weights;
+    pmm_focal::alignedVector<Scalar> m_cdf;
     size_t m_numComponents = t_components;
 
     Scalar m_heuristicWeight = 0.5f;

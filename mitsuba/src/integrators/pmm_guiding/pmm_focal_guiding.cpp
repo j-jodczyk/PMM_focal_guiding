@@ -3,6 +3,15 @@
 #include <mitsuba/core/logger.h>
 
 #include "gaussian_mixture_model.h"
+#include "gaussian_component.h"
+#include "octree.h"
+
+#include "envs.h"
+
+// todo:
+// after each ray is traced go though the tree and collect samples (probably like the middle of the leaf)
+// use those samples to feed GMM
+// make a better project structure
 
 
 MTS_NAMESPACE_BEGIN
@@ -11,9 +20,19 @@ static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage
 
 /* Based on MIPathTracer */
 class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
+    using Tree = pmm_focal::Octree<EnvMitsuba3D>;
+
+    mutable Tree octree;
+    // todo
+    // probably not double
+    using Scalar = double;
+    // what about number of components -- is there a way to intelligently modify
+    // dims -- probably should be in template... -- visualizer???
+    mutable pmm_focal::GaussianMixtureModel<3, 10, Scalar, pmm_focal::GaussianComponent> gmm;
+
 public:
     PMMFocalGuidingIntegrator(const Properties &props)
-        : MonteCarloIntegrator(props) { }
+        : MonteCarloIntegrator(props) {}
 
     PMMFocalGuidingIntegrator(Stream *stream, InstanceManager *manager)
         : MonteCarloIntegrator(stream, manager) { }
@@ -186,6 +205,34 @@ public:
                     break;
                 throughput /= q;
             }
+
+            const BSDF *endpointBSDF = its.getBSDF();
+            Float endpointRoughness = std::numeric_limits<Float>::infinity();
+            if (endpointBSDF) {
+                for (int comp = 0; comp < endpointBSDF->getComponentCount(); ++comp) {
+                    endpointRoughness = std::min(endpointRoughness, endpointBSDF->getRoughness(its, comp));
+                }
+            }
+            const bool endpointIsGlossy = endpointRoughness < 0.3f; // [Ruppert et al. 2020]
+            const Float splatDistance = endpointIsGlossy ?
+                                        std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
+                                        its.t; /// virtual image is not possible since the endpoint is diffuse, splatting segment is sufficient
+
+            std::vector<AABB> leafAABBs;
+            octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
+            Log(EInfo, "Collected %s samples", leafAABBs.size());
+
+            // if first iteration then initialize gmm
+
+            Eigen::Matrix<Scalar, 3, Eigen::Dynamic> samples;
+            for (size_t i=0; i < leafAABBs.size(); i++) {
+                auto leaf = leafAABBs[i];
+                Eigen::Matrix<Scalar, 3, 1> center;
+                center << (leaf.min.x + leaf.max.x) / 2, (leaf.min.y + leaf.max.y) / 2, (leaf.min.y + leaf.max.y) / 2;
+                samples.col(i) = center;
+            }
+            gmm.fit(samples);
+            Log(EInfo, "Fitted GMM");
         }
 
         /* Store statistics */

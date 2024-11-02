@@ -1,5 +1,5 @@
 
-namespace pmm {
+namespace pmm_focal {
 
 template<size_t t_dims, typename Scalar_t>
 class GaussianComponent {

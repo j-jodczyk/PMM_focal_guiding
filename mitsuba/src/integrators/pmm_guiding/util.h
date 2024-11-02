@@ -2,7 +2,7 @@
 #define VCL_NAMESPACE vcl
 #include "../vectorclass/vectorclass.h"
 
-namespace pmm {
+namespace pmm_focal {
 
 typedef vcl::Vec4f float4;
 typedef vcl::Vec8f float8;

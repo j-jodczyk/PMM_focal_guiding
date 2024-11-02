@@ -55,7 +55,7 @@ int main() {
 
     std::cout<<"Data generated"<<std::endl;
 
-    pmm::GaussianMixtureModel<dims, components, Scalar, pmm::GaussianComponent> gmm;
+    pmm_focal::GaussianMixtureModel<dims, components, Scalar, pmm_focal::GaussianComponent> gmm;
     std::cout<<"GMM created"<<std::endl;
 
     gmm.initialize(data);

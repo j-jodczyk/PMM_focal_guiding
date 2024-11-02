@@ -6,7 +6,7 @@
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/StdVector>
 
-namespace pmm {
+namespace pmm_focal {
 
 template<int t_dims, typename Scalar>
 class Distribution {

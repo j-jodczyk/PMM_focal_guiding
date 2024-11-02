@@ -3,8 +3,11 @@
  * An adaptive spatial density represented by a hyperoctree (quad-tree in 2-D, octree in 3-D).
  * Leaves are sub-divided when enough energy is present (similar to the D-Tree of Müller et al. [2017]).
  */
+
+namespace pmm_focal {
+
 template<typename Env>
-class Orthtree {
+class Octree {
     static constexpr int Dimensionality = Env::Dimensionality;
 
     using Float = typename Env::Float;
@@ -25,9 +28,9 @@ class Orthtree {
         Patch(const AABB &domain, Float density) : domain(domain), density(density) {}
     };
 
+    AABB m_aabb;
 
 public:
-
     struct Configuration {
         /// For compatibility with older file formats.
         bool unused{false};
@@ -50,14 +53,17 @@ public:
 
     Configuration configuration;
 
-    Orthtree() : builder(*this) {
-        Orthtree::clear();
+    Octree() : builder(*this) {
+        Octree::clear();
     }
 
-    Orthtree &operator=(const Orthtree &other) {
-        Distribution<Env>::operator=(other);
+    Octree &operator=(const Octree &other) {
         m_nodes = other.m_nodes;
         return *this;
+    }
+
+    const AABB &aabb() const {
+        return m_aabb;
     }
 
     /**
@@ -72,7 +78,7 @@ public:
     /**
      * Sums up the weights accumulated in the leaf nodes and updates the spatial density.
      */
-    void build() override {
+    void build() {
         builder.sumDensities();
         builder.build();
     }
@@ -90,13 +96,13 @@ public:
         builder.build();
     }
 
-    void clear() override {
+    void clear() {
         m_nodes.clear();
         m_nodes.emplace_back();
         build();
     }
 
-    void splat(const Point &origin, const Vector &direction, Float distance, std::vector<AABB>& leafAABBs) override {
+    void splat(const Point &origin, const Vector &direction, Float distance, std::vector<AABB>& leafAABBs) {
         Float alpha = 1;
 
         Traversal traversal{*this, origin, direction};
@@ -107,12 +113,12 @@ public:
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
-                leafAABBs.push_back(computeLeafAABB(nodeIndex, stratum));
+                leafAABBs.push_back(child.computeLeafAABB(nodeIndex, stratum));
             }
         });
     }
 
-    [[nodiscard]] std::vector<Patch> visualize() const override {
+    [[nodiscard]] std::vector<Patch> visualize() const {
         std::vector<Patch> result;
 
         struct StackEntry {
@@ -185,6 +191,24 @@ private:
             [[nodiscard]] bool isLeaf() const {
                 return index == 0;
             }
+
+            AABB computeLeafAABB(NodeIndex nodeIndex, StratumIndex stratum) {
+                const Point origin = {0.0f, 0.0f, 0.0f};
+                Point minPoint, maxPoint;
+                Float currentStepsize = 1;
+
+                for (int dim = 0; dim < Dimensionality; ++dim) {
+                    if (stratum & (1 << dim)) {
+                        minPoint[dim] = origin[dim] + (currentStepsize / 2);
+                        maxPoint[dim] = origin[dim] + currentStepsize;
+                    } else {
+                        minPoint[dim] = origin[dim];
+                        maxPoint[dim] = origin[dim] + (currentStepsize / 2);
+                    }
+                }
+
+                return AABB{minPoint, maxPoint}; // note: this will return AABB in [0,1] scale, each point should be scaled by tree AABB to achieve true coordinates
+            }
         };
 
         Child children[Arity];
@@ -201,23 +225,6 @@ private:
                 pos[dim] = pos[dim] * 2 - Float(bit);
             }
             return stratum;
-        }
-
-        AABB computeLeafAABB((NodeIndex nodeIndex, StratumIndex stratum) {
-            Point minPoint, maxPoint;
-            Float currentStepsize = initialStepsize; // starting stepsize (depends on tree's depth)
-
-            for (int dim = 0; dim < Dimensionality; ++dim) {
-                if (stratum & (1 << dim)) {
-                    minPoint[dim] = origin[dim] + (currentStepsize / 2);
-                    maxPoint[dim] = origin[dim] + currentStepsize;
-                } else {
-                    minPoint[dim] = origin[dim];
-                    maxPoint[dim] = origin[dim] + (currentStepsize / 2);
-                }
-            }
-
-            return AABB{minPoint, maxPoint};
         }
 
         /**
@@ -270,7 +277,7 @@ private:
      */
     struct Traversal {
     private:
-        const Orthtree &tree;
+        const Octree &tree;
         StratumIndex a; // bitmask indicating which dimensions are reversed
         Vector tNear, tFar;
 
@@ -328,7 +335,7 @@ private:
         }
 
     public:
-        explicit Traversal(const Orthtree &tree, Point origin, Vector direction) : tree(tree) {
+        explicit Traversal(const Octree &tree, Point origin, Vector direction) : tree(tree) {
             a = 0;
             for (int dim = 0; dim < Dimensionality; dim++) {
                 if (direction[dim] == 0) direction[dim] = 1e-10; // hack
@@ -355,7 +362,7 @@ private:
     };
 
     struct Builder {
-        explicit Builder(Orthtree &tree) : tree(tree) {}
+        explicit Builder(Octree &tree) : tree(tree) {}
 
         void sumDensities() {
             if (Env::volume(tree.aabb()) == 0) {
@@ -392,7 +399,7 @@ private:
             printf("node count: %d -> %d -> %d\n", nodesBeforeSplit, nodesAfterSplit, nodesAfterPrune);
         }
 
-        Orthtree &tree;
+        Octree &tree;
         Float rootChildVolume{};
         Float rootWeight{};
         Float splittingThreshold{};
@@ -543,42 +550,12 @@ private:
     }
 
 protected:
-    static constexpr uint32_t FileHeaderMagic = 'ORTH';
     static constexpr uint16_t TypeSizes[] = {
         sizeof(Configuration),
         sizeof(Node),
     };
 
-    void internalStore(std::ostream &stream) override {
-        decltype(FileHeaderMagic) magic = FileHeaderMagic;
-        stream.write((char *) &magic, sizeof(FileHeaderMagic));
-        for (auto size: TypeSizes) {
-            stream.write((char *) &size, sizeof(size));
-        }
-
-        const auto nodeCount = NodeIndex(m_nodes.size());
-        stream.write((char *) &configuration, sizeof(configuration));
-        stream.write((char *) &nodeCount, sizeof(nodeCount));
-        stream.write((char *) m_nodes.data(), sizeof(Node) * nodeCount);
-    }
-
-    void internalLoad(std::istream &stream) override {
-        uint32_t magic = 0;
-        stream.read((char *) &magic, sizeof(FileHeaderMagic));
-        assert(magic == FileHeaderMagic);
-
-        for (auto size: TypeSizes) {
-            decltype(size) fsize = 0;
-            stream.read((char *) &fsize, sizeof(fsize));
-            assert(fsize == size);
-        }
-
-        NodeIndex nodeCount = 0;
-        stream.read((char *) &configuration, sizeof(configuration));
-        stream.read((char *) &nodeCount, sizeof(nodeCount));
-        m_nodes.resize(nodeCount);
-        stream.read((char *) m_nodes.data(), sizeof(Node) * nodeCount);
-    }
-
     Builder builder;
+};
+
 };
