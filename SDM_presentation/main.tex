@@ -50,7 +50,7 @@ backend=bibtex,]{biblatex}
    pdfborder={0 0 0}
 }
 
-\title[ \insertframenumber/\inserttotalframenumber]{Optymalizacja ścieżek reprezentacji przestrzeni na potrzebę obsługi efektów lokalnych w symulacji transportu światła}
+\title[ \insertframenumber/\inserttotalframenumber]{Optymalizacja ścieżek i reprezentacji przestrzeni na potrzebę obsługi efektów lokalnych w symulacji transportu światła}
 \author[Julia Jodczyk]{\textbf{Julia Jodczyk}}
 \institute{Instytut Informatyki \\
 dr inż. Łukasz Dąbała}
@@ -78,7 +78,7 @@ dr inż. Łukasz Dąbała}
 \frametitle{Śledzenie promieni \it{ang. Ray tracing}}
 \begin{itemize}
     \item Aby generować realistyczne obrazy, potrzebna jest jak najlepsza symulacja fizyki światła i jego interakcji z materią.
-    \item Wykorzystuje się do niej model światła w postaci cząsteczki poruszające się po promieniach.
+    \item Wykorzystuje się do niej model światła w postaci cząsteczki poruszającej się po promieniach.
     \item Algorytm śledzenia promieni opiera się na podążaniu ścieżką promienia światła przez scenę.
 \end{itemize}
 \end{frame}
@@ -201,32 +201,45 @@ gdzie
     \item Jest to model probabilistyczny, w którym rozkład danych reprezentuje się za pomocą wielu rozkładów Gaussowskich.
     \item Funkcja gęstości prawdopodobieństwa jest zdefiniowana jako:
 $$p(x) = \sum_{k=1}^{K} \pi_k \, \mathcal{N}(x \mid \mu_k, \Sigma_k)$$
-\end{itemize}
-
 gdzie
 \begin{itemize}
     \item K to liczba rozkładów,
     \item $\pi_k$ to waga rozkładu,
     \item $\mathcal{N}(x \mid \mu_k, \Sigma_k)$ to rozkład Gaussa o średniej $\mu_k$ i odchyleniu standardowym $\Sigma_k$
 \end{itemize}
+\item Do znalezienia parametrów rozkładów służy algorytm EM (Expectation-Maximization).
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Algorytm EM}
-\begin{itemize}
-    \item Parametry mieszaniny są szacowane przy użyciu algorytmu EM (\it{ang. Expectation-Maximization}).
-    \item \normalfont Algorytm składa się z dwóch kroków wykonywanych naprzemiennie aż do uzyskania zbieżności.
-    \begin{itemize}
-        \item Krok E: Obliczenie prawdopodobieństwa, że każdy punkt danych należy do każdego z rozkładów Gaussa biorąc pod uwagę bieżące oszacowania parametrów.
-        \item Krok M: Aktualizacja parametrów w calu maksymalizowania prawdopodobieństwa zaobserwowanych danych przy użyciu prawdopodobieństw z kroku E.
-    \end{itemize}
-\end{itemize}
+\begin{frame}{Krok Oczekiwania}
+    Dla każdego punktu x liczone jest prawdopodobieństwo przynależności do poszczególnych komponentów rozkładu Gaussa, bazując na bieżących wartościach parametrów.
+            \[
+            \gamma_{ik} = P(z_i = k \mid x_i, \theta) = \frac{\pi_k \, \mathcal{N}(x_i \mid \mu_k, \Sigma_k)}{\sum_{j} \pi_j \, \mathcal{N}(x_i \mid \mu_j, \Sigma_j)}
+            \]
+            gdzie \( \gamma_{ik} \) to prawdopodobieństwo przynależności punktu \( x_i \) do komponentu \( k \).
+
+\end{frame}
+
+\begin{frame}{Krok maksymalizacji}
+    Aktualizacja parametrów mieszanki (\( \pi_k \), \( \mu_k \), \( \Sigma_k \)) tak, aby zmaksymalizować prawdopodobieństwo danych. Wyznaczone są nowe wartości parametrów, bazując na obliczonych w kroku E prawdopodobieństwach:
+            \[
+            \pi_k = \frac{1}{N} \sum_{i=1}^N \gamma_{ik}
+            \]
+            \[
+            \mu_k = \frac{\sum_{i=1}^N \gamma_{ik} x_i}{\sum_{i=1}^N \gamma_{ik}}
+            \]
+            \[
+            \Sigma_k = \frac{\sum_{i=1}^N \gamma_{ik} (x_i - \mu_k)(x_i - \mu_k)^\top}{\sum_{i=1}^N \gamma_{ik}}
+            \]
 \end{frame}
 
 \section{GMM w path guidingu}
 \begin{frame}{Zastosowanie w path guidingu}
     \begin{itemize}
-        \item Z każdą iteracją renderingu, mieszanina dostosowuje się do nowych ścieżek światła i obserwowanych kierunków, stale udoskonalając swój model.
-        \item Dzięki temu można obniżyć liczbę próbek i skrócić czas potrzebny do uzyskania niezaszumionego obrazu.
+        \item GMM pozwala aproksymować rozkład światła w scenie.
+        \item Modele GMM uczą się na podstawie wcześniejszych próbek, gdzie w przestrzeni kierunków występuje większe prawdopodobieństwo wystąpienia istotnego oświetlenia.
+        \item Na podstawie oszacowanego rozkładu mieszaniny Gaussa, promienie są kierowane w sposób, który zwiększa szansę ich trafienia w obszary o wysokiej intensywności oświetlenia.
     \end{itemize}
 \end{frame}
 
@@ -323,7 +336,7 @@ Rath i in.\footcite{Focal_Guiding} zaproponowali nowatorską metodę path guidin
 \begin{frame}{Wyniki}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{img/ruppert_vs_rath.png}
+        \includegraphics[width=0.8\linewidth]{img/ruppert_vs_rath.png}
         \caption{Porównanie path guidingu wykorzystującego rozkład kierunkowy (po lewej) i rozkład przestrzenny (po prawej)\footcite{Focal_Guiding}}
         \label{fig:enter-label}
     \end{figure}
@@ -351,7 +364,7 @@ Rath i in.\footcite{Focal_Guiding} zaproponowali nowatorską metodę path guidin
     \end{itemize}
 \end{frame}
 
-
+\section{Bibliografia}
 \begin{frame}[allowframebreaks, noframenumbering]
     \frametitle{Bibliografia}
     \nocite{*}
