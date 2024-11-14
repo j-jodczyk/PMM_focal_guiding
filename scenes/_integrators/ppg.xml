@@ -1,0 +1,18 @@
+<scene version="0.6.0">
+    <integrator type="guided_path">
+		<boolean name="strictNormals" value="true" />
+		<integer name="maxDepth" value="40" />
+		<integer name="rrDepth" value="40" />
+		
+		<string name="budgetType" value="spp" />
+		<float name="budget" value="$spp" />
+		<string name="nee" value="always" />
+
+		<string name="sampleCombination" value="discard" />
+		<string name="bsdfSamplingFractionLoss" value="kl" />
+		<string name="spatialFilter" value="stochastic" />
+		<string name="directionalFilter" value="box" />
+		<integer name="sTreeThreshold" value="4000" />
+		<integer name="sppPerPass" value="1" />
+	</integrator>
+</scene>
