@@ -22,20 +22,65 @@ static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage
 class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     using Tree = pmm_focal::Octree<EnvMitsuba3D>;
 
-    mutable Tree octree;
+    mutable Tree m_octree;
     // todo
     // probably not double
     using Scalar = double;
     // what about number of components -- is there a way to intelligently modify
     // dims -- probably should be in template... -- visualizer???
-    mutable pmm_focal::GaussianMixtureModel<3, 10, Scalar, pmm_focal::GaussianComponent> gmm;
+    mutable pmm_focal::GaussianMixtureModel<3, 4, Scalar, pmm_focal::GaussianComponent, EnvMitsuba3D> m_gmm;
 
 public:
     PMMFocalGuidingIntegrator(const Properties &props)
-        : MonteCarloIntegrator(props) {}
+        : MonteCarloIntegrator(props) {
+            m_octree.configuration.threshold = props.getFloat("orth.threshold", 1e-3);
+            m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
+            m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
+            m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
+        }
 
     PMMFocalGuidingIntegrator(Stream *stream, InstanceManager *manager)
         : MonteCarloIntegrator(stream, manager) { }
+
+    bool render(Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
+        ref<Scheduler> sched = Scheduler::getInstance();
+        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
+        ref<Film> film = sensor->getFilm();
+
+        size_t nCores = sched->getCoreCount();
+        const Sampler *sampler = static_cast<const Sampler *>(sched->getResource(samplerResID, 0));
+        size_t sampleCount = sampler->getSampleCount();
+
+        m_octree.setAABB(scene->getAABB());
+        m_gmm.initialize(scene->getAABB());
+        Log(EInfo, m_gmm.toString().c_str());
+        Log(EInfo, m_octree.toString().c_str());
+
+        Log(EInfo, "Starting render job (%ix%i, " SIZE_T_FMT " %s, " SIZE_T_FMT
+            " %s, " SSE_STR ") ..", film->getCropSize().x, film->getCropSize().y,
+            sampleCount, sampleCount == 1 ? "sample" : "samples", nCores,
+            nCores == 1 ? "core" : "cores");
+
+        /* This is a sampling-based integrator - parallelize */
+        ref<ParallelProcess> proc = new BlockedRenderProcess(job,
+            queue, scene->getBlockSize());
+        int integratorResID = sched->registerResource(this);
+        proc->bindResource("integrator", integratorResID);
+        proc->bindResource("scene", sceneResID);
+        proc->bindResource("sensor", sensorResID);
+        proc->bindResource("sampler", samplerResID);
+        scene->bindUsedResources(proc);
+        bindUsedResources(proc);
+        sched->schedule(proc);
+
+        m_process = proc;
+        sched->wait(proc);
+        m_process = NULL;
+        sched->unregisterResource(integratorResID);
+
+        return proc->getReturnStatus() == ParallelProcess::ESuccess;
+    }
+
 
     Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
         /* Some aliases and local variables */
@@ -205,33 +250,33 @@ public:
                     break;
                 throughput /= q;
             }
-
-            const BSDF *endpointBSDF = its.getBSDF();
-            Float endpointRoughness = std::numeric_limits<Float>::infinity();
-            if (endpointBSDF) {
-                for (int comp = 0; comp < endpointBSDF->getComponentCount(); ++comp) {
-                    endpointRoughness = std::min(endpointRoughness, endpointBSDF->getRoughness(its, comp));
-                }
-            }
-            const bool endpointIsGlossy = endpointRoughness < 0.3f; // [Ruppert et al. 2020]
-            const Float splatDistance = endpointIsGlossy ?
-                                        std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
-                                        its.t; /// virtual image is not possible since the endpoint is diffuse, splatting segment is sufficient
+            // todo: there is an issue with endpointRoughness being null -- debug
+            // const BSDF *endpointBSDF = its.getBSDF();
+            // Float endpointRoughness = std::numeric_limits<Float>::infinity();
+            // if (endpointBSDF) {
+            //     for (int comp = 0; comp < endpointBSDF->getComponentCount(); ++comp) {
+            //         endpointRoughness = std::min(endpointRoughness, endpointBSDF->getRoughness(its, comp));
+            //     }
+            // }
+            // const bool endpointIsGlossy = endpointRoughness < 0.3f; // [Ruppert et al. 2020]
+            // const Float splatDistance = endpointIsGlossy ?
+            //                             std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
+            //                             its.t; /// virtual image is not possible since the endpoint is diffuse, splatting segment is sufficient
+            auto splatDistance = its.t;
 
             std::vector<AABB> leafAABBs;
-            octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
-            Log(EInfo, "Collected %s samples", leafAABBs.size());
+            m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
+            Log(EInfo, "Collected %d samples", leafAABBs.size());
 
-            // if first iteration then initialize gmm
-
-            Eigen::Matrix<Scalar, 3, Eigen::Dynamic> samples;
+            Eigen::Matrix<Scalar, 3, Eigen::Dynamic> samples(3, leafAABBs.size());
             for (size_t i=0; i < leafAABBs.size(); i++) {
                 auto leaf = leafAABBs[i];
+                Log(EInfo, leaf.toString().c_str());
                 Eigen::Matrix<Scalar, 3, 1> center;
-                center << (leaf.min.x + leaf.max.x) / 2, (leaf.min.y + leaf.max.y) / 2, (leaf.min.y + leaf.max.y) / 2;
+                center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
                 samples.col(i) = center;
             }
-            gmm.fit(samples);
+            m_gmm.fit(samples);
             Log(EInfo, "Fitted GMM");
         }
 

@@ -3,6 +3,7 @@
  * An adaptive spatial density represented by a hyperoctree (quad-tree in 2-D, octree in 3-D).
  * Leaves are sub-divided when enough energy is present (similar to the D-Tree of Müller et al. [2017]).
  */
+#include <mitsuba/core/logger.h>
 
 namespace pmm_focal {
 
@@ -53,6 +54,14 @@ public:
 
     Configuration configuration;
 
+    std::string toString () const {
+        std::ostringstream oss;
+        oss << "Octree[" << std::endl;
+        oss << m_aabb.toString();
+        oss << "]";
+        return oss.str();
+    }
+
     Octree() : builder(*this) {
         Octree::clear();
     }
@@ -62,9 +71,11 @@ public:
         return *this;
     }
 
-    const AABB &aabb() const {
+    AABB getAABB () const {
         return m_aabb;
     }
+
+    void setAABB(const AABB &aabb) { m_aabb = aabb; }
 
     /**
      * Propagates all sample weight accumulated in the leaf nodes up the entire tree and returns the @b absolute splitting threshold
@@ -108,6 +119,8 @@ public:
         Traversal traversal{*this, origin, direction};
         distance = std::min(distance, traversal.maxT());
 
+        SLog(mitsuba::EInfo, "There are %d nodes", m_nodes.size());
+
         traversal.traverse(distance, [&](
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {
@@ -128,7 +141,7 @@ public:
 
         std::stack<StackEntry> stack;
         stack.push({
-            this->aabb(),
+            this->getAABB(),
             0
         });
 
@@ -342,13 +355,13 @@ private:
                 if (direction[dim] > 0)
                     continue;
 
-                origin[dim] = (tree.aabb().max[dim] + tree.aabb().min[dim]) - origin[dim];
+                origin[dim] = (tree.getAABB().max[dim] + tree.getAABB().min[dim]) - origin[dim];
                 direction[dim] = -direction[dim];
                 a |= 1 << dim;
             }
 
-            tNear = Env::divide(tree.aabb().min - origin, direction);
-            tFar = Env::divide(tree.aabb().max - origin, direction);
+            tNear = Env::divide(tree.getAABB().min - origin, direction);
+            tFar = Env::divide(tree.getAABB().max - origin, direction);
         }
 
         float minT() const { return Env::max(tNear); }
@@ -365,12 +378,12 @@ private:
         explicit Builder(Octree &tree) : tree(tree) {}
 
         void sumDensities() {
-            if (Env::volume(tree.aabb()) == 0) {
+            if (Env::volume(tree.getAABB()) == 0) {
                 printf("empty volume\n");
                 return;
             }
 
-            rootChildVolume = std::min(std::abs(Env::volume(tree.aabb())), Float(1e+20)) / Arity;
+            rootChildVolume = std::min(std::abs(Env::volume(tree.getAABB())), Float(1e+20)) / Arity;
 
             keepNodes.resize(tree.m_nodes.size());
             std::fill(keepNodes.begin(), keepNodes.end(), true);

@@ -39,11 +39,13 @@ template<
     size_t t_dims,
     size_t t_components,
     typename Scalar_t,
-    template<size_t, typename> class Component_t
+    template<size_t, typename> class Component_t,
+    typename Env
 >
 class GaussianMixtureModel : public Distribution<t_dims, Scalar_t> {
 public:
     using Scalar = Scalar_t;
+    using AABB = typename Env::AABB;
 
     using Component = Component_t<t_dims, Scalar>;
 
@@ -61,6 +63,17 @@ public:
 #ifdef MITSUBA_LOGGING
         Log(EInfo, "Created GMM with %i components", t_components);
 #endif
+    }
+
+    std::string toString() const
+    {
+        std::ostringstream oss;
+        oss << "GMM[" << std::endl;
+        for(size_t k = 0; k < t_components; k++){
+            oss << "[" << k << "]: " << "weight = " << m_weights[k] << " " << m_components[k].toString() <<std::endl;
+        }
+        oss << "]";
+        return oss.str();
     }
 
     Scalar pdf(const Vectord& sample) const {
@@ -109,6 +122,35 @@ public:
 
         for (size_t k = 0; k < t_components; ++k) {
             m_components[k].setMean(samples.col(sampleDist(gen)));
+            m_components[k].setCovariance(Matrixd::Identity() * weightDist(gen));
+
+            m_weights[k] = weightDist(gen);
+            weight_sum += m_weights[k];
+        }
+
+        for (auto& weight : m_weights) {
+            weight /= weight_sum;
+        }
+    }
+
+    void initialize(const AABB& aabb) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<Scalar_t> weightDist(0.1, 1.0);
+
+        auto min = aabb.min; ///< Component-wise minimum
+        auto max = aabb.max; ///< Component-wise maximum
+
+        Scalar_t weight_sum = 0.0;
+
+        for (size_t k = 0; k < t_components; ++k) {
+            Vectord mean;
+            for (size_t i=0; i < t_dims; i++) {
+                std::uniform_real_distribution<Scalar_t> pointDist(min[i], max[i]);
+                mean[i] = pointDist(gen);
+            }
+
+            m_components[k].setMean(mean);
             m_components[k].setCovariance(Matrixd::Identity() * weightDist(gen));
 
             m_weights[k] = weightDist(gen);

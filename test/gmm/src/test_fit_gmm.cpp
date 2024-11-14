@@ -16,6 +16,8 @@ constexpr int components = 3;
 using Vectord = Eigen::Matrix<Scalar, dims, 1>;
 using Matrixd = Eigen::Matrix<Scalar, dims, Eigen::Dynamic>;
 
+// todo: fix - need to pass Env to gmm
+
 Matrixd generateGaussianSamples(const Vectord& mean, const Eigen::Matrix<Scalar, dims, dims>& cov, int num_samples) {
     std::random_device rd;
     std::mt19937 gen(rd());

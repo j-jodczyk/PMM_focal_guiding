@@ -27,6 +27,38 @@ public:
         Scalar pdfValue = (1.0 / std::sqrt(std::pow(2 * M_PI, m_dims) * detCovariance)) * std::exp(-0.5 * mahalanobisDist);
         return pdfValue;
     }
+
+    std::string toString() const {
+        std::ostringstream oss;
+        oss << "mean = " << getMeanStr() << "covariance = " << getCovarianceStr();
+        return oss.str();
+    }
+
+    std::string getMeanStr() {
+        std::ostringstream oss;
+        oss << "[";
+        for (size_t i = 0; i < t_dims; ++i) {
+            oss << m_mean(i);
+            if (i < t_dims - 1) oss << " ";
+        }
+        oss << "]";
+        return oss.str();
+    }
+
+    std::string getCovarianceStr() {
+        std::ostringstream oss;
+        oss << "[";
+        for (size_t i = 0; i < t_dims; ++i) {
+            oss << "[";
+            for (size_t j = 0; j < t_dims; ++j) {
+                oss << m_covariance(i, j);
+                if (j < t_dims - 1) oss << " ";
+            }
+            oss << "]";
+        }
+        oss << "]";
+        return oss.str();
+    }
 };
 
 }
