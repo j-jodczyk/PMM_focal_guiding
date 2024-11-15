@@ -54,7 +54,8 @@ public:
         m_octree.setAABB(scene->getAABB());
         m_gmm.initialize(scene->getAABB());
         Log(EInfo, m_gmm.toString().c_str());
-        Log(EInfo, m_octree.toStringVerbose().c_str());
+        Log(EInfo, m_octree.toString().c_str());
+        Log(EDebug, m_octree.toStringVerbose().c_str());
 
         Log(EInfo, "Starting render job (%ix%i, " SIZE_T_FMT " %s, " SIZE_T_FMT
             " %s, " SSE_STR ") ..", film->getCropSize().x, film->getCropSize().y,

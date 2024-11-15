@@ -20,6 +20,8 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
+#define MITSUBA_LOGGING = 1
+
 #ifdef MITSUBA_LOGGING
 #include <mitsuba/core/logger.h>
 #endif
@@ -58,10 +60,11 @@ public:
     GaussianMixtureModel() :
         m_components(t_components),
         m_weights(t_components),
-        m_cdf(t_components)
+        m_cdf(t_components),
+        m_samples()
     {
 #ifdef MITSUBA_LOGGING
-        Log(EInfo, "Created GMM with %i components", t_components);
+        SLog(mitsuba::EInfo, "Created GMM with %i components", t_components);
 #endif
     }
 
@@ -113,6 +116,7 @@ public:
 
     /** Written primarily for testing program, might be better to later initialize with the first couple of samples */
     void initialize(SampleVector& samples) {
+        m_samples = samples;
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> sampleDist(0, samples.cols() - 1);
@@ -180,29 +184,33 @@ public:
             responsibilities(k, i) *= invMixturePDF;
 
 #ifdef MITSUBA_LOGGING
-        Log(EInfo, "Finished calculating responsibilities for %i sample.", i);
+        SLog(mitsuba::EDebug, "Finished calculating responsibilities for %i sample.", i);
 #endif
         return partialSumResponsibility;
     }
 
     // todo:
     // integrate it further to the system
-    // start sample collection -- octree
 
-    Scalar fit(SampleVector& samples) {
+    Scalar fit(SampleVector& newSamples) {
 #ifdef MITSUBA_LOGGING
-        Log(EInfo, "Begining to fit samples.");
+        SLog(mitsuba::EInfo, "Begining to fit samples.");
 #endif
-        size_t numSamples = samples.size();
+        addSamples(newSamples);
+#ifdef MITSUBA_LOGGING
+        SLog(mitsuba::EInfo, "Added new samples.");
+#endif
+        size_t numSamples = m_samples.cols();
+
         Scalar logLikelihood = 0;
         Responsibilities responsibilities(t_components, numSamples);
         responsibilities.setZero();
 
 #ifdef MITSUBA_LOGGING
-        Log(EInfo, "Performing E-step of EM algorithm.");
+        SLog(mitsuba::EInfo, "Performing E-step of EM algorithm.");
 #endif
-        for (size_t col = 0; col < samples.cols(); ++col) {
-            const Vectord sample = samples.col(col);
+        for (size_t col = 0; col < numSamples; ++col) {
+            const Vectord sample = m_samples.col(col);
 
             Scalar partialLogLikelihood = calculateResponsibilitesForSample(sample, col, responsibilities); // todo: refactoring idea: move to a class, similarly to vmm
 
@@ -210,23 +218,29 @@ public:
         }
 
 #ifdef MITSUBA_LOGGING
-        Log(EInfo, "Performing M-step of EM algorithm.");
+        SLog(mitsuba::EInfo, "Performing M-step of EM algorithm.");
 #endif
+        SLog(mitsuba::EInfo, "Responsibilities size: row: %i, col: %i.\nNumber of samples: %i.\nm_samples: rows: %i, cols: %i.\n",
+            responsibilities.rows(), responsibilities.cols(),
+            numSamples,
+            m_samples.rows(), m_samples.cols()
+        );
+
         for (size_t k = 0; k < t_components; ++k) { // M-step -- todo: modularize
             Scalar responsibilitySum = responsibilities.row(k).sum();
             m_weights[k] = responsibilitySum / numSamples;
 
             Vectord newMean = Vectord::Zero();
-            for (size_t col = 0; col < samples.cols(); ++col) {
-                const Vectord sample = samples.col(col);
+            for (size_t col = 0; col < numSamples; ++col) {
+                const Vectord sample = m_samples.col(col);
                 newMean += responsibilities(k, col) * sample;
             }
             newMean /= responsibilitySum;
             m_components[k].setMean(newMean);
 
             Matrixd newCovariance = Matrixd::Zero();
-            for (size_t col = 0; col < samples.cols(); ++col) {
-                const Vectord sample = samples.col(col);
+            for (size_t col = 0; col < numSamples; ++col) {
+                const Vectord sample = m_samples.col(col);
                 Vectord diff = sample - newMean;
                 newCovariance += responsibilities(k, col) * (diff * diff.transpose());
             }
@@ -235,7 +249,7 @@ public:
         }
 
 #ifdef MITSUBA_LOGGING
-        Log(EInfo, "Finished fitting samples.");
+        SLog(mitsuba::EInfo, "Finished fitting samples.");
 #endif
         // todo: check for convergence outside of function (?)
         return logLikelihood;
@@ -267,10 +281,23 @@ private:
         }
     }
 
+    void addSamples(SampleVector &newSamples) {
+        SLog(mitsuba::EInfo, "m_samples cols: %i, rows: %i", m_samples.cols(), m_samples.rows());
+        SLog(mitsuba::EInfo, "newSamples cols: %i, rows: %i", newSamples.cols(), newSamples.rows());
+        if (m_samples.cols() == 0) { // no previous samples at this point
+            m_samples = newSamples;
+        } else {
+            assert(m_samples.rows() == newSamples.rows() && "Row dimensions must match to add as new columns");
+            m_samples.conservativeResize(Eigen::NoChange, m_samples.cols() + newSamples.cols());
+            m_samples.rightCols(newSamples.cols()) = newSamples;
+        }
+    }
+
     pmm_focal::alignedVector<Component> m_components;
     pmm_focal::alignedVector<Scalar> m_weights;
     pmm_focal::alignedVector<Scalar> m_cdf;
     size_t m_numComponents = t_components;
+    SampleVector m_samples;
 
     Scalar m_heuristicWeight = 0.5f;
     Scalar m_mixtureThreshold = 0.f; // 1.f / (Scalar) t_components;
