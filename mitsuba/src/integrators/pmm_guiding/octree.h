@@ -3,10 +3,14 @@
  * An adaptive spatial density represented by a hyperoctree (quad-tree in 2-D, octree in 3-D).
  * Leaves are sub-divided when enough energy is present (similar to the D-Tree of Müller et al. [2017]).
  */
-#include <mitsuba/core/logger.h>
+#include <vector>
+#include <stack>
+#include <cmath>
+#include <cassert>
 
 namespace pmm_focal {
-
+// there seems to be no easy way to calculate AABB without traversing the whole tree
+// let's calculate AABB for each leaf upon creation -- how will this effect memory?
 template<typename Env>
 class Octree {
     static constexpr int Dimensionality = Env::Dimensionality;
@@ -57,7 +61,21 @@ public:
     std::string toString () const {
         std::ostringstream oss;
         oss << "Octree[" << std::endl;
-        oss << m_aabb.toString();
+        oss << "AABB: " << m_aabb.toString() << std::endl;
+        oss << "Nodes count: " << m_nodes.size() << std::endl;
+        oss << "]";
+        return oss.str();
+    }
+
+    std::string toStringVerbose() const {
+        std::ostringstream oss;
+        oss << "Octree[" << std::endl;
+        oss << "AABB: " << m_aabb.toString() << std::endl;
+        oss << "Nodes: [" << std::endl;
+        for (auto &node : m_nodes) {
+            oss << node.toString() << std::endl;
+        }
+        oss << "]" << std::endl;
         oss << "]";
         return oss.str();
     }
@@ -75,7 +93,12 @@ public:
         return m_aabb;
     }
 
-    void setAABB(const AABB &aabb) { m_aabb = aabb; }
+    void setAABB(const AABB &aabb) {
+        m_aabb = aabb;
+        // have to clear and rebuild all nodes - the structure changes with aabb
+        Octree::clear();
+        Octree::build();
+    }
 
     /**
      * Propagates all sample weight accumulated in the leaf nodes up the entire tree and returns the @b absolute splitting threshold
@@ -109,7 +132,7 @@ public:
 
     void clear() {
         m_nodes.clear();
-        m_nodes.emplace_back();
+        m_nodes.emplace_back(this->getAABB()); // the root node will have the same boundries as the whole tree
         build();
     }
 
@@ -119,14 +142,14 @@ public:
         Traversal traversal{*this, origin, direction};
         distance = std::min(distance, traversal.maxT());
 
-        SLog(mitsuba::EInfo, "There are %d nodes", m_nodes.size());
+        // SLog(mitsuba::EInfo, "There are %d nodes", m_nodes.size());
 
         traversal.traverse(distance, [&](
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
-                leafAABBs.push_back(child.computeLeafAABB(nodeIndex, stratum));
+                leafAABBs.push_back(child.m_aabb);
             }
         });
     }
@@ -150,14 +173,14 @@ public:
             stack.pop();
 
             for (StratumIndex stratum = 0; stratum < Arity; stratum++) {
-                auto &child = m_nodes[stackEntry.nodeIndex].children[stratum];
+                auto &child = m_nodes[stackEntry.nodeIndex].children[stratum]; // take the i th child of the node
                 AABB childDomain{};
                 for (int dim = 0; dim < Dimensionality; dim++) {
                     const Float min = stackEntry.domain.min[dim];
                     const Float max = stackEntry.domain.max[dim];
                     const Float mid = (min + max) / 2;
 
-                    if ((stratum >> dim) & 1) {
+                    if ((stratum >> dim) & 1) { // choose placement of the child
                         childDomain.min[dim] = mid;
                         childDomain.max[dim] = max;
                     } else {
@@ -184,7 +207,7 @@ public:
     }
 
 private:
-    static constexpr int Arity = 1 << Dimensionality;
+    static constexpr int Arity = 1 << Dimensionality; // arity describes how many children in a node
 
     using NodeIndex = uint32_t;
     using StratumIndex = uint8_t;
@@ -193,6 +216,7 @@ private:
         struct Child {
             NodeIndex index{0};
             Float accumulator{};
+            AABB m_aabb{};
 
             union {
                 // we differentiate between the two depending on context,
@@ -202,29 +226,43 @@ private:
             };
 
             [[nodiscard]] bool isLeaf() const {
+                // this is because upon construction we initialize index as 0
+                // and only when we divide a node in `builder` function, we overwrite index
                 return index == 0;
-            }
-
-            AABB computeLeafAABB(NodeIndex nodeIndex, StratumIndex stratum) {
-                const Point origin = {0.0f, 0.0f, 0.0f};
-                Point minPoint, maxPoint;
-                Float currentStepsize = 1;
-
-                for (int dim = 0; dim < Dimensionality; ++dim) {
-                    if (stratum & (1 << dim)) {
-                        minPoint[dim] = origin[dim] + (currentStepsize / 2);
-                        maxPoint[dim] = origin[dim] + currentStepsize;
-                    } else {
-                        minPoint[dim] = origin[dim];
-                        maxPoint[dim] = origin[dim] + (currentStepsize / 2);
-                    }
-                }
-
-                return AABB{minPoint, maxPoint}; // note: this will return AABB in [0,1] scale, each point should be scaled by tree AABB to achieve true coordinates
             }
         };
 
         Child children[Arity];
+
+        Node(const AABB &aabb) {
+            for (StratumIndex stratum = 0; stratum < Arity; stratum++) {
+                auto &child = children[stratum];
+                for (int dim = 0; dim < Dimensionality; dim++) {
+                    const Float min = aabb.min[dim];
+                    const Float max = aabb.max[dim];
+                    const Float mid = (min + max) / 2;
+
+                    if ((stratum >> dim) & 1) {
+                        child.m_aabb.min[dim] = mid;
+                        child.m_aabb.max[dim] = max;
+                    } else {
+                        child.m_aabb.min[dim] = min;
+                        child.m_aabb.max[dim] = mid;
+                    }
+                }
+            }
+        }
+
+        std::string toString() const {
+            std::ostringstream oss;
+            oss << "Node[" << std::endl;
+            for (auto &child: children) {
+                oss << "Index: " << child.index << "\t";
+                oss << "AABB: " << child.m_aabb.toString() << std::endl;
+            }
+            oss << "]";
+            return oss.str();
+        }
 
         /**
          * Looks up which child index (stratum) a point in [0,1)^n lies in,
@@ -469,9 +507,11 @@ private:
                 if (wasLeafBefore && !isLeafNow) {
                     // need to split node
                     const auto newNodeIndex = NodeIndex(tree.m_nodes.size());
-                    tree.m_nodes.emplace_back();
+                    // emplace_back creates a new node - fetch previous leaf boundry
+                    tree.m_nodes.emplace_back(child().m_aabb);
                     keepNodes.push_back(true);
                     maxDensities.push_back(accumulator);
+
                     for (auto &childStratum: tree.m_nodes[newNodeIndex].children) {
                         // initialize children weight
                         childStratum.accumulator = accumulator / Arity;

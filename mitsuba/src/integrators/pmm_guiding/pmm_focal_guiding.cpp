@@ -6,7 +6,7 @@
 #include "gaussian_component.h"
 #include "octree.h"
 
-#include "envs.h"
+#include "./envs/mitsuba_env.h"
 
 // todo:
 // after each ray is traced go though the tree and collect samples (probably like the middle of the leaf)
@@ -54,7 +54,7 @@ public:
         m_octree.setAABB(scene->getAABB());
         m_gmm.initialize(scene->getAABB());
         Log(EInfo, m_gmm.toString().c_str());
-        Log(EInfo, m_octree.toString().c_str());
+        Log(EInfo, m_octree.toStringVerbose().c_str());
 
         Log(EInfo, "Starting render job (%ix%i, " SIZE_T_FMT " %s, " SIZE_T_FMT
             " %s, " SSE_STR ") ..", film->getCropSize().x, film->getCropSize().y,
@@ -266,18 +266,22 @@ public:
 
             std::vector<AABB> leafAABBs;
             m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
-            Log(EInfo, "Collected %d samples", leafAABBs.size());
+            Log(EDebug, "Collected %d samples", leafAABBs.size());
+
+            // todo: 1. need to scale trees aabb by scene aabb
+            // todo: 2. why is it always 1 or 0.5
 
             Eigen::Matrix<Scalar, 3, Eigen::Dynamic> samples(3, leafAABBs.size());
             for (size_t i=0; i < leafAABBs.size(); i++) {
                 auto leaf = leafAABBs[i];
-                Log(EInfo, leaf.toString().c_str());
+                Log(EDebug, leaf.toString().c_str());
                 Eigen::Matrix<Scalar, 3, 1> center;
                 center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
                 samples.col(i) = center;
             }
             m_gmm.fit(samples);
-            Log(EInfo, "Fitted GMM");
+            Log(EDebug, "Fitted GMM");
+            Log(EInfo, m_gmm.toString().c_str());
         }
 
         /* Store statistics */
