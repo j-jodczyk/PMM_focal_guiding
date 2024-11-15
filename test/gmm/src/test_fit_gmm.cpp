@@ -1,4 +1,5 @@
 /* Simple program for testing how well GMM fits to data */
+/* TODO: doesn't work anymore - fix in free time */
 #include <iostream>
 #include <random>
 #include <eigen3/Eigen/Dense>
