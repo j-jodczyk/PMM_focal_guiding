@@ -1,4 +1,8 @@
 
+#ifdef MITSUBA_LOGGING
+#include <mitsuba/core/logger.h>
+#endif
+
 namespace pmm_focal {
 
 template<size_t t_dims, typename Scalar_t>
@@ -11,7 +15,6 @@ public:
 private:
     Matrixd m_covariance;
     Vectord m_mean;
-    size_t m_dims = t_dims;
 
 public:
     Matrixd getCovariance() { return m_covariance; }
@@ -21,10 +24,27 @@ public:
     void setMean(Vectord newMean) { m_mean = newMean; }
 
     Scalar pdf(const Vectord& sample) const {
+        constexpr Scalar epsilon = std::numeric_limits<Scalar>::epsilon();
+        const Scalar twoPi = static_cast<Scalar>(2.0 * M_PI);
+
+        Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Scalar, t_dims, t_dims>> eigenSolver(m_covariance);
+        Eigen::Matrix<Scalar, t_dims, t_dims> stableCovariance = m_covariance;
+        for (int i = 0; i < t_dims; ++i) {
+            if (eigenSolver.eigenvalues()[i] < epsilon)
+                stableCovariance(i, i) += epsilon;
+        }
+        Eigen::Matrix<Scalar, t_dims, t_dims> covarianceInv = stableCovariance.inverse();
+        Scalar detCovariance = stableCovariance.determinant();
+
         Vectord diff = sample - m_mean;
-        Scalar mahalanobisDist = diff.transpose() * m_covariance.inverse() * diff;
-        Scalar detCovariance = m_covariance.determinant();
-        Scalar pdfValue = (1.0 / std::sqrt(std::pow(2 * M_PI, m_dims) * detCovariance)) * std::exp(-0.5 * mahalanobisDist);
+        Scalar mahalanobisDist = diff.transpose() * covarianceInv * diff;
+        int minusTDims = static_cast<int>(-t_dims);
+
+        Scalar normalization1 = std::pow(twoPi, static_cast<Scalar>(minusTDims / 2.0)) ;
+        Scalar normalization2 = std::pow(detCovariance, static_cast<Scalar>(-0.5));
+
+        Scalar normalization = std::pow(twoPi, static_cast<Scalar>(minusTDims / 2.0)) * std::pow(detCovariance, static_cast<Scalar>(-0.5));
+        Scalar pdfValue = normalization * std::exp(static_cast<Scalar>(-0.5) * mahalanobisDist);
         return pdfValue;
     }
 
@@ -34,7 +54,7 @@ public:
         return oss.str();
     }
 
-    std::string getMeanStr() {
+    std::string getMeanStr() const {
         std::ostringstream oss;
         oss << "[";
         for (size_t i = 0; i < t_dims; ++i) {
@@ -45,7 +65,7 @@ public:
         return oss.str();
     }
 
-    std::string getCovarianceStr() {
+    std::string getCovarianceStr() const {
         std::ostringstream oss;
         oss << "[";
         for (size_t i = 0; i < t_dims; ++i) {

@@ -20,7 +20,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#define MITSUBA_LOGGING = 1
+// #define MITSUBA_LOGGING = 1
 
 #ifdef MITSUBA_LOGGING
 #include <mitsuba/core/logger.h>
@@ -61,7 +61,8 @@ public:
         m_components(t_components),
         m_weights(t_components),
         m_cdf(t_components),
-        m_samples()
+        m_samples(),
+        m_paramCount(getParamCount(t_dims, t_components))
     {
 #ifdef MITSUBA_LOGGING
         SLog(mitsuba::EInfo, "Created GMM with %i components", t_components);
@@ -112,6 +113,11 @@ public:
 
     Matrixd getComponentCovariance(size_t k) {
         return m_components[k].getCovariance();
+    }
+
+    size_t getParamCount(size_t dimentions, size_t components) {
+        /* Mean vector has dim elements, Covariance 0.5 * dim * (dim + 1), and there are t_components */
+        return 0.5 * components * ( dimentions * dimentions + 3 * dimentions + 2 );
     }
 
     /** Written primarily for testing program, might be better to later initialize with the first couple of samples */
@@ -178,7 +184,7 @@ public:
 
         // float mixturePDF = sum(partialSumResponsibility); -- uncomment for SIMD (to be implemented)
         float mixturePDF = partialSumResponsibility;
-        const float invMixturePDF = 1.0f/mixturePDF;
+        const float invMixturePDF = mixturePDF <= std::numeric_limits<Scalar>::epsilon() ? 0 : 1.0f/mixturePDF;
 
         for(size_t k = 0; k < m_numComponents; ++k)
             responsibilities(k, i) *= invMixturePDF;
@@ -189,45 +195,71 @@ public:
         return partialSumResponsibility;
     }
 
-    // todo:
-    // integrate it further to the system
+    std::string samplesToString(const SampleVector& samples) {
+        std::ostringstream oss;
+        oss << "[";
+        for (int i = 0; i < samples.cols(); ++i) {
+            oss << "[";
+            for (int j = 0; j < samples.rows(); ++j) {
+                oss << samples(j, i);
+                if (j < samples.rows() - 1) {
+                    oss << ", ";
+                }
+            }
+            oss << "]";
+            if (i < samples.cols() - 1) {
+                oss << "; ";
+            }
+        }
+
+        oss << "]";
+        return oss.str();
+    }
 
     Scalar fit(SampleVector& newSamples) {
 #ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EInfo, "Begining to fit samples.");
+        SLog(mitsuba::EDebug, "Begining to fit samples.");
+        SLog(mitsuba::EInfo, samplesToString(newSamples).c_str());
 #endif
         addSamples(newSamples);
 #ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EInfo, "Added new samples.");
+        SLog(mitsuba::EDebug, "Added new samples.");
 #endif
         size_t numSamples = m_samples.cols();
+        if (numSamples < m_paramCount) {
+#ifdef MITSUBA_LOGGING
+        SLog(mitsuba::EDebug, "Haven't collected enough samples, returning unfitted");
+#endif
+            return 0;
+        }
 
         Scalar logLikelihood = 0;
         Responsibilities responsibilities(t_components, numSamples);
         responsibilities.setZero();
 
 #ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EInfo, "Performing E-step of EM algorithm.");
+        SLog(mitsuba::EDebug, "Performing E-step of EM algorithm.");
 #endif
         for (size_t col = 0; col < numSamples; ++col) {
             const Vectord sample = m_samples.col(col);
 
             Scalar partialLogLikelihood = calculateResponsibilitesForSample(sample, col, responsibilities); // todo: refactoring idea: move to a class, similarly to vmm
+            partialLogLikelihood = std::max(partialLogLikelihood, std::numeric_limits<Scalar>::epsilon());
 
             logLikelihood += std::log(partialLogLikelihood);
         }
 
 #ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EInfo, "Performing M-step of EM algorithm.");
+        SLog(mitsuba::EDebug, "Performing M-step of EM algorithm.");
 #endif
-        SLog(mitsuba::EInfo, "Responsibilities size: row: %i, col: %i.\nNumber of samples: %i.\nm_samples: rows: %i, cols: %i.\n",
-            responsibilities.rows(), responsibilities.cols(),
-            numSamples,
-            m_samples.rows(), m_samples.cols()
-        );
 
         for (size_t k = 0; k < t_components; ++k) { // M-step -- todo: modularize
             Scalar responsibilitySum = responsibilities.row(k).sum();
+            // SLog(mitsuba::EInfo, "responsibilitySum is %f", responsibilitySum);
+            if (responsibilitySum <= std::numeric_limits<Scalar>::epsilon()) {
+                m_weights[k] = 0; // Set weight to zero
+                continue; // Skip updating mean and covariance
+            }
             m_weights[k] = responsibilitySum / numSamples;
 
             Vectord newMean = Vectord::Zero();
@@ -236,6 +268,7 @@ public:
                 newMean += responsibilities(k, col) * sample;
             }
             newMean /= responsibilitySum;
+            // SLog(mitsuba::EInfo, "NewMean is %d", newMean);
             m_components[k].setMean(newMean);
 
             Matrixd newCovariance = Matrixd::Zero();
@@ -249,7 +282,7 @@ public:
         }
 
 #ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EInfo, "Finished fitting samples.");
+        SLog(mitsuba::EDebug, "Finished fitting samples.");
 #endif
         // todo: check for convergence outside of function (?)
         return logLikelihood;
@@ -282,8 +315,6 @@ private:
     }
 
     void addSamples(SampleVector &newSamples) {
-        SLog(mitsuba::EInfo, "m_samples cols: %i, rows: %i", m_samples.cols(), m_samples.rows());
-        SLog(mitsuba::EInfo, "newSamples cols: %i, rows: %i", newSamples.cols(), newSamples.rows());
         if (m_samples.cols() == 0) { // no previous samples at this point
             m_samples = newSamples;
         } else {
@@ -298,6 +329,7 @@ private:
     pmm_focal::alignedVector<Scalar> m_cdf;
     size_t m_numComponents = t_components;
     SampleVector m_samples;
+    size_t m_paramCount;
 
     Scalar m_heuristicWeight = 0.5f;
     Scalar m_mixtureThreshold = 0.f; // 1.f / (Scalar) t_components;
