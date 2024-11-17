@@ -1,23 +1,28 @@
 /* Simple program for testing how well GMM fits to data */
 /* TODO: doesn't work anymore - fix in free time */
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <random>
+#include <string>
+#include <vector>
 #include <eigen3/Eigen/Dense>
 #include "../include/matplotlibcpp.h"
 
 #include "../../../mitsuba/src/integrators/pmm_guiding/gaussian_mixture_model.h"
 #include "../../../mitsuba/src/integrators/pmm_guiding/gaussian_component.h"
+#include "../../../mitsuba/src/integrators/pmm_guiding/envs/3d_env.h"
 
 namespace plt = matplotlibcpp;
 using Scalar = double;
 
-constexpr int dims = 2; // 2D mixture
+constexpr int dims = 3;
 constexpr int components = 3;
 
 using Vectord = Eigen::Matrix<Scalar, dims, 1>;
 using Matrixd = Eigen::Matrix<Scalar, dims, Eigen::Dynamic>;
 
-// todo: fix - need to pass Env to gmm
+using SampleVector = Eigen::Matrix<Scalar, dims, Eigen::Dynamic>;
 
 Matrixd generateGaussianSamples(const Vectord& mean, const Eigen::Matrix<Scalar, dims, dims>& cov, int num_samples) {
     std::random_device rd;
@@ -36,82 +41,210 @@ Matrixd generateGaussianSamples(const Vectord& mean, const Eigen::Matrix<Scalar,
     return samples;
 }
 
-int main() {
-    // Parameters for data generation
-    std::cout<<"Begin program"<<std::endl;
+// copied from gaussian component for debugging
+Scalar pdf(const Vectord& sample, const Vectord& mean, const Matrixd& covariance) {
+    constexpr Scalar epsilon = std::numeric_limits<Scalar>::epsilon();
+    const Scalar twoPi = static_cast<Scalar>(2.0 * M_PI);
 
-    Vectord mean1, mean2, mean3;
-    mean1 << 2.0, 3.0;
-    mean2 << -2.0, -2.5;
-    mean3 << 4.0, -3.5;
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Scalar, dims, dims>> eigenSolver(covariance);
+    Eigen::Matrix<Scalar, dims, dims> stableCovariance = covariance;
+    for (int i = 0; i < dims; ++i) {
+        if (eigenSolver.eigenvalues()[i] < epsilon)
+            stableCovariance(i, i) += epsilon;
+    }
+    Eigen::Matrix<Scalar, dims, dims> covarianceInv = stableCovariance.inverse();
+    Scalar detCovariance = stableCovariance.determinant();
 
-    Eigen::Matrix<Scalar, dims, dims> cov1 = (Eigen::Matrix<Scalar, dims, dims>() << 1.0, 0.2, 0.2, 0.5).finished();
-    Eigen::Matrix<Scalar, dims, dims> cov2 = (Eigen::Matrix<Scalar, dims, dims>() << 0.3, 0.1, 0.1, 0.3).finished();
-    Eigen::Matrix<Scalar, dims, dims> cov3 = (Eigen::Matrix<Scalar, dims, dims>() << 0.5, -0.2, -0.2, 0.7).finished();
+    std::cout << detCovariance << std::endl;
 
-    // Generate samples for each component
-    int samples_per_component = 100;
-    Matrixd data(dims, 3 * samples_per_component);
-    data << generateGaussianSamples(mean1, cov1, samples_per_component),
-            generateGaussianSamples(mean2, cov2, samples_per_component),
-            generateGaussianSamples(mean3, cov3, samples_per_component);
+    Vectord diff = sample - mean;
+    Scalar mahalanobisDist = diff.transpose() * covarianceInv * diff;
+    std::cout << mahalanobisDist << std::endl;
 
-    std::cout<<"Data generated"<<std::endl;
+    Scalar normalization = std::pow(twoPi, static_cast<Scalar>(-dims / 2.0)) * std::pow(detCovariance, static_cast<Scalar>(-0.5));
+    std::cout << normalization << std::endl;
 
-    pmm_focal::GaussianMixtureModel<dims, components, Scalar, pmm_focal::GaussianComponent> gmm;
-    std::cout<<"GMM created"<<std::endl;
+    Scalar pdfValue = normalization * std::exp(static_cast<Scalar>(-0.5) * mahalanobisDist);
+    return pdfValue;
+}
 
-    gmm.initialize(data);
-    std::cout<<"GMM initialized"<<std::endl;
+void plotGMM3D(
+    const Eigen::Matrix<double, 3, Eigen::Dynamic>& samples,
+    pmm_focal::GaussianMixtureModel<3, 4, Scalar, pmm_focal::GaussianComponent, Env3D>& gmm,
+    int figure_index) {
 
-    // Plot component initialization before fitting
-    for (int k = 0; k < components; ++k) {
+    // plt::figure(figure_index); // Create a new figure for each plot
+
+    // Extract sample points
+    std::vector<double> sample_x, sample_y, sample_z;
+    for (int i = 0; i < samples.cols(); ++i) {
+        sample_x.push_back(samples(0, i));
+        sample_y.push_back(samples(1, i));
+        sample_z.push_back(samples(2, i));
+    }
+
+    // Scatter plot for sample points
+    plt::scatter(sample_x, sample_y, sample_z, 10.0, {{"label", "Samples"}});
+
+    for (int k = 0; k < gmm.components().size(); ++k) {
         auto mean = gmm.getComponentMean(k);
         auto cov = gmm.getComponentCovariance(k);
 
-        std::vector<double> ellipse_x, ellipse_y;
-        for (double theta = 0.0; theta < 2 * M_PI; theta += 0.01) {
-            Eigen::Vector2d point(std::cos(theta), std::sin(theta));
-            Eigen::Vector2d ellipse_point = mean + cov.llt().matrixL() * point;
+        // Generate points for the ellipsoid
+        std::vector<double> ellipsoid_x, ellipsoid_y, ellipsoid_z;
 
-            ellipse_x.push_back(ellipse_point(0));
-            ellipse_y.push_back(ellipse_point(1));
+        // Create a sphere and transform it into an ellipsoid
+        for (double phi = 0; phi < M_PI; phi += 0.1) {
+            for (double theta = 0; theta < 2 * M_PI; theta += 0.1) {
+                // Points on the unit sphere
+                Eigen::Vector3d unit_point(
+                    std::sin(phi) * std::cos(theta),
+                    std::sin(phi) * std::sin(theta),
+                    std::cos(phi)
+                );
+
+                // Transform unit sphere into an ellipsoid
+                Eigen::Vector3d ellipsoid_point = mean + cov.llt().matrixL() * unit_point;
+
+                // Collect transformed points
+                ellipsoid_x.push_back(ellipsoid_point(0));
+                ellipsoid_y.push_back(ellipsoid_point(1));
+                ellipsoid_z.push_back(ellipsoid_point(2));
+            }
         }
-        plt::plot(ellipse_x, ellipse_y, {{"color", "red"}, {"linestyle", "--"}});
+
+        // Use scatter3 to simulate a surface for the ellipsoid
+        plt::scatter(ellipsoid_x, ellipsoid_y, ellipsoid_z, 1.0,
+                      {{"label", "Cluster " + std::to_string(k)}, {"color", "red"}});
     }
-
-    gmm.fit(data, 100);
-    std::cout<<"GMM fitted"<<std::endl;
-
-    // Plot original data
-    std::vector<double> x, y;
-    for (int i = 0; i < data.cols(); ++i) {
-        x.push_back(data(0, i));
-        y.push_back(data(1, i));
-    }
-    plt::scatter(x, y, 10.0);
-
-    // Plot fitted GMM components as ellipses
-    for (int k = 0; k < components; ++k) {
-        auto mean = gmm.getComponentMean(k);
-        auto cov = gmm.getComponentCovariance(k);
-
-        std::vector<double> ellipse_x, ellipse_y;
-        for (double theta = 0.0; theta < 2 * M_PI; theta += 0.01) {
-            Eigen::Vector2d point(std::cos(theta), std::sin(theta));
-            Eigen::Vector2d ellipse_point = mean + cov.llt().matrixL() * point;
-
-            ellipse_x.push_back(ellipse_point(0));
-            ellipse_y.push_back(ellipse_point(1));
-        }
-        plt::plot(ellipse_x, ellipse_y, {{"color", "green"}, {"linestyle", "--"}});
-    }
-
-    // Display plot
+    // Set plot labels and display
     plt::xlabel("X");
     plt::ylabel("Y");
-    plt::title("Gaussian Mixture Model Fitting");
-    plt::show();
+    // plt::zlabel("Z");
+    plt::title("Gaussian Mixture Model Fitting (3D) - Iteration " + std::to_string(figure_index));
+    plt::legend();
+
+}
+
+
+int main() {
+    std::cout<<"Begin program"<<std::endl;
+    pmm_focal::GaussianMixtureModel<3, 4, Scalar, pmm_focal::GaussianComponent, Env3D> gmm;
+    std::cout<<"GMM created"<<std::endl;
+
+    // [min=[-21.7494, -3.70393, -3.09172], max=[7.19249, 11.2965, 6.96201]
+    Env3D::AABB aabb = { {-21.7494, -3.70393, -3.09172}, {7.19249, 11.2965, 6.96201} };
+    std::cout<<"GMM initialized"<<std::endl;
+    gmm.initialize(aabb);
+
+    std::cout<<gmm.toString()<<std::endl;
+
+    std::cout<<"Reading samples file"<<std::endl;
+    const std::string filename = "./src/samples.txt";
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << "\n";
+        return 1;
+    }
+    int lineMax = 10;
+    int figureIndex = 1;
+    Eigen::Matrix<double, 3, Eigen::Dynamic> allSamples(3, 0);
+
+    std::string line;
+    while (lineMax > 0 && std::getline(file, line)) {
+        // Remove whitespace and brackets from the line
+        line.erase(std::remove(line.begin(), line.end(), '['), line.end());
+        line.erase(std::remove(line.begin(), line.end(), ']'), line.end());
+
+        // Split the line into individual points
+        std::stringstream ss(line);
+        std::string point;
+        std::vector<Eigen::Vector3d> points;
+
+        while (std::getline(ss, point, ';')) {
+            std::stringstream pointStream(point);
+            double x, y, z;
+
+            // Parse the point
+            char comma;
+            if (pointStream >> x >> comma >> y >> comma >> z) {
+                points.emplace_back(x, y, z);
+            }
+        }
+
+        Eigen::Matrix<double, 3, Eigen::Dynamic> sample(3, points.size());
+        for (size_t i = 0; i < points.size(); ++i) {
+            sample.col(i) = points[i];
+        }
+        // std::cout<<gmm.samplesToString(sample) << std::endl;
+
+        gmm.fit(sample);
+        std::cout << gmm.toString();
+
+        allSamples.conservativeResize(3, allSamples.cols() + sample.cols());
+        allSamples.rightCols(sample.cols()) = sample;
+
+        // plotGMM3D(allSamples, gmm, figureIndex++);
+        // plt::show();
+        lineMax -= 1;
+    }
+
+    // Plot component initialization before fitting
+    // for (int k = 0; k < components; ++k) {
+    //     auto mean = gmm.getComponentMean(k);
+    //     auto cov = gmm.getComponentCovariance(k);
+
+    //     std::vector<double> ellipse_x, ellipse_y;
+    //     for (double theta = 0.0; theta < 2 * M_PI; theta += 0.01) {
+    //         Eigen::Vector2d point(std::cos(theta), std::sin(theta));
+    //         Eigen::Vector2d ellipse_point = mean + cov.llt().matrixL() * point;
+
+    //         ellipse_x.push_back(ellipse_point(0));
+    //         ellipse_y.push_back(ellipse_point(1));
+    //     }
+    //     plt::plot(ellipse_x, ellipse_y, {{"color", "red"}, {"linestyle", "--"}});
+    // }
+
+    // gmm.fit(data, 100);
+    // std::cout<<"GMM fitted"<<std::endl;
+
+    // Plot original data
+    // std::vector<double> x, y;
+    // for (int i = 0; i < data.cols(); ++i) {
+    //     x.push_back(data(0, i));
+    //     y.push_back(data(1, i));
+    // }
+    // plt::scatter(x, y, 10.0);
+
+    // // Plot fitted GMM components as ellipses
+    // for (int k = 0; k < components; ++k) {
+    //     auto mean = gmm.getComponentMean(k);
+    //     auto cov = gmm.getComponentCovariance(k);
+
+    //     std::vector<double> ellipse_x, ellipse_y;
+    //     for (double theta = 0.0; theta < 2 * M_PI; theta += 0.01) {
+    //         Eigen::Vector2d point(std::cos(theta), std::sin(theta));
+    //         Eigen::Vector2d ellipse_point = mean + cov.llt().matrixL() * point;
+
+    //         ellipse_x.push_back(ellipse_point(0));
+    //         ellipse_y.push_back(ellipse_point(1));
+    //     }
+    //     plt::plot(ellipse_x, ellipse_y, {{"color", "green"}, {"linestyle", "--"}});
+    // }
+
+    // // Display plot
+    // plt::xlabel("X");
+    // plt::ylabel("Y");
+    // plt::title("Gaussian Mixture Model Fitting");
+    // plt::show();
+
+    // Vectord mean = (Vectord() << -21.4804, 10.5519, 3.38738).finished();
+    // Matrixd covariance = (Eigen::Matrix<Scalar, dims, dims>() << 0.18122, 0, 0, 0, 0.18122, 0, 0, 0, 0.18122).finished();
+    // Vectord sample = (Vectord() << 0.86144, 2.39, -0.892465).finished();
+
+    // Scalar p = pdf(sample, mean, covariance);
+    // std::cout << p << std::endl;
 
     return 0;
 }
