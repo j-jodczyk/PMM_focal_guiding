@@ -26,26 +26,30 @@ public:
     Scalar pdf(const Vectord& sample) const {
         constexpr Scalar epsilon = std::numeric_limits<Scalar>::epsilon();
         const Scalar twoPi = static_cast<Scalar>(2.0 * M_PI);
-
+        //  safeguard against numerical instability
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Scalar, t_dims, t_dims>> eigenSolver(m_covariance);
-        Eigen::Matrix<Scalar, t_dims, t_dims> stableCovariance = m_covariance;
+        Matrixd stableCovariance = m_covariance;
         for (int i = 0; i < t_dims; ++i) {
-            if (eigenSolver.eigenvalues()[i] < epsilon)
-                stableCovariance(i, i) += epsilon;
+            if (eigenSolver.eigenvalues()[i] < epsilon) {
+                stableCovariance += epsilon * Matrixd::Identity();
+            }
         }
         Eigen::Matrix<Scalar, t_dims, t_dims> covarianceInv = stableCovariance.inverse();
-        Scalar detCovariance = stableCovariance.determinant();
+        Scalar detCovariance = stableCovariance.determinant() + epsilon;
 
         Vectord diff = sample - m_mean;
         Scalar mahalanobisDist = diff.transpose() * covarianceInv * diff;
         int minusTDims = static_cast<int>(-t_dims);
 
-        Scalar normalization1 = std::pow(twoPi, static_cast<Scalar>(minusTDims / 2.0)) ;
-        Scalar normalization2 = std::pow(detCovariance, static_cast<Scalar>(-0.5));
+        Scalar normalization =
+            std::pow(twoPi, static_cast<Scalar>(minusTDims / 2.0))
+            * std::pow(detCovariance, static_cast<Scalar>(-0.5));
+        Scalar pdfValue = normalization
+            * std::exp(static_cast<Scalar>(-0.5) * mahalanobisDist);
 
-        Scalar normalization = std::pow(twoPi, static_cast<Scalar>(minusTDims / 2.0)) * std::pow(detCovariance, static_cast<Scalar>(-0.5));
-        Scalar pdfValue = normalization * std::exp(static_cast<Scalar>(-0.5) * mahalanobisDist);
-        return pdfValue;
+        // std::cout << "detCovariance: " << detCovariance << "\tmahalanobisDist: " << mahalanobisDist << "\tnormalization2: " << normalization2 << "\tnormalization: " << normalization << "\tpdf: " << pdfValue << std::endl;
+
+        return pdfValue < epsilon ? epsilon : pdfValue;
     }
 
     std::string toString() const {

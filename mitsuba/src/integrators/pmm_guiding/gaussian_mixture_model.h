@@ -55,7 +55,7 @@ public:
     using Matrixd = Eigen::Matrix<Scalar, t_dims, t_dims>;
 
     using Responsibilities = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, t_components, Eigen::Dynamic>;
-    using SampleVector = Eigen::Matrix<Scalar, t_dims, Eigen::Dynamic>;
+    using SampleVector = std::vector<Vectord>;
 
     GaussianMixtureModel() :
         m_components(t_components),
@@ -125,14 +125,14 @@ public:
         m_samples = samples;
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> sampleDist(0, samples.cols() - 1);
+        std::uniform_int_distribution<> sampleDist(0, samples.size() - 1);
         std::uniform_real_distribution<Scalar_t> weightDist(0.1, 1.0);
 
         Scalar_t weight_sum = 0.0;
 
         for (size_t k = 0; k < t_components; ++k) {
-            m_components[k].setMean(samples.col(sampleDist(gen)));
-            m_components[k].setCovariance(Matrixd::Identity() * weightDist(gen));
+            m_components[k].setMean(samples[sampleDist(gen)]);
+            m_components[k].setCovariance(Matrixd::Identity() * std::numeric_limits<Scalar>::epsilon());
 
             m_weights[k] = weightDist(gen);
             weight_sum += m_weights[k];
@@ -151,8 +151,6 @@ public:
         auto min = aabb.min; ///< Component-wise minimum
         auto max = aabb.max; ///< Component-wise maximum
 
-        Scalar_t weight_sum = 0.0;
-
         for (size_t k = 0; k < t_components; ++k) {
             Vectord mean;
             for (size_t i=0; i < t_dims; i++) {
@@ -163,12 +161,7 @@ public:
             m_components[k].setMean(mean);
             m_components[k].setCovariance(Matrixd::Identity() * weightDist(gen));
 
-            m_weights[k] = weightDist(gen);
-            weight_sum += m_weights[k];
-        }
-
-        for (auto& weight : m_weights) {
-            weight /= weight_sum;
+            m_weights[k] = 1.0 / t_components; // starting with equal weights for all
         }
     }
 
@@ -178,13 +171,16 @@ public:
 
         for (size_t k = 0; k < m_numComponents; ++k) {
             Scalar pdfValue = m_components[k].pdf(sample);
-            responsibilities(k, i) = m_weights[k] * pdfValue;
+            Scalar responsibility = m_weights[k] * pdfValue;
+            responsibilities(k, i) = responsibility;
             partialSumResponsibility += responsibilities(k, i);
         }
 
         // float mixturePDF = sum(partialSumResponsibility); -- uncomment for SIMD (to be implemented)
         float mixturePDF = partialSumResponsibility;
-        const float invMixturePDF = mixturePDF <= std::numeric_limits<Scalar>::epsilon() ? 0 : 1.0f/mixturePDF;
+        const Scalar invMixturePDF = partialSumResponsibility > std::numeric_limits<Scalar>::epsilon()
+                                    ? 1.0f / partialSumResponsibility
+                                    : 1.0f / t_components;
 
         for(size_t k = 0; k < m_numComponents; ++k)
             responsibilities(k, i) *= invMixturePDF;
@@ -198,18 +194,15 @@ public:
     std::string samplesToString(const SampleVector& samples) {
         std::ostringstream oss;
         oss << "[";
-        for (int i = 0; i < samples.cols(); ++i) {
+        for (auto& sample : samples) {
             oss << "[";
-            for (int j = 0; j < samples.rows(); ++j) {
-                oss << samples(j, i);
-                if (j < samples.rows() - 1) {
+            for (int i = 0; i < t_dims; ++i) {
+                oss << sample[i];
+                if (i < t_dims - 1) {
                     oss << ", ";
                 }
             }
             oss << "]";
-            if (i < samples.cols() - 1) {
-                oss << "; ";
-            }
         }
 
         oss << "]";
@@ -225,7 +218,7 @@ public:
 #ifdef MITSUBA_LOGGING
         SLog(mitsuba::EDebug, "Added new samples.");
 #endif
-        size_t numSamples = m_samples.cols();
+        size_t numSamples = m_samples.size();
         if (numSamples < m_paramCount) {
 #ifdef MITSUBA_LOGGING
         SLog(mitsuba::EDebug, "Haven't collected enough samples, returning unfitted");
@@ -241,7 +234,7 @@ public:
         SLog(mitsuba::EDebug, "Performing E-step of EM algorithm.");
 #endif
         for (size_t col = 0; col < numSamples; ++col) {
-            const Vectord sample = m_samples.col(col);
+            const Vectord sample = m_samples[col];
 
             Scalar partialLogLikelihood = calculateResponsibilitesForSample(sample, col, responsibilities); // todo: refactoring idea: move to a class, similarly to vmm
             partialLogLikelihood = std::max(partialLogLikelihood, std::numeric_limits<Scalar>::epsilon());
@@ -253,18 +246,18 @@ public:
         SLog(mitsuba::EDebug, "Performing M-step of EM algorithm.");
 #endif
 
+        Scalar weightSum = 0.0;
         for (size_t k = 0; k < t_components; ++k) { // M-step -- todo: modularize
             Scalar responsibilitySum = responsibilities.row(k).sum();
-            // SLog(mitsuba::EInfo, "responsibilitySum is %f", responsibilitySum);
-            if (responsibilitySum <= std::numeric_limits<Scalar>::epsilon()) {
-                m_weights[k] = 0; // Set weight to zero
-                continue; // Skip updating mean and covariance
-            }
+
+            std::cout << "responsibilitySum: " << responsibilitySum << std::endl;
+
             m_weights[k] = responsibilitySum / numSamples;
+            weightSum += responsibilitySum / numSamples;
 
             Vectord newMean = Vectord::Zero();
             for (size_t col = 0; col < numSamples; ++col) {
-                const Vectord sample = m_samples.col(col);
+                const Vectord sample = m_samples[col];
                 newMean += responsibilities(k, col) * sample;
             }
             newMean /= responsibilitySum;
@@ -273,13 +266,21 @@ public:
 
             Matrixd newCovariance = Matrixd::Zero();
             for (size_t col = 0; col < numSamples; ++col) {
-                const Vectord sample = m_samples.col(col);
+                const Vectord sample = m_samples[col];
                 Vectord diff = sample - newMean;
                 newCovariance += responsibilities(k, col) * (diff * diff.transpose());
             }
             newCovariance /= responsibilitySum;
             m_components[k].setCovariance(newCovariance);
         }
+
+        if (weightSum == 1.0) {
+            // weights sum up to 1 - can return early
+            return logLikelihood;
+        }
+        // weights don't sum up to 1 - normalize
+        for (size_t k = 0; k < t_components; ++k)
+            m_weights[k] = m_weights[k] / weightSum;
 
 #ifdef MITSUBA_LOGGING
         SLog(mitsuba::EDebug, "Finished fitting samples.");
@@ -315,12 +316,10 @@ private:
     }
 
     void addSamples(SampleVector &newSamples) {
-        if (m_samples.cols() == 0) { // no previous samples at this point
+        if (m_samples.size() == 0) { // no previous samples at this point
             m_samples = newSamples;
         } else {
-            assert(m_samples.rows() == newSamples.rows() && "Row dimensions must match to add as new columns");
-            m_samples.conservativeResize(Eigen::NoChange, m_samples.cols() + newSamples.cols());
-            m_samples.rightCols(newSamples.cols()) = newSamples;
+            m_samples.insert( m_samples.end(), newSamples.begin(), newSamples.end() );
         }
     }
 
