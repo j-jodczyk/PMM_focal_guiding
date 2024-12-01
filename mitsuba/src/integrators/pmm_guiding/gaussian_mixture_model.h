@@ -196,7 +196,7 @@ public:
         oss << "[";
         for (auto& sample : samples) {
             oss << "[";
-            for (int i = 0; i < t_dims; ++i) {
+            for (size_t i = 0; i < t_dims; ++i) {
                 oss << sample[i];
                 if (i < t_dims - 1) {
                     oss << ", ";
@@ -250,7 +250,7 @@ public:
         for (size_t k = 0; k < t_components; ++k) { // M-step -- todo: modularize
             Scalar responsibilitySum = responsibilities.row(k).sum();
 
-            std::cout << "responsibilitySum: " << responsibilitySum << std::endl;
+            // std::cout << "responsibilitySum: " << responsibilitySum << std::endl;
 
             m_weights[k] = responsibilitySum / numSamples;
             weightSum += responsibilitySum / numSamples;
@@ -299,6 +299,32 @@ public:
                 break;
             previousLogLikelihood = logLikelihood;
         }
+    }
+
+    Vectord sample() const {
+        // first we have to sample the component according to weights
+        std::vector<Scalar> cdf(m_weights.size(), 0.0f);
+        cdf[0] = m_weights[0];
+
+        for (size_t i = 1; i < m_weights.size(); i++) {
+            cdf[i] = cdf[i - 1] + m_weights[i];
+        }
+
+        std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+        std::mt19937 rng(std::random_device{}());
+        float randomValue = dist(rng);
+
+        Component component;
+
+        for (size_t i = 0; i < cdf.size(); ++i) {
+            if (randomValue <= cdf[i]) {
+                component = m_components[i];
+                break;
+            }
+        }
+
+        // now we sample from the component
+        return component.sample();
     }
 
 

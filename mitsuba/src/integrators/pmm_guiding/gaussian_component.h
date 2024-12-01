@@ -29,7 +29,7 @@ public:
         //  safeguard against numerical instability
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix<Scalar, t_dims, t_dims>> eigenSolver(m_covariance);
         Matrixd stableCovariance = m_covariance;
-        for (int i = 0; i < t_dims; ++i) {
+        for (size_t i = 0; i < t_dims; ++i) {
             if (eigenSolver.eigenvalues()[i] < epsilon) {
                 stableCovariance += epsilon * Matrixd::Identity();
             }
@@ -50,6 +50,26 @@ public:
         // std::cout << "detCovariance: " << detCovariance << "\tmahalanobisDist: " << mahalanobisDist << "\tnormalization2: " << normalization2 << "\tnormalization: " << normalization << "\tpdf: " << pdfValue << std::endl;
 
         return pdfValue < epsilon ? epsilon : pdfValue;
+    }
+
+    Vectord sample() {
+        std::mt19937 rng(std::random_device{}());
+
+        // cholesky decomposition
+        Eigen::LLT<Eigen::MatrixXd> llt(m_covariance);
+        Eigen::MatrixXd L = llt.matrixL();
+
+        // generate standard normal sample
+        std::normal_distribution<double> dist(0.0, 1.0);
+        Vectord z(t_dims);
+        for (size_t i = 0; i < t_dims; ++i) {
+            z(i) = dist(rng);
+        }
+
+        // transform the standard normal samples
+        Vectord x = m_mean + L * z;
+
+        return x;
     }
 
     std::string toString() const {
