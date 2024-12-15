@@ -30,6 +30,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     // what about number of components -- is there a way to intelligently modify
     // dims -- probably should be in template... -- visualizer???
     mutable pmm_focal::GaussianMixtureModel<3, 4, Scalar, pmm_focal::GaussianComponent, EnvMitsuba3D> m_gmm;
+    ref<Timer> m_timer;
 
 public:
     PMMFocalGuidingIntegrator(const Properties &props)
@@ -38,6 +39,8 @@ public:
             m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
             m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
+            this->m_maxDepth = 10;
+            Log(EInfo, this->toString().c_str());
         }
 
     PMMFocalGuidingIntegrator(Stream *stream, InstanceManager *manager)
@@ -47,6 +50,9 @@ public:
         ref<Scheduler> sched = Scheduler::getInstance();
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
         ref<Film> film = sensor->getFilm();
+
+        m_timer = new Timer{false};
+        iterationPreprocess(film);
 
         size_t nCores = sched->getCoreCount();
         const Sampler *sampler = static_cast<const Sampler *>(sched->getResource(samplerResID, 0));
@@ -80,6 +86,8 @@ public:
         m_process = NULL;
         sched->unregisterResource(integratorResID);
 
+        Log(EInfo, "Finished rendering job");
+
         return proc->getReturnStatus() == ParallelProcess::ESuccess;
     }
 
@@ -91,8 +99,7 @@ public:
         Float& bsdfPdf,
         Float& gmmPdf,
         Float bsdfSamplingFraction,
-        RadianceQueryRecord rRec,
-        bool& isGuidedSample
+        RadianceQueryRecord rRec
     ) const {
         mitsuba::Point2 sample = rRec.nextSample2D(); // this is direction (azimutal and polar coords)
         // not sure why we need this.
@@ -147,8 +154,6 @@ public:
             //     // invalid (aka zero contribution) direction
             //     return result;
             // }
-
-            isGuidedSample = true;
         }
 
         pdfCombined(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, gmmSample);
@@ -174,8 +179,12 @@ public:
         bsdfPdf = bsdf->pdf(bRec);
         assert(std::isfinite(bsdfPdf));
 
-        gmmPdf = m_gmm.pdf(gmmSample); // idk - the original with tree did a splat from itersection point towards wo
-        assert(std::isfinite(gmmPdf));
+        // this shouldn't be taken into account in direct light (probably)
+        gmmPdf = m_gmm.pdf(gmmSample);
+        if (!std::isfinite(gmmPdf)) {
+            Log(EInfo, m_gmm.toString().c_str());
+            assert(std::isfinite(gmmPdf)); // debug
+        }
 
         // Multiple Importance Sampling - "While our guiding density excels at sampling focal effects, its performance on other light transport can be poor.
         // It is therefore advisable to combine it with other sampling strategies using multiple importance sampling"
@@ -188,7 +197,7 @@ public:
         const Scene *scene = rRec.scene;
         Intersection &its = rRec.its;
         RayDifferential ray(r);
-        Spectrum Li(0.0f);
+        Spectrum Li{0.0f};
         bool scattered = false;
 
         Float bsdfSamplingFraction = 0.5f; // MIS
@@ -238,53 +247,48 @@ public:
             /* ==================================================================== */
 
             /* Estimate the direct illumination if this is requested */
+            // THIS IS NEE
             DirectSamplingRecord dRec(its);
 
-            // this is nee
-            // if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
-            //     (bsdf->getType() & BSDF::ESmooth)) {
-            //     Spectrum value = scene->sampleEmitterDirect(dRec, rRec.nextSample2D());
-            //     if (!value.isZero()) {
-            //         const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
+            if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
+                (bsdf->getType() & BSDF::ESmooth)) {
+                Spectrum value = scene->sampleEmitterDirect(dRec, rRec.nextSample2D());
+                if (!value.isZero()) {
+                    const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
 
-            //         /* Allocate a record for querying the BSDF */
-            //         BSDFSamplingRecord bRec(its, its.toLocal(dRec.d), ERadiance);
+                    /* Allocate a record for querying the BSDF */
+                    BSDFSamplingRecord bRec(its, its.toLocal(dRec.d), ERadiance);
 
-            //         /* Evaluate BSDF * cos(theta) */
-            //         const Spectrum bsdfVal = bsdf->eval(bRec);
+                    /* Evaluate BSDF * cos(theta) */
+                    const Spectrum bsdfVal = bsdf->eval(bRec);
 
-            //         /* Prevent light leaks due to the use of shading normals */
-            //         if (!bsdfVal.isZero() && (!m_strictNormals
-            //                 || dot(its.geoFrame.n, dRec.d) * Frame::cosTheta(bRec.wo) > 0)) {
+                    /* Prevent light leaks due to the use of shading normals */
+                    if (!bsdfVal.isZero() && (!m_strictNormals
+                            || dot(its.geoFrame.n, dRec.d) * Frame::cosTheta(bRec.wo) > 0)) {
 
-            //             /* Calculate prob. of having generated that direction
-            //                using BSDF sampling */
-            //             Float woPdf = 0, bsdfPdf = 0, gmmPdf = 0;
-            //             if (emitter->isOnSurface() && dRec.measure == ESolidAngle) {
-            //                 pdfCombined(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec);
-            //             }
+                        /* Calculate prob. of having generated that direction
+                           using BSDF sampling */
+                        const Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle) ? bsdf->pdf(bRec) : 0;
 
-            //             /* Weight using the power heuristic */
-            //             Float misWeight = miWeight(dRec.pdf, woPdf);
-            //             // LrEstimate += bsdfVal * value * misWeight;
-            //             Li += throughput * value * bsdfVal * misWeight;
-            //         }
-            //     }
-            // }
+                        /* Weight using the power heuristic */
+                        const Float weight = miWeight(dRec.pdf, bsdfPdf);
+                        // LrEstimate += bsdfVal * value * misWeight;
+                        Li += throughput * value * bsdfVal * weight;
+                    }
+                }
+            }
 
             /* ==================================================================== */
             /*                            BSDF sampling                             */
             /* ==================================================================== */
 
             /* Sample BSDF * cos(theta) */
+            // sampling the BSDF to determine a new ray direction for light transport
             Float woPdf, bsdfPdf, gmmPdf;
 
             do {
                 BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
-                bool isGuidedSample = false;
-                Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, rRec, isGuidedSample);
-                if (bsdfWeight.isZero())
-                    break;
+                Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, rRec);
 
                 const Vector wo = its.toWorld(bRec.wo);
                 Float woDotGeoN = dot(its.geoFrame.n, wo);
@@ -340,6 +344,7 @@ public:
                 rRec.type = RadianceQueryRecord::ERadianceNoEmission & ~RadianceQueryRecord::EIntersection;
                 rRec.depth++;
 
+                Log(EInfo, "rRec depth %d", rRec.depth);
                 Spectrum outputNested = this->Li(ray, rRec);
                 Li += bsdfWeight * outputNested;
 
@@ -358,7 +363,7 @@ public:
 
                 std::vector<AABB> leafAABBs;
                 m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
-                Log(EDebug, "Collected %d samples", leafAABBs.size());
+                // Log(EInfo, "Collected %d samples", leafAABBs.size());
 
                 std::vector<Eigen::Matrix<Scalar, 3, 1>> samples;
                 for (size_t i=0; i < leafAABBs.size(); i++) {
@@ -379,9 +384,35 @@ public:
         avgPathLength.incrementBase();
         avgPathLength += rRec.depth;
 
-        // Log(EInfo, m_gmm.toString().c_str());
-
         return Li;
+    }
+
+    void iterationPreprocess(ref<Film> film)
+    {
+        film->clear();
+        Statistics::getInstance()->resetAll();
+
+        m_timer->reset();
+    }
+
+    void postprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID)
+    {
+        (void)queue; (void)sceneResID; (void)samplerResID;
+
+        ref<Scheduler> sched = Scheduler::getInstance();
+        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
+        ref<Film> film = sensor->getFilm();
+
+        iterationPostprocess(film, static_cast<uint32_t>(scene->getSampler()->getSampleCount()), job);
+
+        Log(EInfo, this->toString().c_str());
+        Log(EInfo, m_gmm.toString().c_str());
+    }
+
+    void iterationPostprocess(const ref<Film> film, uint32_t numSPP, const RenderJob *job)
+    {
+        const Float renderTime = m_timer->stop();
+        Log(EInfo, "iteration render time: %s", timeString(renderTime, true).c_str());
     }
 
     inline Float miWeight(Float pdfA, Float pdfB) const {

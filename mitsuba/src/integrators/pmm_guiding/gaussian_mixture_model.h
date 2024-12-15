@@ -171,6 +171,11 @@ public:
 
         for (size_t k = 0; k < m_numComponents; ++k) {
             Scalar pdfValue = m_components[k].pdf(sample);
+            if (!std::isfinite(pdfValue)) {
+                SLog(mitsuba::EInfo, m_components[k].toString().c_str());
+                // SLog(mitsuba::EInfo, "sample: %f, %f, %f", sample[0], sample[1], sample[2]);
+                assert(std::isfinite(pdfValue));
+            }
             Scalar responsibility = m_weights[k] * pdfValue;
             responsibilities(k, i) = responsibility;
             partialSumResponsibility += responsibilities(k, i);
@@ -253,6 +258,12 @@ public:
             // std::cout << "responsibilitySum: " << responsibilitySum << std::endl;
 
             m_weights[k] = responsibilitySum / numSamples;
+
+            if(!std::isfinite(m_weights[k])) {
+                SLog(mitsuba::EInfo, "Responsibility sum = %f", responsibilitySum);
+                SLog(mitsuba::EInfo, this->toString().c_str());
+            }
+
             weightSum += responsibilitySum / numSamples;
 
             Vectord newMean = Vectord::Zero();

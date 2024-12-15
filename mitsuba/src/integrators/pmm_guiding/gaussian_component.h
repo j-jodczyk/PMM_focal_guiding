@@ -49,7 +49,10 @@ public:
 
         // std::cout << "detCovariance: " << detCovariance << "\tmahalanobisDist: " << mahalanobisDist << "\tnormalization2: " << normalization2 << "\tnormalization: " << normalization << "\tpdf: " << pdfValue << std::endl;
 
-        return pdfValue < epsilon ? epsilon : pdfValue;
+        if (!std::isfinite(pdfValue)) {
+            return epsilon;
+        }
+        return pdfValue;
     }
 
     Vectord sample() {
