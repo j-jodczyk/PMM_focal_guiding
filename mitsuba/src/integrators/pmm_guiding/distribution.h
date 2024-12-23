@@ -8,15 +8,15 @@
 
 namespace pmm_focal {
 
-template<int t_dims, typename Scalar>
+template<typename Scalar>
 class Distribution {
 public:
-    using Vectord = Eigen::Matrix<Scalar, t_dims, 1>;
-    using Matrixd = Eigen::Matrix<Scalar, t_dims, t_dims>;
+    using Vectord = Eigen::VectorXd;
+    using Matrixd = Eigen::MatrixXd;
 
     virtual ~Distribution() {}
     // virtual Vectord sample(const std::function<Scalar()>& rng) const = 0;
-    virtual Scalar pdf(const Vectord& sample) const = 0;
+    // virtual Scalar pdf(const Vectord& sample) const = 0;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

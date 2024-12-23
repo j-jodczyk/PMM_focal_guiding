@@ -16,7 +16,6 @@
 #include <deque>
 
 #include "gaussian_mixture_model.h"
-#include "gaussian_component.h"
 #include "octree.h"
 
 #include "./envs/mitsuba_env.h"
@@ -40,9 +39,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     // probably not double
     using Scalar = double;
     using Vectord = Eigen::Matrix<Scalar, 3, 1>;
-    // what about number of components -- is there a way to intelligently modify
-    // dims -- probably should be in template... -- visualizer???
-    mutable pmm_focal::GaussianMixtureModel<3, 4, Scalar, pmm_focal::GaussianComponent, EnvMitsuba3D> m_gmm;
+    mutable pmm_focal::GaussianMixtureModel<Scalar, EnvMitsuba3D> m_gmm;
     ref<Timer> m_timer;
     uint32_t m_renderMaxSeconds;
 
@@ -53,6 +50,11 @@ public:
             m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
             m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
+
+            m_gmm.chiSquaredThreshold = props.getFloat("gmm.chiSquaredThreshold");
+            m_gmm.learningRate = props.getFloat("gmm.learingRate");
+            m_gmm.setInitialVariance(props.getFloat("gmm.initialVariance"));
+
             m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL));
             this->m_maxDepth = 10;
             Log(EInfo, this->toString().c_str());
@@ -81,8 +83,7 @@ public:
         int integratorResID = sched->registerResource(this);
 
         m_octree.setAABB(scene->getAABB());
-        m_gmm.initialize(scene->getAABB());
-        Log(EInfo, m_gmm.toString().c_str());
+        // Log(EInfo, m_gmm.toString().c_str());
         Log(EInfo, m_octree.toString().c_str());
         Log(EDebug, m_octree.toStringVerbose().c_str());
 
@@ -164,7 +165,7 @@ public:
             // sample guiding distribution
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
 
-            gmmSample = m_gmm.sample();
+            // gmmSample = m_gmm.sample();
             // mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
             // // wo is outgoing direction
             // bRec.wo = normalize(endPoint - bRec.its.p);
@@ -206,11 +207,11 @@ public:
         assert(std::isfinite(bsdfPdf));
 
         // this shouldn't be taken into account in direct light (probably)
-        gmmPdf = m_gmm.pdf(gmmSample);
-        if (!std::isfinite(gmmPdf)) {
-            Log(EInfo, m_gmm.toString().c_str());
-            assert(std::isfinite(gmmPdf)); // debug
-        }
+        // gmmPdf = m_gmm.pdf(gmmSample);
+        // if (!std::isfinite(gmmPdf)) {
+        //     Log(EInfo, m_gmm.toString().c_str());
+        //     assert(std::isfinite(gmmPdf)); // debug
+        // }
 
         // Multiple Importance Sampling - "While our guiding density excels at sampling focal effects, its performance on other light transport can be poor.
         // It is therefore advisable to combine it with other sampling strategies using multiple importance sampling"
@@ -408,19 +409,16 @@ public:
             for (size_t i=0; i < leafAABBs.size(); i++) {
                 auto leaf = leafAABBs[i];
                 Log(EDebug, leaf.toString().c_str());
-                Eigen::Matrix<Scalar, 3, 1> center;
+                Eigen::VectorXd center;
                 center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
-                samples.push_back(center);
+
+                m_gmm.process(center);
             }
-            // Log(EDebug, "Fitted GMM");
-            // Log(EDebug, m_gmm.toString().c_str());
         }
 
         /* Store statistics */
         avgPathLength.incrementBase();
         avgPathLength += rRec.depth;
-
-        m_gmm.fit(samples);
 
         return Li;
     }
