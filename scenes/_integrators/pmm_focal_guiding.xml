@@ -1,9 +1,11 @@
 <scene version="0.6.0">
 	<default name="maxDepth" value="40" />
-	<default name="budget" value="300" /> <!-- training + render -->
+	<!-- <default name="budget" value="300" /> training + render -->
+	<default name="budget" value="30" /> <!-- training + render -->
 	<default name="splitThreshold" value="1e-3" />
 	<!-- trainingTime = trainingIterations * iterationTime -->
-	<default name="trainingIterations" value="15" />
+	<!-- <default name="trainingIterations" value="15" /> -->
+	<default name="trainingIterations" value="1" />
 	<default name="iterationTime" value="10" />
 	<default name="normalBinning" value="disabled" />
 	<default name="dumpScene" value="false"/>
@@ -25,6 +27,8 @@
 		<boolean name="unboundedSplatting" value="$unboundedSplatting" />
 		<integer name="samplingMode" value="$samplingMode" />
 		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
+
+		<default name="renderMaxSeconds" value="120"/>
 
 		<integer name="orth.outliers" value="0" />
 		<integer name="orth.minDepth" value="0" />

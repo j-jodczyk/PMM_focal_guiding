@@ -1,6 +1,19 @@
-#include <mitsuba/render/scene.h>
-#include <mitsuba/core/statistics.h>
+#include <mitsuba/mitsuba.h>
+#include <mitsuba/core/bitmap.h>
+#include <mitsuba/core/fstream.h>
 #include <mitsuba/core/logger.h>
+#include <mitsuba/core/plugin.h>
+#include <mitsuba/core/sched.h>
+#include <mitsuba/core/statistics.h>
+#include <mitsuba/core/tls.h>
+#include <mitsuba/render/bsdf.h>
+#include <mitsuba/render/film.h>
+#include <mitsuba/render/integrator.h>
+#include <mitsuba/render/sampler.h>
+#include <mitsuba/render/scene.h>
+#include <mitsuba/render/sensor.h>
+#include <mitsuba/render/renderproc.h>
+#include <deque>
 
 #include "gaussian_mixture_model.h"
 #include "gaussian_component.h"
@@ -31,6 +44,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     // dims -- probably should be in template... -- visualizer???
     mutable pmm_focal::GaussianMixtureModel<3, 4, Scalar, pmm_focal::GaussianComponent, EnvMitsuba3D> m_gmm;
     ref<Timer> m_timer;
+    uint32_t m_renderMaxSeconds;
 
 public:
     PMMFocalGuidingIntegrator(const Properties &props)
@@ -39,6 +53,7 @@ public:
             m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
             m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
+            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL));
             this->m_maxDepth = 10;
             Log(EInfo, this->toString().c_str());
         }
@@ -47,16 +62,23 @@ public:
         : MonteCarloIntegrator(stream, manager) { }
 
     bool render(Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
+
+        ref<Timer> renderTimer = new Timer{};
+
         ref<Scheduler> sched = Scheduler::getInstance();
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
         ref<Film> film = sensor->getFilm();
 
-        m_timer = new Timer{false};
-        iterationPreprocess(film);
-
         size_t nCores = sched->getCoreCount();
         const Sampler *sampler = static_cast<const Sampler *>(sched->getResource(samplerResID, 0));
         size_t sampleCount = sampler->getSampleCount();
+
+        Log(EInfo, "Starting render job (%ix%i, " SIZE_T_FMT " %s, " SIZE_T_FMT
+            " %s, " SSE_STR ") ..", film->getCropSize().x, film->getCropSize().y,
+            sampleCount, sampleCount == 1 ? "sample" : "samples", nCores,
+            nCores == 1 ? "core" : "cores");
+
+        int integratorResID = sched->registerResource(this);
 
         m_octree.setAABB(scene->getAABB());
         m_gmm.initialize(scene->getAABB());
@@ -64,31 +86,35 @@ public:
         Log(EInfo, m_octree.toString().c_str());
         Log(EDebug, m_octree.toStringVerbose().c_str());
 
-        Log(EInfo, "Starting render job (%ix%i, " SIZE_T_FMT " %s, " SIZE_T_FMT
-            " %s, " SSE_STR ") ..", film->getCropSize().x, film->getCropSize().y,
-            sampleCount, sampleCount == 1 ? "sample" : "samples", nCores,
-            nCores == 1 ? "core" : "cores");
+        Float totalRenderTime;
+        Float iterationRenderTime;
+        ParallelProcess::EStatus status;
+        size_t iterations = 0;
+        do {
+            /* This is a sampling-based integrator - parallelize */
+            ref<ParallelProcess> proc = new BlockedRenderProcess(job,
+                queue, scene->getBlockSize());
+            proc->bindResource("integrator", integratorResID);
+            proc->bindResource("scene", sceneResID);
+            proc->bindResource("sensor", sensorResID);
+            proc->bindResource("sampler", samplerResID);
+            scene->bindUsedResources(proc);
+            sched->schedule(proc);
 
-        /* This is a sampling-based integrator - parallelize */
-        ref<ParallelProcess> proc = new BlockedRenderProcess(job,
-            queue, scene->getBlockSize());
-        int integratorResID = sched->registerResource(this);
-        proc->bindResource("integrator", integratorResID);
-        proc->bindResource("scene", sceneResID);
-        proc->bindResource("sensor", sensorResID);
-        proc->bindResource("sampler", samplerResID);
-        scene->bindUsedResources(proc);
-        bindUsedResources(proc);
-        sched->schedule(proc);
+            m_process = proc;
+            sched->wait(proc);
+            m_process = nullptr;
+            status = proc->getReturnStatus();
 
-        m_process = proc;
-        sched->wait(proc);
-        m_process = NULL;
+            iterationRenderTime = renderTimer->lap();
+            totalRenderTime = renderTimer->getSeconds();
+            ++iterations;
+        } while(status == ParallelProcess::ESuccess && totalRenderTime + iterationRenderTime < m_renderMaxSeconds);
+
+        Log(EInfo, "rendered %zu samples per pixel in %s.", iterations*sampler->getSampleCount(), timeString(renderTimer->getMilliseconds()/1000.0f, true).c_str());
         sched->unregisterResource(integratorResID);
 
-        Log(EInfo, "Finished rendering job");
-
-        return proc->getReturnStatus() == ParallelProcess::ESuccess;
+        return status == ParallelProcess::ESuccess;
     }
 
 
@@ -197,10 +223,8 @@ public:
         const Scene *scene = rRec.scene;
         Intersection &its = rRec.its;
         RayDifferential ray(r);
-        Spectrum Li{0.0f};
+        Spectrum Li(0.0f);
         bool scattered = false;
-
-        Float bsdfSamplingFraction = 0.5f; // MIS
 
         /* Perform the first ray intersection (or ignore if the
            intersection has already been provided). */
@@ -209,6 +233,7 @@ public:
 
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
+        std::deque<Eigen::Matrix<Scalar, 3, 1>> samples;
 
         while (rRec.depth <= m_maxDepth || m_maxDepth < 0) {
             if (!its.isValid()) {
@@ -247,7 +272,6 @@ public:
             /* ==================================================================== */
 
             /* Estimate the direct illumination if this is requested */
-            // THIS IS NEE
             DirectSamplingRecord dRec(its);
 
             if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
@@ -268,11 +292,11 @@ public:
 
                         /* Calculate prob. of having generated that direction
                            using BSDF sampling */
-                        const Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle) ? bsdf->pdf(bRec) : 0;
+                        Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle)
+                            ? bsdf->pdf(bRec) : 0;
 
                         /* Weight using the power heuristic */
-                        const Float weight = miWeight(dRec.pdf, bsdfPdf);
-                        // LrEstimate += bsdfVal * value * misWeight;
+                        Float weight = miWeight(dRec.pdf, bsdfPdf);
                         Li += throughput * value * bsdfVal * weight;
                     }
                 }
@@ -283,106 +307,120 @@ public:
             /* ==================================================================== */
 
             /* Sample BSDF * cos(theta) */
-            // sampling the BSDF to determine a new ray direction for light transport
-            Float woPdf, bsdfPdf, gmmPdf;
+            Float bsdfPdf;
+            BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
+            Spectrum bsdfWeight = bsdf->sample(bRec, bsdfPdf, rRec.nextSample2D());
+            if (bsdfWeight.isZero())
+                break;
 
-            do {
-                BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
-                Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, rRec);
+            scattered |= bRec.sampledType != BSDF::ENull;
 
-                const Vector wo = its.toWorld(bRec.wo);
-                Float woDotGeoN = dot(its.geoFrame.n, wo);
-                if (m_strictNormals && woDotGeoN * Frame::cosTheta(bRec.wo) <= 0)
-                    break;
+            /* Prevent light leaks due to the use of shading normals */
+            const Vector wo = its.toWorld(bRec.wo);
+            Float woDotGeoN = dot(its.geoFrame.n, wo);
+            if (m_strictNormals && woDotGeoN * Frame::cosTheta(bRec.wo) <= 0)
+                break;
 
-                bool hitEmitter = false;
-                Spectrum value;
+            bool hitEmitter = false;
+            Spectrum value;
 
-                /* Trace a ray in this direction */
-                ray = Ray(its.p, wo, ray.time);
+            /* Trace a ray in this direction */
+            ray = Ray(its.p, wo, ray.time);
+            if (scene->rayIntersect(ray, its)) {
+                /* Intersected something - check if it was a luminaire */
+                if (its.isEmitter()) {
+                    value = its.Le(-ray.d);
+                    dRec.setQuery(ray, its);
+                    hitEmitter = true;
+                }
+            } else {
+                /* Intersected nothing -- perhaps there is an environment map? */
+                const Emitter *env = scene->getEnvironmentEmitter();
 
-                if (scene->rayIntersect(ray, its)) {
-                    /* Intersected something - check if it was a luminaire */
-                    if (its.isEmitter()) {
-                        value = its.Le(-ray.d);
-                        dRec.setQuery(ray, its);
-                        hitEmitter = true;
-                    }
-                } else {
-                    /* Intersected nothing -- perhaps there is an environment map? */
-                    const Emitter *env = scene->getEnvironmentEmitter();
-
-                    if (env) {
-                        value = env->evalEnvironment(ray);
-                        if (!env->fillDirectSamplingRecord(dRec, ray))
-                            break;
-                        hitEmitter = true;
-                    } else {
+                if (env) {
+                    if (m_hideEmitters && !scattered)
                         break;
-                    }
-                }
 
-                /* If a luminaire was hit, estimate the local illumination and
-                    weight using the power heuristic */
-                if (hitEmitter &&
-                    (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance)) {
-                    /* Compute the prob. of generating that direction using the
-                        implemented direct illumination sampling technique */
-                    Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ? scene->pdfEmitterDirect(dRec) : 0;
-                    Float misWeight = miWeight(woPdf, lumPdf);
-                    Li += bsdfWeight * value * misWeight;
-                }
-
-                /* ==================================================================== */
-                /*                         Indirect illumination                        */
-                /* ==================================================================== */
-
-                /* Set the recursive query type. Stop if no surface was hit by the
-                    BSDF sample or if indirect illumination was not requested */
-                if (!its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance))
+                    value = env->evalEnvironment(ray);
+                    if (!env->fillDirectSamplingRecord(dRec, ray))
+                        break;
+                    hitEmitter = true;
+                } else {
                     break;
-                rRec.type = RadianceQueryRecord::ERadianceNoEmission & ~RadianceQueryRecord::EIntersection;
-                rRec.depth++;
-
-                Log(EInfo, "rRec depth %d", rRec.depth);
-                Spectrum outputNested = this->Li(ray, rRec);
-                Li += bsdfWeight * outputNested;
-
-                // splat
-                const BSDF *endpointBSDF = its.getBSDF();
-                Float endpointRoughness = std::numeric_limits<Float>::infinity();
-                if (endpointBSDF) {
-                    for (int comp = 0; comp < endpointBSDF->getComponentCount(); ++comp) {
-                        endpointRoughness = std::min(endpointRoughness, endpointBSDF->getRoughness(its, comp));
-                    }
                 }
-                const bool endpointIsGlossy = endpointRoughness < 0.3f; // [Ruppert et al. 2020]
-                const Float splatDistance = endpointIsGlossy ?
-                    std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
-                    its.t;
+            }
 
-                std::vector<AABB> leafAABBs;
-                m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
-                // Log(EInfo, "Collected %d samples", leafAABBs.size());
+            /* Keep track of the throughput and relative
+               refractive index along the path */
+            throughput *= bsdfWeight;
+            eta *= bRec.eta;
 
-                std::vector<Eigen::Matrix<Scalar, 3, 1>> samples;
-                for (size_t i=0; i < leafAABBs.size(); i++) {
-                    auto leaf = leafAABBs[i];
-                    Log(EDebug, leaf.toString().c_str());
-                    Eigen::Matrix<Scalar, 3, 1> center;
-                    center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
-                    samples.push_back(center);
+            /* If a luminaire was hit, estimate the local illumination and
+               weight using the power heuristic */
+            if (hitEmitter &&
+                (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance)) {
+                /* Compute the prob. of generating that direction using the
+                   implemented direct illumination sampling technique */
+                const Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ?
+                    scene->pdfEmitterDirect(dRec) : 0;
+                Li += throughput * value * miWeight(bsdfPdf, lumPdf);
+            }
+
+            /* ==================================================================== */
+            /*                         Indirect illumination                        */
+            /* ==================================================================== */
+
+            /* Set the recursive query type. Stop if no surface was hit by the
+               BSDF sample or if indirect illumination was not requested */
+            if (!its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance))
+                break;
+            rRec.type = RadianceQueryRecord::ERadianceNoEmission;
+
+            if (rRec.depth++ >= m_rrDepth) {
+                /* Russian roulette: try to keep path weights equal to one,
+                   while accounting for the solid angle compression at refractive
+                   index boundaries. Stop with at least some probability to avoid
+                   getting stuck (e.g. due to total internal reflection) */
+
+                Float q = std::min(throughput.max() * eta * eta, (Float) 0.95f);
+                if (rRec.nextSample1D() >= q)
+                    break;
+                throughput /= q;
+            }
+
+            // splat
+            const BSDF *endpointBSDF = its.getBSDF();
+            Float endpointRoughness = std::numeric_limits<Float>::infinity();
+            if (endpointBSDF) {
+                for (int comp = 0; comp < endpointBSDF->getComponentCount(); ++comp) {
+                    endpointRoughness = std::min(endpointRoughness, endpointBSDF->getRoughness(its, comp));
                 }
-                m_gmm.fit(samples);
-                Log(EDebug, "Fitted GMM");
-                Log(EDebug, m_gmm.toString().c_str());
+            }
+            const bool endpointIsGlossy = endpointRoughness < 0.3f; // [Ruppert et al. 2020]
+            const Float splatDistance = endpointIsGlossy ?
+                std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
+                its.t;
 
-            } while(false);
+            std::vector<AABB> leafAABBs;
+            m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
+            // Log(EInfo, "Collected %d samples", leafAABBs.size());
+
+            for (size_t i=0; i < leafAABBs.size(); i++) {
+                auto leaf = leafAABBs[i];
+                Log(EDebug, leaf.toString().c_str());
+                Eigen::Matrix<Scalar, 3, 1> center;
+                center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
+                samples.push_back(center);
+            }
+            // Log(EDebug, "Fitted GMM");
+            // Log(EDebug, m_gmm.toString().c_str());
         }
 
         /* Store statistics */
         avgPathLength.incrementBase();
         avgPathLength += rRec.depth;
+
+        m_gmm.fit(samples);
 
         return Li;
     }
@@ -395,24 +433,26 @@ public:
         m_timer->reset();
     }
 
-    void postprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID)
-    {
-        (void)queue; (void)sceneResID; (void)samplerResID;
-
-        ref<Scheduler> sched = Scheduler::getInstance();
-        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
-        ref<Film> film = sensor->getFilm();
-
-        iterationPostprocess(film, static_cast<uint32_t>(scene->getSampler()->getSampleCount()), job);
-
-        Log(EInfo, this->toString().c_str());
-        Log(EInfo, m_gmm.toString().c_str());
-    }
-
     void iterationPostprocess(const ref<Film> film, uint32_t numSPP, const RenderJob *job)
     {
         const Float renderTime = m_timer->stop();
         Log(EInfo, "iteration render time: %s", timeString(renderTime, true).c_str());
+
+        m_timer->reset();
+    }
+
+    bool preprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
+        ref<Scheduler> sched = Scheduler::getInstance();
+        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
+        ref<Film> film = sensor->getFilm();
+        return true;
+    }
+
+    void postprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID)
+    {
+        ref<Scheduler> sched = Scheduler::getInstance();
+        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
+        ref<Film> film = sensor->getFilm();
     }
 
     inline Float miWeight(Float pdfA, Float pdfB) const {

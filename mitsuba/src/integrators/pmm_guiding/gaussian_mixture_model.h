@@ -14,6 +14,8 @@
 #include <fstream>
 #include <string>
 #include <random>
+#include <deque>
+#include <mutex>
 
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/vector.hpp>
@@ -55,7 +57,7 @@ public:
     using Matrixd = Eigen::Matrix<Scalar, t_dims, t_dims>;
 
     using Responsibilities = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, t_components, Eigen::Dynamic>;
-    using SampleVector = std::vector<Vectord>;
+    using SampleVector = std::deque<Vectord>;
 
     GaussianMixtureModel() :
         m_components(t_components),
@@ -171,11 +173,6 @@ public:
 
         for (size_t k = 0; k < m_numComponents; ++k) {
             Scalar pdfValue = m_components[k].pdf(sample);
-            if (!std::isfinite(pdfValue)) {
-                SLog(mitsuba::EInfo, m_components[k].toString().c_str());
-                // SLog(mitsuba::EInfo, "sample: %f, %f, %f", sample[0], sample[1], sample[2]);
-                assert(std::isfinite(pdfValue));
-            }
             Scalar responsibility = m_weights[k] * pdfValue;
             responsibilities(k, i) = responsibility;
             partialSumResponsibility += responsibilities(k, i);
@@ -219,17 +216,7 @@ public:
         SLog(mitsuba::EDebug, "Begining to fit samples.");
         SLog(mitsuba::EInfo, samplesToString(newSamples).c_str());
 #endif
-        addSamples(newSamples);
-#ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EDebug, "Added new samples.");
-#endif
-        size_t numSamples = m_samples.size();
-        if (numSamples < m_paramCount) {
-#ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EDebug, "Haven't collected enough samples, returning unfitted");
-#endif
-            return 0;
-        }
+        size_t numSamples = newSamples.size();
 
         Scalar logLikelihood = 0;
         Responsibilities responsibilities(t_components, numSamples);
@@ -239,7 +226,7 @@ public:
         SLog(mitsuba::EDebug, "Performing E-step of EM algorithm.");
 #endif
         for (size_t col = 0; col < numSamples; ++col) {
-            const Vectord sample = m_samples[col];
+            const Vectord sample = newSamples[col];
 
             Scalar partialLogLikelihood = calculateResponsibilitesForSample(sample, col, responsibilities); // todo: refactoring idea: move to a class, similarly to vmm
             partialLogLikelihood = std::max(partialLogLikelihood, std::numeric_limits<Scalar>::epsilon());
@@ -259,16 +246,16 @@ public:
 
             m_weights[k] = responsibilitySum / numSamples;
 
-            if(!std::isfinite(m_weights[k])) {
-                SLog(mitsuba::EInfo, "Responsibility sum = %f", responsibilitySum);
-                SLog(mitsuba::EInfo, this->toString().c_str());
-            }
+            // if(!std::isfinite(m_weights[k])) {
+            //     SLog(mitsuba::EInfo, "Responsibility sum = %f", responsibilitySum);
+            //     SLog(mitsuba::EInfo, this->toString().c_str());
+            // }
 
             weightSum += responsibilitySum / numSamples;
 
             Vectord newMean = Vectord::Zero();
             for (size_t col = 0; col < numSamples; ++col) {
-                const Vectord sample = m_samples[col];
+                const Vectord sample = newSamples[col];
                 newMean += responsibilities(k, col) * sample;
             }
             newMean /= responsibilitySum;
@@ -277,7 +264,7 @@ public:
 
             Matrixd newCovariance = Matrixd::Zero();
             for (size_t col = 0; col < numSamples; ++col) {
-                const Vectord sample = m_samples[col];
+                const Vectord sample = newSamples[col];
                 Vectord diff = sample - newMean;
                 newCovariance += responsibilities(k, col) * (diff * diff.transpose());
             }
@@ -352,17 +339,10 @@ private:
         }
     }
 
-    void addSamples(SampleVector &newSamples) {
-        if (m_samples.size() == 0) { // no previous samples at this point
-            m_samples = newSamples;
-        } else {
-            m_samples.insert( m_samples.end(), newSamples.begin(), newSamples.end() );
-        }
-    }
-
     pmm_focal::alignedVector<Component> m_components;
     pmm_focal::alignedVector<Scalar> m_weights;
     pmm_focal::alignedVector<Scalar> m_cdf;
+    std::mutex m_mutex;
     size_t m_numComponents = t_components;
     SampleVector m_samples;
     size_t m_paramCount;
