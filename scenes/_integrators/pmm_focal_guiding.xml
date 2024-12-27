@@ -1,8 +1,8 @@
 <scene version="0.6.0">
-	<default name="maxDepth" value="40" />
+	<default name="maxDepth" value="14" />
 	<!-- <default name="budget" value="300" /> training + render -->
 	<default name="budget" value="30" /> <!-- training + render -->
-	<default name="splitThreshold" value="1e-3" />
+	<default name="splitThreshold" value="1e-2" /> <!-- affects the number of nodes -->
 	<!-- trainingTime = trainingIterations * iterationTime -->
 	<!-- <default name="trainingIterations" value="15" /> -->
 	<default name="trainingIterations" value="1" />
@@ -28,9 +28,9 @@
 		<integer name="samplingMode" value="$samplingMode" />
 		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
 
-		<float name="gmm.chiSquaredThreshold" value="0.1">
-		<float name="gmm.learingRate" value="0.1" >
-		<float name="gmm.initialVariance" value="10" >
+		<float name="gmm.alpha" value="0.8" />
+		<float name="gmm.splittingThreshold" value="100.0" />
+		<float name="gmm.mergingThreshold" value="0.01" />
 
 		<default name="renderMaxSeconds" value="120"/>
 

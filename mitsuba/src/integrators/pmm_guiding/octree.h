@@ -142,8 +142,6 @@ public:
         Traversal traversal{*this, origin, direction};
         distance = std::min(distance, traversal.maxT());
 
-        // SLog(mitsuba::EInfo, "There are %d nodes", m_nodes.size());
-
         traversal.traverse(distance, [&](
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {

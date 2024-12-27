@@ -1,5 +1,3 @@
-/* Adapted from Anna Dodik sdmm-mitsuba project (https://github.com/anadodik/sdmm-mitsuba/tree/main/mitsuba/src/integrators/dmm) */
-
 #ifndef __MIXTURE_MODEL_H
 #define __MIXTURE_MODEL_H
 
@@ -45,97 +43,217 @@ template<
     typename Env
 >
 class GaussianMixtureModel : public Distribution<Scalar_t> {
-public:
+private:
     using Scalar = Scalar_t;
     using AABB = typename Env::AABB;
 
     std::vector<GaussianComponent> components;
-    double learningRate;
-    double chiSquaredThreshold;
+    double alpha;
+    int splittingThreshold;
+    int mergingThreshold;
+    std::mutex mtx;
 
-    GaussianMixtureModel() {
-        initialVariance_ = 0;
-        learningRate = 0;
-        chiSquaredThreshold = 0;
-    }
+    double pdf(const Eigen::VectorXd& x, const GaussianComponent& component) {
+        int d = x.size();
+        double det = component.getCovariance().determinant();
 
-    GaussianMixtureModel(double initialVariance, double learningRate, double chiSquaredThreshold)
-        : learningRate(learningRate), chiSquaredThreshold(chiSquaredThreshold) {
-        initialVariance_ = initialVariance;
-#ifdef MITSUBA_LOGGING
-        SLog(mitsuba::EInfo, "Created GMM with %i components", t_components);
-#endif
-    }
+        assert(det != 0);
+        // double normConst = 1.0 / std::sqrt(std::pow(2 * M_PI, d) * det);
+        double logNormConst = -0.5 * (d * std::log(2 * M_PI) +std::log(det));
 
-    void setInitialVariance( double variance ) { initialVariance_ = variance; }
-
-    void addComponent(const Eigen::VectorXd& x) {
-        int dimension = x.size();
-        GaussianComponent newComponent(dimension, initialVariance_);
-        newComponent.setMean(x);
-        components.push_back(newComponent);
-    }
-
-    void updateComponent(GaussianComponent& component, const Eigen::VectorXd& x) {
         Eigen::VectorXd diff = x - component.getMean();
-        double responsibility = this->computeResponsibility(component, x);
+        double exponent = -0.5 * diff.transpose() * component.getCovariance().inverse() * diff;
+        double logPdf = logNormConst + exponent;
+        // std::cout << "Condition number: " << condition_number << std::endl;
 
-        // Update weight
-        auto newWeight = (1 - learningRate) * component.getWeight() + learningRate * responsibility;
-        component.setWeight(newWeight);
-
-        // Update mean
-        Eigen::VectorXd deltaMean = learningRate * responsibility * diff;
-        auto newMean = component.getMean() + deltaMean;
-        component.setMean(newMean);
-
-        // Update precision matrix using Sherman-Morrison formula
-        Eigen::MatrixXd outerProd = diff * diff.transpose();
-        Eigen::MatrixXd adjustment = (component.getPrecisionMatrix() * outerProd * component.getPrecisionMatrix()) /
-                              (1.0 + (diff.transpose() * component.getPrecisionMatrix() * diff)(0));
-        auto newPrecisionMatrix = component.getPrecisionMatrix() - adjustment;
-        component.setPrecisionMatrix(newPrecisionMatrix);
-
-        // Update determinant using rank-one update formula
-        double adjustmentFactor = 1.0 - (diff.transpose() * component.getPrecisionMatrix() * diff)(0);
-        double newDeterminant = component.getDeterminant() * adjustmentFactor;
-        component.setDeterminant(newDeterminant);
+        // std::cout << "exponent = " << exponent << " logNormConst = " << logNormConst << " logPdf = " << logPdf << std::endl;
+        return std::exp(logPdf);
     }
 
-    void process(const Eigen::VectorXd& x) {
-        double minMahalanobisDistance = std::numeric_limits<double>::max();
-        GaussianComponent* bestComponent = nullptr;
+    void updateSufficientStatistics(const std::vector<Eigen::VectorXd>& batch, const Eigen::MatrixXd& responsibilities) {
+        std::lock_guard<std::mutex> lock(mtx);
 
-        for (auto& component : components) {
-            double distance = computeMahalanobisDistance(component, x);
-            if (distance < minMahalanobisDistance) {
-                minMahalanobisDistance = distance;
-                bestComponent = &component;
+        size_t N = 0;
+        size_t NNew = batch.size();
+
+        for (const auto& comp : components) {
+            N += comp.getPriorSampleCount();
+        }
+
+        double weightSum = 0;
+        for (size_t j = 0; j < components.size(); ++j) {
+            auto& comp = components[j];
+
+            double responsibilitySum = responsibilities.col(j).sum();
+            if (responsibilitySum == 0) {
+                SLog(mitsuba::EInfo, components[j].toString().c_str());
+                // std::cout << components[j].toString().c_str();
+            }
+            assert(responsibilitySum != 0);
+            double newWeight = responsibilitySum / NNew;
+            assert(!std::isinf(newWeight));
+            weightSum += newWeight;
+
+            auto meanSize = comp.getMean().size();
+
+            Eigen::VectorXd newMean = Eigen::VectorXd::Zero(meanSize);
+            for (size_t i = 0; i < NNew; i++) {
+                newMean += responsibilities(i, j) * batch[i];
+            }
+            newMean /= responsibilitySum;
+            assert(!std::isinf(newMean[0]));
+
+            Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(meanSize, meanSize);
+            for (size_t i = 0; i < NNew; ++i) {
+                Eigen::VectorXd diff = batch[i] - comp.getMean();
+                newCov += responsibilities(i, j) * (diff * diff.transpose());
+            }
+            newCov /= responsibilitySum;
+            assert(!std::isinf(newCov(0,0)));
+
+            comp.updateComponent(N, NNew, newMean, newCov, newWeight, alpha);
+        }
+
+        if (weightSum != 1.0) {
+            for (size_t j = 0; j < components.size(); ++j) {
+                components[j].setWeight(components[j].getWeight() / weightSum);
             }
         }
 
-        if (bestComponent && minMahalanobisDistance < chiSquaredThreshold) {
-            updateComponent(*bestComponent, x);
-        } else {
-            addComponent(x);
+        components.erase(
+            std::remove_if(components.begin(), components.end(),
+                [](const GaussianComponent& comp) {
+                    return comp.getWeight() < 1e-3;
+                }),
+            components.end()
+        );
+
+        if (components.size() > 100) {
+            std::cout << "Boom";
+        }
+        // splitting
+        for (size_t j = 0; j < components.size(); ++j) {
+            double conditionNumber = components[j].getCovariance().norm() * components[j].getCovariance().inverse().norm();
+            if (conditionNumber > splittingThreshold)
+                splitComponent(j);
+        }
+
+        // merging
+        for (size_t i = 0; i < components.size(); ++i) {
+            for (size_t j = i + 1; j < components.size(); ++j) {
+                double distance = (components[i].getMean() - components[j].getMean()).norm();
+                if (distance < mergingThreshold) {
+                    mergeComponents(i, j);
+                    break;
+                }
+            }
         }
     }
 
-    // TODO: fix
+    void splitComponent(size_t index) {
+        if (index >= components.size()) return;
+
+        GaussianComponent& comp = components[index];
+
+        // Split into two components
+        Eigen::VectorXd offset = Eigen::VectorXd::Random(comp.getMean().size()) * 0.1; // Small random offset
+        GaussianComponent newComp;
+
+        Eigen::VectorXd mean = comp.getMean();
+
+        comp.setWeight(comp.getWeight() / 2.0);
+        comp.setMean(mean + offset);
+        comp.setPriorSampleCount(comp.getPriorSampleCount() / 2);
+
+        Eigen::MatrixXd perturbation = Eigen::MatrixXd::Identity(comp.getCovariance().rows(), comp.getCovariance().cols()) * 0.05;
+        comp.setCovariance(comp.getCovariance() * 0.5 + perturbation);
+
+        newComp.setMean(mean - 2 * offset);
+        newComp.setCovariance(comp.getCovariance());
+        newComp.setPriorSampleCount(comp.getPriorSampleCount());
+        newComp.setCovariance(comp.getCovariance());
+
+        components.push_back(newComp);
+    }
+
+    void mergeComponents(size_t index1, size_t index2) {
+        if (index1 >= components.size() || index2 >= components.size() || index1 == index2) return;
+
+        GaussianComponent& comp1 = components[index1];
+        GaussianComponent& comp2 = components[index2];
+
+        double totalWeight = comp1.getWeight() + comp2.getWeight();
+        Eigen::VectorXd mergedMean = (comp1.getWeight() * comp1.getMean() + comp2.getWeight() * comp2.getMean()) / totalWeight;
+
+        Eigen::MatrixXd mergedConvs =
+            (comp1.getWeight() * (comp1.getCovariance() + (comp1.getMean() - mergedMean) * (comp1.getMean() - mergedMean).transpose()) +
+             comp2.getWeight() * (comp2.getCovariance() + (comp2.getMean() - mergedMean) * (comp2.getMean() - mergedMean).transpose())) /
+            totalWeight;
+
+        comp1.setWeight(totalWeight);
+        comp1.setMean(mergedMean);
+        comp1.setCovariance(mergedConvs);
+        comp1.setPriorSampleCount(comp1.getPriorSampleCount() + comp2.getPriorSampleCount());
+
+        components.erase(components.begin() + index2);
+    }
+
+
+public:
+    GaussianMixtureModel() {}
+
+    void init(size_t numComponents, size_t dimension, double _alpha, int _splittingThreshold, int _mergingThreshold) {
+        alpha = _alpha;
+        splittingThreshold = _splittingThreshold;
+        mergingThreshold = _mergingThreshold;
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> dis(0.0, 1.0);
+
+        components.resize(numComponents);
+        for (auto& comp : components) {
+            comp.setWeight(1.0 / numComponents);
+            comp.setMean(Eigen::VectorXd::Zero(dimension));
+            comp.setCovariance(Eigen::MatrixXd::Identity(dimension, dimension));
+
+            Eigen::VectorXd compMean(dimension);
+            for (size_t d = 0; d < dimension; ++d) {
+                compMean[d] = dis(gen);
+            }
+            comp.setMean(compMean);
+        }
+    }
+
+     void processBatch(const std::vector<Eigen::VectorXd>& batch) {
+        Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
+
+        // E-step
+        for (size_t j = 0; j < components.size(); ++j) {
+            for (size_t i = 0; i < batch.size(); ++i) {
+                double resp = components[j].getWeight() * pdf(batch[i], components[j]);
+                // std::cout << resp << std::endl;
+                responsibilities(i, j) = resp;
+            }
+        }
+
+        // Normalize responsibilities
+        for (int i = 0; i < responsibilities.rows(); ++i) {
+            responsibilities.row(i) /= responsibilities.row(i).sum();
+        }
+
+        // M-step
+        updateSufficientStatistics(batch, responsibilities);
+    }
+
     std::string toString() const
     {
         std::ostringstream oss;
-        oss << "GMM";
-        return oss.str();
-    }
-
-    double pdf(const Eigen::VectorXd& x) {
-        double totalPdf = 0.0;
+        oss << "GMM[";
         for (const auto& component : components) {
-            double density = computeGaussianDensity(component, x);
-            totalPdf += component.getWeight() * density;
+            oss << component.toString() << "\n";
         }
-        return totalPdf;
+        oss << "]";
+        return oss.str();
     }
 
 private:
@@ -143,25 +261,6 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const size_t version) {
         ar  & components;
-    }
-
-    double initialVariance_;
-    double computeMahalanobisDistance(const GaussianComponent& component, const Eigen::VectorXd& x) {
-        Eigen::VectorXd diff = x - component.getMean();
-        return diff.transpose() * component.getPrecisionMatrix() * diff;
-    }
-
-    double computeGaussianDensity(const GaussianComponent& component, const Eigen::VectorXd& x) {
-        Eigen::VectorXd diff = x - component.getMean();
-        double exponent = -0.5 * diff.transpose() * component.getPrecisionMatrix() * diff;
-        double normalization = pow(2 * M_PI, -x.size() / 2.0) * sqrt(component.getDeterminant());
-        return normalization * exp(exponent);
-    }
-
-    double computeResponsibility(const GaussianComponent& component, const Eigen::VectorXd& x) {
-        double exponent = -0.5 * computeMahalanobisDistance(component, x);
-        double normalization = pow(2 * M_PI, -x.size() / 2.0) * sqrt(component.getDeterminant());
-        return exp(exponent) / normalization;
     }
 
 public:

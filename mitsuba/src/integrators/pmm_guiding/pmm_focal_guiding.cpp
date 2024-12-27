@@ -20,12 +20,6 @@
 
 #include "./envs/mitsuba_env.h"
 
-// todo:
-// after each ray is traced go though the tree and collect samples (probably like the middle of the leaf)
-// use those samples to feed GMM
-// make a better project structure
-
-
 MTS_NAMESPACE_BEGIN
 
 static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage);
@@ -51,9 +45,9 @@ public:
             m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
 
-            m_gmm.chiSquaredThreshold = props.getFloat("gmm.chiSquaredThreshold");
-            m_gmm.learningRate = props.getFloat("gmm.learingRate");
-            m_gmm.setInitialVariance(props.getFloat("gmm.initialVariance"));
+            m_gmm.init(
+                5, 3, props.getFloat("gmm.alpha"), props.getFloat("gmm.splittingThreshold"), props.getFloat("gmm.mergingThreshold")
+            );
 
             m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL));
             this->m_maxDepth = 10;
@@ -83,7 +77,7 @@ public:
         int integratorResID = sched->registerResource(this);
 
         m_octree.setAABB(scene->getAABB());
-        // Log(EInfo, m_gmm.toString().c_str());
+        Log(EInfo, m_gmm.toString().c_str());
         Log(EInfo, m_octree.toString().c_str());
         Log(EDebug, m_octree.toStringVerbose().c_str());
 
@@ -234,7 +228,7 @@ public:
 
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
-        std::deque<Eigen::Matrix<Scalar, 3, 1>> samples;
+        std::vector<Eigen::VectorXd> samples;
 
         while (rRec.depth <= m_maxDepth || m_maxDepth < 0) {
             if (!its.isValid()) {
@@ -409,10 +403,11 @@ public:
             for (size_t i=0; i < leafAABBs.size(); i++) {
                 auto leaf = leafAABBs[i];
                 Log(EDebug, leaf.toString().c_str());
-                Eigen::VectorXd center;
+                Eigen::VectorXd center(3);
                 center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
 
-                m_gmm.process(center);
+                // Log(EInfo, "%f %f %f", center[0], center[1], center[2]);
+                samples.push_back(center);
             }
         }
 
@@ -420,6 +415,9 @@ public:
         avgPathLength.incrementBase();
         avgPathLength += rRec.depth;
 
+        // Log(EInfo, "processing %d samples", samples.size());
+        if (samples.size() != 0)
+            m_gmm.processBatch(samples);
         return Li;
     }
 
@@ -431,7 +429,7 @@ public:
         m_timer->reset();
     }
 
-    void iterationPostprocess(const ref<Film> film, uint32_t numSPP, const RenderJob *job)
+    void iterationPostprocess()
     {
         const Float renderTime = m_timer->stop();
         Log(EInfo, "iteration render time: %s", timeString(renderTime, true).c_str());
@@ -451,6 +449,7 @@ public:
         ref<Scheduler> sched = Scheduler::getInstance();
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
         ref<Film> film = sensor->getFilm();
+        iterationPostprocess();
     }
 
     inline Float miWeight(Float pdfA, Float pdfB) const {
