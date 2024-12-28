@@ -245,6 +245,18 @@ public:
         updateSufficientStatistics(batch, responsibilities);
     }
 
+    Eigen::VectorXd sample(std::mt19937& gen) const {
+        std::vector<double> weights;
+        for (const auto& comp : components) {
+            weights.push_back(comp.getWeight());
+        }
+        std::discrete_distribution<> component_dist(weights.begin(), weights.end());
+
+        const GaussianComponent& selected_component = components[component_dist(gen)];
+
+        return selected_component.sample(gen);
+    }
+
     std::string toString() const
     {
         std::ostringstream oss;

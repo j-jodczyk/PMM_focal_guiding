@@ -42,6 +42,15 @@ namespace pmm_focal
             priorSampleCount += N_new;
         }
 
+        Eigen::VectorXd sample(std::mt19937& gen) const {
+            std::normal_distribution<> dist(0.0, 1.0);
+            Eigen::VectorXd z(mean.size());
+            for (int i = 0; i < mean.size(); ++i) {
+                z[i] = dist(gen);
+            }
+            return mean + covariance.llt().matrixL() * z;
+        }
+
         std::string toString() const {
             std::ostringstream oss;
             oss << "weight = " << getWeight() << " mean = " << getMeanStr() << " covaraince = " << getCovarianceStr();

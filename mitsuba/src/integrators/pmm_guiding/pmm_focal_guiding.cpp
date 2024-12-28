@@ -123,18 +123,19 @@ public:
         RadianceQueryRecord rRec
     ) const {
         mitsuba::Point2 sample = rRec.nextSample2D(); // this is direction (azimutal and polar coords)
-        // not sure why we need this.
 
         auto type = bsdf->getType();
 
-        // EDelta means discrete number of directions - unsuitable for guiding or importance sampling based on density distributions that work over ranges of directions
+        // EDelta means discrete number of directions
+        // - unsuitable for guiding or importance sampling based on density distributions
+        // that work over ranges of directions
         if ((type & BSDF::EDelta) == (type & BSDF::EAll)) { // || m_iteration == 0) {
             auto result = bsdf->sample(bRec, bsdfPdf, sample);
             woPdf = bsdfPdf;
             gmmPdf = 0;
             return result;
         }
-        Vectord gmmSample;
+
         Spectrum result;
         if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
             // sample BSDF
@@ -158,60 +159,40 @@ public:
         } else {
             // sample guiding distribution
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
+            std::random_device rd;
+            std::mt19937 gen(rd());
 
-            // gmmSample = m_gmm.sample();
-            // mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
-            // // wo is outgoing direction
-            // bRec.wo = normalize(endPoint - bRec.its.p);
-            // bRec.wo = bRec.its.toLocal(bRec.wo);
+            Eigen::VectorXd gmmSample = m_gmm.sample(gen);
+            mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
+            // wo is outgoing direction
+            bRec.wo = normalize(endPoint - bRec.its.p);
+            bRec.wo = bRec.its.toLocal(bRec.wo);
 
             // // idk - they say it's hack
-            // bRec.eta = 1; // eta is Relative index of refraction in the sampled direction. Refractive index determines how much the path of light is bent, or refracted, when entering a material.
-            // bRec.sampledType = BSDF::EDiffuse;
+            bRec.eta = 1; // eta is Relative index of refraction in the sampled direction. Refractive index determines how much the path of light is bent, or refracted, when entering a material.
+            bRec.sampledType = BSDF::EDiffuse;
 
-            // result = bsdf->eval(bRec);
+            result = bsdf->eval(bRec);
 
-            // if (result.isZero()) {
-            //     // invalid (aka zero contribution) direction
-            //     return result;
-            // }
+            if (result.isZero()) {
+                // invalid (aka zero contribution) direction
+                return result;
+            }
         }
 
-        pdfCombined(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, gmmSample);
+        pdfMat(woPdf, bsdf, bRec);
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
-
         return result / woPdf;
     }
 
-    void pdfCombined(
-        Float& woPdf, Float& bsdfPdf, Float& gmmPdf, Float bsdfSamplingFraction,
-        const BSDF* bsdf, const BSDFSamplingRecord& bRec, Vectord& gmmSample
+    void pdfMat(
+        Float& woPdf, // Float& bsdfPdf, Float& dTreePdf, Float bsdfSamplingFraction,
+        const BSDF* bsdf, const BSDFSamplingRecord& bRec
     ) const {
-        gmmPdf = 0;
-
-        auto type = bsdf->getType();
-        if ((type & BSDF::EDelta) == (type & BSDF::EAll)) {// || m_iteration == 0) {
-            woPdf = bsdfPdf = bsdf->pdf(bRec);
-            return;
-        }
-
-        bsdfPdf = bsdf->pdf(bRec);
-        assert(std::isfinite(bsdfPdf));
-
-        // this shouldn't be taken into account in direct light (probably)
-        // gmmPdf = m_gmm.pdf(gmmSample);
-        // if (!std::isfinite(gmmPdf)) {
-        //     Log(EInfo, m_gmm.toString().c_str());
-        //     assert(std::isfinite(gmmPdf)); // debug
-        // }
-
-        // Multiple Importance Sampling - "While our guiding density excels at sampling focal effects, its performance on other light transport can be poor.
-        // It is therefore advisable to combine it with other sampling strategies using multiple importance sampling"
-        woPdf = bsdfSamplingFraction * bsdfPdf + (1 - bsdfSamplingFraction) * gmmPdf;
+        woPdf = bsdf->pdf(bRec); // leaving this like this for now
     }
-
 
     Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
         /* Some aliases and local variables */
@@ -287,6 +268,7 @@ public:
 
                         /* Calculate prob. of having generated that direction
                            using BSDF sampling */
+                           // it both other solutions here is where pdf is calculated from guided distribution
                         Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle)
                             ? bsdf->pdf(bRec) : 0;
 
@@ -302,9 +284,12 @@ public:
             /* ==================================================================== */
 
             /* Sample BSDF * cos(theta) */
-            Float bsdfPdf;
+            Float bsdfPdf, woPdf, gmmPdf;
+            Float bsdfSamplingFraction = 0.5;
             BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
-            Spectrum bsdfWeight = bsdf->sample(bRec, bsdfPdf, rRec.nextSample2D());
+            // here is where sampling takes place -- should sample guided
+            // Spectrum bsdfWeight = bsdf->sample(bRec, bsdfPdf, rRec.nextSample2D());
+            Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, rRec);
             if (bsdfWeight.isZero())
                 break;
 
