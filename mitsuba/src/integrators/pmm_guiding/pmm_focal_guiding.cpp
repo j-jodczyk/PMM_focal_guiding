@@ -20,6 +20,7 @@
 
 #include "gaussian_mixture_model.h"
 #include "octree.h"
+#include "weighted_sample.h"
 
 #include "./envs/mitsuba_env.h"
 
@@ -205,11 +206,17 @@ public:
     }
 
     Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
+        Spectrum Li(0.0f);
+
+        if (m_maxDepth >=0 && rRec.depth > m_maxDepth) {
+            return Li;
+        }
+
         /* Some aliases and local variables */
         const Scene *scene = rRec.scene;
         Intersection &its = rRec.its;
         RayDifferential ray(r);
-        Spectrum Li(0.0f);
+
         bool scattered = false;
 
         /* Perform the first ray intersection (or ignore if the
@@ -219,83 +226,89 @@ public:
 
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
-        thread_local std::vector<Eigen::VectorXd> samples;
 
-        while (rRec.depth <= m_maxDepth || m_maxDepth < 0) {
-            if (!its.isValid()) {
-                /* If no intersection could be found, potentially return
-                   radiance from a environment luminaire if it exists */
-                if ((rRec.type & RadianceQueryRecord::EEmittedRadiance)
-                    && (!m_hideEmitters || scattered))
-                    Li += throughput * scene->evalEnvironment(ray);
-                break;
-            }
+        Spectrum contribution(0.0f);
 
-            const BSDF *bsdf = its.getBSDF(ray);
 
-            /* Possibly include emitted radiance if requested */
-            if (its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)
+        if (!its.isValid()) {
+            /* If no intersection could be found, potentially return
+                radiance from a environment luminaire if it exists */
+            if ((rRec.type & RadianceQueryRecord::EEmittedRadiance)
                 && (!m_hideEmitters || scattered))
-                Li += throughput * its.Le(-ray.d);
+                Li += throughput * scene->evalEnvironment(ray);
+            return Li;
+        }
 
-            /* Include radiance from a subsurface scattering model if requested */
-            if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance))
-                Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
+        const BSDF *bsdf = its.getBSDF(ray);
 
-            if ((rRec.depth >= m_maxDepth && m_maxDepth > 0)
-                || (m_strictNormals && dot(ray.d, its.geoFrame.n)
-                    * Frame::cosTheta(its.wi) >= 0)) {
+        /* Possibly include emitted radiance if requested */
+        if (its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)
+            && (!m_hideEmitters || scattered))
+            Li += throughput * its.Le(-ray.d);
 
-                /* Only continue if:
-                   1. The current path length is below the specifed maximum
-                   2. If 'strictNormals'=true, when the geometric and shading
-                      normals classify the incident direction to the same side */
-                break;
-            }
+        /* Include radiance from a subsurface scattering model if requested */
+        if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance))
+            Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
 
-            /* ==================================================================== */
-            /*                     Direct illumination sampling                     */
-            /* ==================================================================== */
+        if ((rRec.depth >= m_maxDepth && m_maxDepth > 0)
+            || (m_strictNormals && dot(ray.d, its.geoFrame.n)
+                * Frame::cosTheta(its.wi) >= 0)) {
 
-            /* Estimate the direct illumination if this is requested */
-            DirectSamplingRecord dRec(its);
+            /* Only continue if:
+                1. The current path length is below the specifed maximum
+                2. If 'strictNormals'=true, when the geometric and shading
+                    normals classify the incident direction to the same side */
+            return Li;
+        }
 
-            if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
-                (bsdf->getType() & BSDF::ESmooth)) {
-                Spectrum value = scene->sampleEmitterDirect(dRec, rRec.nextSample2D());
-                if (!value.isZero()) {
-                    const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
+        Spectrum learnedContribution(0.f);
 
-                    /* Allocate a record for querying the BSDF */
-                    BSDFSamplingRecord bRec(its, its.toLocal(dRec.d), ERadiance);
+        /* ==================================================================== */
+        /*                     Direct illumination sampling                     */
+        /* ==================================================================== */
 
-                    /* Evaluate BSDF * cos(theta) */
-                    const Spectrum bsdfVal = bsdf->eval(bRec);
+        /* Estimate the direct illumination if this is requested */
+        DirectSamplingRecord dRec(its);
 
-                    /* Prevent light leaks due to the use of shading normals */
-                    if (!bsdfVal.isZero() && (!m_strictNormals
-                            || dot(its.geoFrame.n, dRec.d) * Frame::cosTheta(bRec.wo) > 0)) {
+        if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
+            (bsdf->getType() & BSDF::ESmooth)) {
+            Spectrum value = scene->sampleEmitterDirect(dRec, rRec.nextSample2D());
+            if (!value.isZero()) {
+                const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
 
-                        /* Calculate prob. of having generated that direction
-                           using BSDF sampling */
-                           // it both other solutions here is where pdf is calculated from guided distribution
-                        Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle)
-                            ? bsdf->pdf(bRec) : 0;
+                /* Allocate a record for querying the BSDF */
+                BSDFSamplingRecord bRec(its, its.toLocal(dRec.d), ERadiance);
 
-                        /* Weight using the power heuristic */
-                        Float weight = miWeight(dRec.pdf, bsdfPdf);
-                        Li += throughput * value * bsdfVal * weight;
-                    }
+                /* Evaluate BSDF * cos(theta) */
+                const Spectrum bsdfVal = bsdf->eval(bRec);
+
+                /* Prevent light leaks due to the use of shading normals */
+                if (!bsdfVal.isZero() && (!m_strictNormals
+                        || dot(its.geoFrame.n, dRec.d) * Frame::cosTheta(bRec.wo) > 0)) {
+
+                    /* Calculate prob. of having generated that direction
+                        using BSDF sampling */
+                        // it both other solutions here is where pdf is calculated from guided distribution
+                    Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle)
+                        ? bsdf->pdf(bRec) : 0;
+
+                    /* Weight using the power heuristic */
+                    Float weight = miWeight(dRec.pdf, bsdfPdf);
+                    Li += throughput * value * bsdfVal * weight;
                 }
             }
+        }
 
-            /* ==================================================================== */
-            /*                            BSDF sampling                             */
-            /* ==================================================================== */
+        /* ==================================================================== */
+        /*                            BSDF sampling                             */
+        /* ==================================================================== */
 
-            /* Sample BSDF * cos(theta) */
-            Float bsdfPdf, woPdf, gmmPdf;
-            Float bsdfSamplingFraction = 0.5;
+        /* Sample BSDF * cos(theta) */
+        Float bsdfPdf, woPdf, gmmPdf;
+        Float bsdfSamplingFraction = 0.5;
+
+        do {
+            thread_local std::vector<pmm_focal::WeightedSample> samples;
             BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
             // here is where sampling takes place -- should sample guided
             // Spectrum bsdfWeight = bsdf->sample(bRec, bsdfPdf, rRec.nextSample2D());
@@ -341,19 +354,20 @@ public:
             }
 
             /* Keep track of the throughput and relative
-               refractive index along the path */
+                refractive index along the path */
             throughput *= bsdfWeight;
             eta *= bRec.eta;
 
             /* If a luminaire was hit, estimate the local illumination and
-               weight using the power heuristic */
+                weight using the power heuristic */
             if (hitEmitter &&
                 (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance)) {
                 /* Compute the prob. of generating that direction using the
-                   implemented direct illumination sampling technique */
+                    implemented direct illumination sampling technique */
                 const Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ?
                     scene->pdfEmitterDirect(dRec) : 0;
                 Li += throughput * value * miWeight(bsdfPdf, lumPdf);
+                learnedContribution += throughput * value * miWeight(bsdfPdf, lumPdf);
             }
 
             /* ==================================================================== */
@@ -361,22 +375,26 @@ public:
             /* ==================================================================== */
 
             /* Set the recursive query type. Stop if no surface was hit by the
-               BSDF sample or if indirect illumination was not requested */
+                BSDF sample or if indirect illumination was not requested */
             if (!its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance))
                 break;
             rRec.type = RadianceQueryRecord::ERadianceNoEmission;
+            rRec.depth ++;
+            auto liNested = this->Li(r, rRec);
+            Li += bsdfWeight * liNested;
+            learnedContribution += bsdfWeight * liNested;
 
-            if (rRec.depth++ >= m_rrDepth) {
-                /* Russian roulette: try to keep path weights equal to one,
-                   while accounting for the solid angle compression at refractive
-                   index boundaries. Stop with at least some probability to avoid
-                   getting stuck (e.g. due to total internal reflection) */
+            // if (rRec.depth++ >= m_rrDepth) {
+            //     /* Russian roulette: try to keep path weights equal to one,
+            //         while accounting for the solid angle compression at refractive
+            //         index boundaries. Stop with at least some probability to avoid
+            //         getting stuck (e.g. due to total internal reflection) */
 
-                Float q = std::min(throughput.max() * eta * eta, (Float) 0.95f);
-                if (rRec.nextSample1D() >= q)
-                    break;
-                throughput /= q;
-            }
+            //     Float q = std::min(throughput.max() * eta * eta, (Float) 0.95f);
+            //     if (rRec.nextSample1D() >= q)
+            //         break;
+            //     throughput /= q;
+            // }
 
             // splat
             const BSDF *endpointBSDF = its.getBSDF();
@@ -391,31 +409,37 @@ public:
                 std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
                 its.t;
 
-            std::vector<AABB> leafAABBs;
-            m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
-            // Log(EInfo, "Collected %d samples", leafAABBs.size());
+            Log(EInfo, Li.toString().c_str());
 
-            for (size_t i=0; i < leafAABBs.size(); i++) {
-                auto leaf = leafAABBs[i];
-                Log(EDebug, leaf.toString().c_str());
-                Eigen::VectorXd center(3);
-                center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
+            float contribution = (throughput * learnedContribution).average();
 
-                samples.push_back(center);
+            if (contribution != 0) {
+                std::vector<AABB> leafAABBs;
+                m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
+                Log(EInfo, "Contribution = %f, Throughput = %f, LearnedContribution avg = %f", contribution, throughput, learnedContribution.average());
+
+                for (size_t i=0; i < leafAABBs.size(); i++) {
+                    auto leaf = leafAABBs[i];
+                    Log(EDebug, leaf.toString().c_str());
+                    Eigen::VectorXd center(3);
+                    center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
+
+                    samples.push_back({center, contribution});
+                }
             }
-        }
 
-        /* Store statistics */
-        avgPathLength.incrementBase();
-        avgPathLength += rRec.depth;
+            /* Store statistics */
+            avgPathLength.incrementBase();
+            avgPathLength += rRec.depth;
 
-        if (samples.size() != 0) {
-            m_gmm.processBatch(samples);
-            // int thread_id = mitsuba::Thread::getID();
-            // std::ostringstream filename;
-            // filename << "samples_thread_" << thread_id << ".txt";
-            // this->dumpVectorToTextFile(samples, filename.str());
-        }
+            if (samples.size() != 0) {
+                m_gmm.processBatch(samples);
+                // int thread_id = mitsuba::Thread::getID();
+                // std::ostringstream filename;
+                // filename << "samples_thread_" << thread_id << ".txt";
+                // this->dumpVectorToTextFile(samples, filename.str());
+            }
+        } while (false);
         return Li;
     }
 

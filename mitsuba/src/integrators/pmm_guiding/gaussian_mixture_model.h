@@ -23,6 +23,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include "gaussian_component.h"
+#include "weighted_sample.h"
 
 // #define MITSUBA_LOGGING = 1
 
@@ -79,7 +80,7 @@ private:
         return std::exp(logPdf);
     }
 
-    void updateSufficientStatistics(const std::vector<Eigen::VectorXd>& batch, const Eigen::MatrixXd& responsibilities) {
+    void updateSufficientStatistics(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
         std::lock_guard<std::mutex> lock(mtx);
 
         size_t N = 0;
@@ -108,7 +109,7 @@ private:
             Eigen::VectorXd newMean(meanSize);
             newMean.setZero();
             for (size_t i = 0; i < NNew; i++) {
-                newMean += responsibilities(i, j) * batch[i];
+                newMean += responsibilities(i, j) * batch[i].point;
                 // SLog(mitsuba::EInfo, "Responsibility = %f", responsibilities(i, j));
             }
 
@@ -120,7 +121,7 @@ private:
 
             Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(meanSize, meanSize);
             for (size_t i = 0; i < NNew; ++i) {
-                Eigen::VectorXd diff = batch[i] - comp.getMean();
+                Eigen::VectorXd diff = batch[i].point - comp.getMean();
                 newCov += responsibilities(i, j) * (diff * diff.transpose());
             }
             newCov /= responsibilitySum;
@@ -257,14 +258,14 @@ public:
         component.setCovariance(Eigen::MatrixXd::Identity(component.getCovariance().rows(), component.getCovariance().cols()));
     }
 
-     void processBatch(const std::vector<Eigen::VectorXd>& batch) {
+     void processBatch(const std::vector<WeightedSample>& batch) {
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
 
         // E-step
         for (size_t j = 0; j < components.size(); ++j) {
             for (size_t i = 0; i < batch.size(); ++i) {
-                double resp = components[j].getWeight() * pdf(batch[i], components[j]);
-                responsibilities(i, j) = resp;
+                double resp = components[j].getWeight() * pdf(batch[i].point, components[j]);
+                responsibilities(i, j) = resp * batch[i].weight;
             }
         }
 
