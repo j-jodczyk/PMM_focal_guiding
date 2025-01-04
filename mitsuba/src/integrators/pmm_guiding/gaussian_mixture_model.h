@@ -52,21 +52,30 @@ private:
     int splittingThreshold;
     int mergingThreshold;
     std::mutex mtx;
+    AABB m_aabb;
 
-    double pdf(const Eigen::VectorXd& x, const GaussianComponent& component) {
+    double pdf(const Eigen::VectorXd& x, GaussianComponent& component) {
         int d = x.size();
         double det = component.getCovariance().determinant();
 
-        assert(det != 0);
-        // double normConst = 1.0 / std::sqrt(std::pow(2 * M_PI, d) * det);
+        if (det <= 0) {
+            // SLog(mitsuba::EInfo, component.toString().c_str());
+            SLog(mitsuba::EWarn, "Unexpected non positive value of determinant, reseting component");
+            resetComponent(component);
+            det = component.getCovariance().determinant();
+        }
+
         double logNormConst = -0.5 * (d * std::log(2 * M_PI) +std::log(det));
+        // SLog(mitsuba::EInfo, "det: %f", det);
 
         Eigen::VectorXd diff = x - component.getMean();
+        // SLog(mitsuba::EInfo, "diff: %f, %f, %f", diff(0), diff(1), diff(2));
         double exponent = -0.5 * diff.transpose() * component.getCovariance().inverse() * diff;
+        // SLog(mitsuba::EInfo, "exponent: %f", exponent);
         double logPdf = logNormConst + exponent;
-        // std::cout << "Condition number: " << condition_number << std::endl;
+        // SLog(mitsuba::EInfo, "logPdf: %f", logPdf);
+        // SLog(mitsuba::EInfo, "exp(logPdf): %f", std::exp(logPdf));
 
-        // std::cout << "exponent = " << exponent << " logNormConst = " << logNormConst << " logPdf = " << logPdf << std::endl;
         return std::exp(logPdf);
     }
 
@@ -86,8 +95,8 @@ private:
 
             double responsibilitySum = responsibilities.col(j).sum();
             if (responsibilitySum == 0) {
+                SLog(mitsuba::EWarn, "Responsibility sum is 0");
                 SLog(mitsuba::EInfo, components[j].toString().c_str());
-                // std::cout << components[j].toString().c_str();
             }
             assert(responsibilitySum != 0);
             double newWeight = responsibilitySum / NNew;
@@ -96,12 +105,18 @@ private:
 
             auto meanSize = comp.getMean().size();
 
-            Eigen::VectorXd newMean = Eigen::VectorXd::Zero(meanSize);
+            Eigen::VectorXd newMean(meanSize);
+            newMean.setZero();
             for (size_t i = 0; i < NNew; i++) {
                 newMean += responsibilities(i, j) * batch[i];
+                // SLog(mitsuba::EInfo, "Responsibility = %f", responsibilities(i, j));
             }
+
             newMean /= responsibilitySum;
-            assert(!std::isinf(newMean[0]));
+            if(!newMean.allFinite()) {
+                SLog(mitsuba::EInfo, "Mean: %f, %f, %f", newMean[0], newMean[1], newMean[2]);
+                assert(newMean.allFinite());
+            }
 
             Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(meanSize, meanSize);
             for (size_t i = 0; i < NNew; ++i) {
@@ -109,7 +124,7 @@ private:
                 newCov += responsibilities(i, j) * (diff * diff.transpose());
             }
             newCov /= responsibilitySum;
-            assert(!std::isinf(newCov(0,0)));
+            assert(newCov.allFinite());
 
             comp.updateComponent(N, NNew, newMean, newCov, newWeight, alpha);
         }
@@ -120,6 +135,7 @@ private:
             }
         }
 
+        // remove if weight too small
         components.erase(
             std::remove_if(components.begin(), components.end(),
                 [](const GaussianComponent& comp) {
@@ -128,17 +144,15 @@ private:
             components.end()
         );
 
-        if (components.size() > 100) {
-            std::cout << "Boom";
-        }
         // splitting
         for (size_t j = 0; j < components.size(); ++j) {
+            // high condition number indicates that matrix is close to being singular (det near 0), or its eigenbalues vary widely in magnitude.
             double conditionNumber = components[j].getCovariance().norm() * components[j].getCovariance().inverse().norm();
             if (conditionNumber > splittingThreshold)
                 splitComponent(j);
         }
 
-        // merging
+        // merging - when components too similar
         for (size_t i = 0; i < components.size(); ++i) {
             for (size_t j = i + 1; j < components.size(); ++j) {
                 double distance = (components[i].getMean() - components[j].getMean()).norm();
@@ -202,13 +216,15 @@ private:
 public:
     GaussianMixtureModel() {}
 
-    void init(size_t numComponents, size_t dimension, double _alpha, int _splittingThreshold, int _mergingThreshold) {
-        alpha = _alpha;
-        splittingThreshold = _splittingThreshold;
-        mergingThreshold = _mergingThreshold;
+    void setAlpha(double newAlpha) { alpha = newAlpha; };
+    void setSplittingThreshold(double newThreshold) { splittingThreshold = newThreshold; };
+    void setMergingThreshold(double newThreshold) { mergingThreshold = newThreshold; };
+
+    void init(size_t numComponents, size_t dimension, const AABB& aabb) {
+        m_aabb = aabb;
+
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dis(0.0, 1.0);
 
         components.resize(numComponents);
         for (auto& comp : components) {
@@ -218,10 +234,27 @@ public:
 
             Eigen::VectorXd compMean(dimension);
             for (size_t d = 0; d < dimension; ++d) {
-                compMean[d] = dis(gen);
+                std::uniform_real_distribution<> dist(aabb.min[d], aabb.max[d]);
+                compMean[d] = dist(gen);
             }
             comp.setMean(compMean);
         }
+    }
+
+    void resetComponent(GaussianComponent& component) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        component.setWeight(1.0 / components.size());
+
+        Eigen::VectorXd compMean(component.getMean().size());
+        for (int d = 0; d < component.getMean().size(); ++d) {
+            std::uniform_real_distribution<> dist(m_aabb.min[d], m_aabb.max[d]);
+            compMean[d] = dist(gen);
+        }
+        component.setMean(compMean);
+
+        component.setCovariance(Eigen::MatrixXd::Identity(component.getCovariance().rows(), component.getCovariance().cols()));
     }
 
      void processBatch(const std::vector<Eigen::VectorXd>& batch) {
@@ -231,7 +264,6 @@ public:
         for (size_t j = 0; j < components.size(); ++j) {
             for (size_t i = 0; i < batch.size(); ++i) {
                 double resp = components[j].getWeight() * pdf(batch[i], components[j]);
-                // std::cout << resp << std::endl;
                 responsibilities(i, j) = resp;
             }
         }

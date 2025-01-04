@@ -14,6 +14,9 @@
 #include <mitsuba/render/sensor.h>
 #include <mitsuba/render/renderproc.h>
 #include <deque>
+#include <fstream>
+#include <filesystem>
+#include <sstream>
 
 #include "gaussian_mixture_model.h"
 #include "octree.h"
@@ -23,6 +26,12 @@
 MTS_NAMESPACE_BEGIN
 
 static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage);
+
+#include <vector>
+#include <Eigen/Dense>
+#include <mutex>
+#include <sstream>
+#include <string>
 
 /* Based on MIPathTracer */
 class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
@@ -44,10 +53,9 @@ public:
             m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
             m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
-
-            m_gmm.init(
-                5, 3, props.getFloat("gmm.alpha"), props.getFloat("gmm.splittingThreshold"), props.getFloat("gmm.mergingThreshold")
-            );
+            m_gmm.setAlpha(props.getFloat("gmm.alpha"));
+            m_gmm.setSplittingThreshold(props.getFloat("gmm.splittingThreshold"));
+            m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold"));
 
             m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL));
             this->m_maxDepth = 10;
@@ -77,6 +85,8 @@ public:
         int integratorResID = sched->registerResource(this);
 
         m_octree.setAABB(scene->getAABB());
+        m_gmm.init(5, 3, scene->getAABB());
+
         Log(EInfo, m_gmm.toString().c_str());
         Log(EInfo, m_octree.toString().c_str());
         Log(EDebug, m_octree.toStringVerbose().c_str());
@@ -209,7 +219,7 @@ public:
 
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
-        std::vector<Eigen::VectorXd> samples;
+        thread_local std::vector<Eigen::VectorXd> samples;
 
         while (rRec.depth <= m_maxDepth || m_maxDepth < 0) {
             if (!its.isValid()) {
@@ -391,7 +401,6 @@ public:
                 Eigen::VectorXd center(3);
                 center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
 
-                // Log(EInfo, "%f %f %f", center[0], center[1], center[2]);
                 samples.push_back(center);
             }
         }
@@ -400,24 +409,49 @@ public:
         avgPathLength.incrementBase();
         avgPathLength += rRec.depth;
 
-        // Log(EInfo, "processing %d samples", samples.size());
-        if (samples.size() != 0)
+        if (samples.size() != 0) {
             m_gmm.processBatch(samples);
+            // int thread_id = mitsuba::Thread::getID();
+            // std::ostringstream filename;
+            // filename << "samples_thread_" << thread_id << ".txt";
+            // this->dumpVectorToTextFile(samples, filename.str());
+        }
         return Li;
+    }
+
+    bool fileExists(const std::string &filename) const {
+        std::ifstream file(filename);
+        return file.good(); // Returns true if file exists and is accessible
+    }
+
+    void dumpVectorToTextFile(const std::vector<Eigen::VectorXd> &data, const std::string &filename) const {
+        bool file_exists = fileExists(filename);
+
+        // Open the file for writing (overwriting or appending)
+        std::ofstream file;
+        if (file_exists) {
+            file.open(filename, std::ios::app); // Append if the file already exists
+        } else {
+            file.open(filename); // Create a new file
+        }
+
+        for (const auto &vec : data) {
+            for (int i = 0; i < vec.size(); ++i) {
+                file << vec[i];
+                if (i != vec.size() - 1) {
+                    file << " ";
+                }
+            }
+            file << "\n";
+        }
+
+        file.close();
     }
 
     void iterationPreprocess(ref<Film> film)
     {
         film->clear();
         Statistics::getInstance()->resetAll();
-
-        m_timer->reset();
-    }
-
-    void iterationPostprocess()
-    {
-        const Float renderTime = m_timer->stop();
-        Log(EInfo, "iteration render time: %s", timeString(renderTime, true).c_str());
 
         m_timer->reset();
     }
@@ -434,7 +468,8 @@ public:
         ref<Scheduler> sched = Scheduler::getInstance();
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
         ref<Film> film = sensor->getFilm();
-        iterationPostprocess();
+
+        Log(EInfo, m_gmm.toString().c_str());
     }
 
     inline Float miWeight(Float pdfA, Float pdfB) const {
@@ -453,6 +488,7 @@ public:
             << "  maxDepth = " << m_maxDepth << "," << endl
             << "  rrDepth = " << m_rrDepth << "," << endl
             << "  strictNormals = " << m_strictNormals << endl
+            << "  gmm = " << m_gmm.toString() << endl
             << "]";
         return oss.str();
     }

@@ -39,6 +39,8 @@ namespace pmm_focal
             Eigen::MatrixXd correction = (N * N_new) / pow(N + N_new, 2) * (new_mean - priorMean) * (new_mean - priorMean).transpose();
             covariance = (N * covariance + N_new * new_cov) / (N + N_new) + correction;
 
+            covariance += 1e-6 * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
+
             priorSampleCount += N_new;
         }
 
