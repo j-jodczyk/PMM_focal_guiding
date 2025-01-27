@@ -54,9 +54,15 @@ public:
             m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
             m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
-            m_gmm.setAlpha(props.getFloat("gmm.alpha"));
-            m_gmm.setSplittingThreshold(props.getFloat("gmm.splittingThreshold"));
-            m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold"));
+            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.8));
+            double st = props.getFloat("gmm.splittingThreshold", 500.0);
+            m_gmm.setSplittingThreshold(st);
+
+            double mt = props.getFloat("gmm.mergingThreshold");
+            m_gmm.setMergingThreshold(mt);
+
+            m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 4));
+            m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
 
             m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL));
             this->m_maxDepth = 10;
@@ -129,7 +135,6 @@ public:
         BSDFSamplingRecord& bRec,
         Float& woPdf,
         Float& bsdfPdf,
-        Float& gmmPdf,
         Float bsdfSamplingFraction,
         RadianceQueryRecord rRec
     ) const {
@@ -141,28 +146,26 @@ public:
         // - unsuitable for guiding or importance sampling based on density distributions
         // that work over ranges of directions
         if ((type & BSDF::EDelta) == (type & BSDF::EAll)) { // || m_iteration == 0) {
-            auto result = bsdf->sample(bRec, bsdfPdf, sample);
+            auto result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
             woPdf = bsdfPdf;
-            gmmPdf = 0;
-            return result;
+            return result; // woPdf and bsdfPdf set - it's fine
         }
 
         Spectrum result;
         if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
             // sample BSDF
             sample.x /= bsdfSamplingFraction;
-            result = bsdf->sample(bRec, bsdfPdf, sample);
+            result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
             if (result.isZero()) {
-                woPdf = bsdfPdf = gmmPdf = 0;
-                return Spectrum{0.0f};
+                woPdf = bsdfPdf = 0;
+                return Spectrum{0.0f}; // woPdf and bsdfPdf set - it's fine
             }
 
             // If we sampled a delta component, then we have a 0 probability
             // of sampling that direction via guiding, thus we can return early.
             if (bRec.sampledType & BSDF::EDelta) {
-                gmmPdf = 0;
                 woPdf = bsdfPdf * bsdfSamplingFraction;
-                return result / bsdfSamplingFraction;
+                return result / bsdfSamplingFraction; // woPdf and bsdfPdf set - it's fine
             }
 
             result *= bsdfPdf;
@@ -186,23 +189,24 @@ public:
             result = bsdf->eval(bRec);
 
             if (result.isZero()) {
-                // invalid (aka zero contribution) direction
+                // invalid (aka zero contribution) direction - so we don't set wo and bdfPdf I guess
                 return result;
             }
         }
 
-        pdfMat(woPdf, bsdf, bRec);
+        pdfMat(woPdf, bsdfPdf, bsdf, bRec); // woPdf and bsdfPdf set - it's fine
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
         return result / woPdf;
+        // from what I can tell right now, always: woPdf == bsdfPdf
     }
 
     void pdfMat(
-        Float& woPdf, // Float& bsdfPdf, Float& dTreePdf, Float bsdfSamplingFraction,
+        Float& woPdf, Float& bsdfPdf, // Float bsdfSamplingFraction,
         const BSDF* bsdf, const BSDFSamplingRecord& bRec
     ) const {
-        woPdf = bsdf->pdf(bRec); // leaving this like this for now
+        woPdf = bsdfPdf = bsdf->pdf(bRec); // leaving this for now
     }
 
     Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
@@ -226,9 +230,6 @@ public:
 
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
-
-        Spectrum contribution(0.0f);
-
 
         if (!its.isValid()) {
             /* If no intersection could be found, potentially return
@@ -274,6 +275,7 @@ public:
             (bsdf->getType() & BSDF::ESmooth)) {
             Spectrum value = scene->sampleEmitterDirect(dRec, rRec.nextSample2D());
             if (!value.isZero()) {
+                // so this is almost never true for our scenes - no wonder, it's very difficult to hit the emitter
                 const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
 
                 /* Allocate a record for querying the BSDF */
@@ -294,6 +296,7 @@ public:
 
                     /* Weight using the power heuristic */
                     Float weight = miWeight(dRec.pdf, bsdfPdf);
+                    // Log(EInfo, ("throughput = " + throughput.toString() + " value = " + value.toString() + " bsdfVal = " + bsdfVal.toString() + " weight = %f").c_str(), weight);
                     Li += throughput * value * bsdfVal * weight;
                 }
             }
@@ -304,7 +307,7 @@ public:
         /* ==================================================================== */
 
         /* Sample BSDF * cos(theta) */
-        Float bsdfPdf, woPdf, gmmPdf;
+        Float bsdfPdf, woPdf;
         Float bsdfSamplingFraction = 0.5;
 
         do {
@@ -312,8 +315,9 @@ public:
             BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
             // here is where sampling takes place -- should sample guided
             // Spectrum bsdfWeight = bsdf->sample(bRec, bsdfPdf, rRec.nextSample2D());
-            Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, rRec);
-            if (bsdfWeight.isZero())
+            Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, bsdfSamplingFraction, rRec);
+            // Log(EInfo, "bsdfPdf = %f, woPdf = %f", bsdfPdf, woPdf);
+            if (bsdfWeight.isZero()) // this is why woPdf and bsdfPdf doesn't matter here
                 break;
 
             scattered |= bRec.sampledType != BSDF::ENull;
@@ -333,6 +337,7 @@ public:
                 /* Intersected something - check if it was a luminaire */
                 if (its.isEmitter()) {
                     value = its.Le(-ray.d);
+                    Log(EInfo, ("hit luminaire, value = " + value.toString()).c_str());
                     dRec.setQuery(ray, its);
                     hitEmitter = true;
                 }
@@ -341,6 +346,7 @@ public:
                 const Emitter *env = scene->getEnvironmentEmitter();
 
                 if (env) {
+                    Log(EInfo, "Environment map");
                     if (m_hideEmitters && !scattered)
                         break;
 
@@ -366,8 +372,12 @@ public:
                     implemented direct illumination sampling technique */
                 const Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ?
                     scene->pdfEmitterDirect(dRec) : 0;
-                Li += throughput * value * miWeight(bsdfPdf, lumPdf);
-                learnedContribution += throughput * value * miWeight(bsdfPdf, lumPdf);
+
+                Float weight = miWeight(woPdf, lumPdf);
+                Li += throughput * value * weight;
+
+                Log(EInfo, ("Throughput = " + throughput.toString() + " value = " + value.toString() + " weight = %f").c_str(), weight);
+                learnedContribution += throughput * value * weight;
             }
 
             /* ==================================================================== */
@@ -384,17 +394,17 @@ public:
             Li += bsdfWeight * liNested;
             learnedContribution += bsdfWeight * liNested;
 
-            // if (rRec.depth++ >= m_rrDepth) {
-            //     /* Russian roulette: try to keep path weights equal to one,
-            //         while accounting for the solid angle compression at refractive
-            //         index boundaries. Stop with at least some probability to avoid
-            //         getting stuck (e.g. due to total internal reflection) */
+            if (rRec.depth++ >= m_rrDepth) {
+                /* Russian roulette: try to keep path weights equal to one,
+                    while accounting for the solid angle compression at refractive
+                    index boundaries. Stop with at least some probability to avoid
+                    getting stuck (e.g. due to total internal reflection) */
 
-            //     Float q = std::min(throughput.max() * eta * eta, (Float) 0.95f);
-            //     if (rRec.nextSample1D() >= q)
-            //         break;
-            //     throughput /= q;
-            // }
+                Float q = std::min(throughput.max() * eta * eta, (Float) 0.95f);
+                if (rRec.nextSample1D() >= q)
+                    break;
+                throughput /= q;
+            }
 
             // splat
             const BSDF *endpointBSDF = its.getBSDF();
@@ -409,22 +419,19 @@ public:
                 std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
                 its.t;
 
-            Log(EInfo, Li.toString().c_str());
-
-            float contribution = (throughput * learnedContribution).average();
+            float contribution = (learnedContribution * throughput).average();
 
             if (contribution != 0) {
                 std::vector<AABB> leafAABBs;
                 m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
-                Log(EInfo, "Contribution = %f, Throughput = %f, LearnedContribution avg = %f", contribution, throughput, learnedContribution.average());
-
+                // Log(EInfo, "collect some samples because contribution is %f", contribution);
                 for (size_t i=0; i < leafAABBs.size(); i++) {
                     auto leaf = leafAABBs[i];
-                    Log(EDebug, leaf.toString().c_str());
+
                     Eigen::VectorXd center(3);
                     center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
 
-                    samples.push_back({center, contribution});
+                    samples.push_back({center, 1.0}); // for now, everything has contribution 1
                 }
             }
 
@@ -433,6 +440,7 @@ public:
             avgPathLength += rRec.depth;
 
             if (samples.size() != 0) {
+                // SLog(EInfo, "process this batch");
                 m_gmm.processBatch(samples);
                 // int thread_id = mitsuba::Thread::getID();
                 // std::ostringstream filename;
@@ -497,6 +505,8 @@ public:
     }
 
     inline Float miWeight(Float pdfA, Float pdfB) const {
+        if (pdfA == 0.0 && pdfB == 0.0)
+            return 0.0; // make sure you're not dividing by 0
         pdfA *= pdfA;
         pdfB *= pdfB;
         return pdfA / (pdfA + pdfB);

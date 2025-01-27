@@ -14,6 +14,8 @@
 #include <random>
 #include <deque>
 #include <mutex>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #include <eigen3/Eigen/Dense>
 
@@ -47,21 +49,24 @@ class GaussianMixtureModel : public Distribution<Scalar_t> {
 private:
     using Scalar = Scalar_t;
     using AABB = typename Env::AABB;
+    mutable boost::shared_mutex mtx;
 
     std::vector<GaussianComponent> components;
     double alpha;
-    int splittingThreshold;
-    int mergingThreshold;
-    std::mutex mtx;
+    double splittingThreshold;
+    double mergingThreshold;
+    u_int16_t minNumComp;
+    u_int16_t maxNumComp;
     AABB m_aabb;
+    size_t m_dimension;
 
     double pdf(const Eigen::VectorXd& x, GaussianComponent& component) {
         int d = x.size();
         double det = component.getCovariance().determinant();
 
-        if (det <= 0) {
+        if (det <= 1e-6) {
             // SLog(mitsuba::EInfo, component.toString().c_str());
-            SLog(mitsuba::EWarn, "Unexpected non positive value of determinant, reseting component");
+            // SLog(mitsuba::EWarn, "Unexpected non positive value of determinant, reseting component");
             resetComponent(component);
             det = component.getCovariance().determinant();
         }
@@ -81,8 +86,6 @@ private:
     }
 
     void updateSufficientStatistics(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
-        std::lock_guard<std::mutex> lock(mtx);
-
         size_t N = 0;
         size_t NNew = batch.size();
 
@@ -90,23 +93,31 @@ private:
             N += comp.getPriorSampleCount();
         }
 
-        double weightSum = 0;
+        // double weightSum = 0;
+        std::vector<size_t> componentIdxToDelete;
         for (size_t j = 0; j < components.size(); ++j) {
             auto& comp = components[j];
+            if (j >= responsibilities.cols()) {
+                SLog(mitsuba::EInfo, "j = %d, responsibilities.cols() = %d", j, responsibilities.cols());
+                break; // TODO: probably do something better about this - maybe need to resize responsibilities (how do rebust vmm do it?)
+            }
 
             double responsibilitySum = responsibilities.col(j).sum();
-            if (responsibilitySum == 0) {
-                SLog(mitsuba::EWarn, "Responsibility sum is 0");
-                SLog(mitsuba::EInfo, components[j].toString().c_str());
+            if (responsibilitySum < 1e-6) {
+                // SLog(mitsuba::EWarn, "Responsibility sum is close to 0 - deleting the component");
+                componentIdxToDelete.push_back(j);
+                continue;
             }
-            assert(responsibilitySum != 0);
+            if (responsibilitySum != responsibilitySum) {
+                SLog(mitsuba::EInfo, "Crashing program - responsibility is -nan");
+                SLog(mitsuba::EInfo, this->toString().c_str());
+            }
+            assert(responsibilitySum == responsibilitySum);
             double newWeight = responsibilitySum / NNew;
             assert(!std::isinf(newWeight));
-            weightSum += newWeight;
+            // weightSum += newWeight;
 
-            auto meanSize = comp.getMean().size();
-
-            Eigen::VectorXd newMean(meanSize);
+            Eigen::VectorXd newMean(comp.getMean().size());
             newMean.setZero();
             for (size_t i = 0; i < NNew; i++) {
                 newMean += responsibilities(i, j) * batch[i].point;
@@ -115,11 +126,13 @@ private:
 
             newMean /= responsibilitySum;
             if(!newMean.allFinite()) {
+                SLog(mitsuba::EInfo, this->toString().c_str());
+                SLog(mitsuba::EInfo, "ResponsibilitySum = %f", responsibilitySum);
                 SLog(mitsuba::EInfo, "Mean: %f, %f, %f", newMean[0], newMean[1], newMean[2]);
                 assert(newMean.allFinite());
             }
 
-            Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(meanSize, meanSize);
+            Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(comp.getMean().size(), comp.getMean().size());
             for (size_t i = 0; i < NNew; ++i) {
                 Eigen::VectorXd diff = batch[i].point - comp.getMean();
                 newCov += responsibilities(i, j) * (diff * diff.transpose());
@@ -130,11 +143,20 @@ private:
             comp.updateComponent(N, NNew, newMean, newCov, newWeight, alpha);
         }
 
-        if (weightSum != 1.0) {
-            for (size_t j = 0; j < components.size(); ++j) {
-                components[j].setWeight(components[j].getWeight() / weightSum);
-            }
+        if (componentIdxToDelete.size() == components.size()) {
+            SLog(mitsuba::EWarn, "All components are supposed to be deleted... not sure what to do about this");
         }
+
+        int componentCountAfterDeleting = components.size() - componentIdxToDelete.size();
+        std::sort(componentIdxToDelete.rbegin(), componentIdxToDelete.rend()); // reverse sort so we don't invalidate idxs
+        for (int idx : componentIdxToDelete)
+            components.erase(components.begin() + idx);
+
+        // if (weightSum != 1.0) {
+        //     for (size_t j = 0; j < components.size(); ++j) {
+        //         components[j].setWeight(components[j].getWeight() / weightSum);
+        //     }
+        // }
 
         // remove if weight too small
         components.erase(
@@ -147,25 +169,63 @@ private:
 
         // splitting
         for (size_t j = 0; j < components.size(); ++j) {
+            if (components.size() >= maxNumComp)
+                break;
             // high condition number indicates that matrix is close to being singular (det near 0), or its eigenbalues vary widely in magnitude.
             double conditionNumber = components[j].getCovariance().norm() * components[j].getCovariance().inverse().norm();
-            if (conditionNumber > splittingThreshold)
+            if (conditionNumber > splittingThreshold) {
+                // SLog(mitsuba::EInfo, "Splitting");
                 splitComponent(j);
+            }
         }
 
         // merging - when components too similar
         for (size_t i = 0; i < components.size(); ++i) {
             for (size_t j = i + 1; j < components.size(); ++j) {
+                if (components.size() <= minNumComp)
+                    break;
+                if (components[i].getMean().cols() != components[j].getMean().cols()) {
+                    SLog(mitsuba::EInfo, this->toString().c_str());
+                }
                 double distance = (components[i].getMean() - components[j].getMean()).norm();
                 if (distance < mergingThreshold) {
+                    // SLog(mitsuba::EInfo, "Merging");
                     mergeComponents(i, j);
                     break;
                 }
             }
         }
+
+
+        // todo: if this is needed, then weights need to be thought through
+        // if (componentCountAfterDeleting < minNumComp) {
+        //     int componentsToCreateCount = minNumComp - componentCountAfterDeleting;
+        //     // SLog(mitsuba::EInfo, "Too many components to delete, will initialize %d new components", componentsToCreateCount);
+        //     components.resize(components.size() + componentsToCreateCount);
+        //     for (size_t i = componentsToCreateCount; i < components.size(); i++) {
+        //         GaussianComponent& comp = components[i];
+        //         initComponentMean(comp);
+        //         initComponentCovaraince(comp);
+        //     }
+        // }
+
+        // final weight recount
+        double weightSum = 0;
+        for (auto& component : components) {
+            weightSum += component.getWeight();
+        }
+
+        for (size_t j = 0; j < components.size(); ++j) {
+            components[j].setWeight(components[j].getWeight() / weightSum);
+        }
+
     }
 
     void splitComponent(size_t index) {
+        // assert(mtx.try_lock() == false);
+        // boost::unique_lock<boost::shared_mutex> lock(mtx);
+        if (components.size() > maxNumComp)
+            SLog(mitsuba::EInfo, "splitting despite too large count of components");
         if (index >= components.size()) return;
 
         GaussianComponent& comp = components[index];
@@ -192,6 +252,10 @@ private:
     }
 
     void mergeComponents(size_t index1, size_t index2) {
+        // assert(mtx.try_lock() == false);
+        // boost::unique_lock<boost::shared_mutex> lock(mtx);
+        if (components.size() < minNumComp)
+            SLog(mitsuba::EInfo, "merging despite too small count of components");
         if (index1 >= components.size() || index2 >= components.size() || index1 == index2) return;
 
         GaussianComponent& comp1 = components[index1];
@@ -218,27 +282,41 @@ public:
     GaussianMixtureModel() {}
 
     void setAlpha(double newAlpha) { alpha = newAlpha; };
+    double getSplittingThreshold() { return splittingThreshold; };
     void setSplittingThreshold(double newThreshold) { splittingThreshold = newThreshold; };
+    double getMergingThreshold() { return mergingThreshold; };
     void setMergingThreshold(double newThreshold) { mergingThreshold = newThreshold; };
+
+    void setMinNumComp(u_int16_t newMinNumComp) { minNumComp = newMinNumComp; };
+    void setMaxNumComp(u_int16_t newMaxNumComp) { maxNumComp = newMaxNumComp; };
+
+    void initComponentMean(GaussianComponent& comp) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        comp.setMean(Eigen::VectorXd::Zero(m_dimension));
+
+        Eigen::VectorXd compMean(m_dimension);
+        for (size_t d = 0; d < m_dimension; ++d) {
+            std::uniform_real_distribution<> dist(m_aabb.min[d], m_aabb.max[d]);
+            compMean[d] = dist(gen);
+        }
+        comp.setMean(compMean);
+    }
+
+    void initComponentCovaraince(GaussianComponent& comp) {
+        comp.setCovariance(Eigen::MatrixXd::Identity(m_dimension, m_dimension));
+    }
 
     void init(size_t numComponents, size_t dimension, const AABB& aabb) {
         m_aabb = aabb;
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
+        m_dimension = dimension;
 
         components.resize(numComponents);
         for (auto& comp : components) {
             comp.setWeight(1.0 / numComponents);
-            comp.setMean(Eigen::VectorXd::Zero(dimension));
-            comp.setCovariance(Eigen::MatrixXd::Identity(dimension, dimension));
-
-            Eigen::VectorXd compMean(dimension);
-            for (size_t d = 0; d < dimension; ++d) {
-                std::uniform_real_distribution<> dist(aabb.min[d], aabb.max[d]);
-                compMean[d] = dist(gen);
-            }
-            comp.setMean(compMean);
+            initComponentMean(comp);
+            initComponentCovaraince(comp);
         }
     }
 
@@ -254,7 +332,6 @@ public:
             compMean[d] = dist(gen);
         }
         component.setMean(compMean);
-
         component.setCovariance(Eigen::MatrixXd::Identity(component.getCovariance().rows(), component.getCovariance().cols()));
     }
 
@@ -262,11 +339,15 @@ public:
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
 
         // E-step
-        for (size_t j = 0; j < components.size(); ++j) {
-            for (size_t i = 0; i < batch.size(); ++i) {
-                double resp = components[j].getWeight() * pdf(batch[i].point, components[j]);
-                responsibilities(i, j) = resp * batch[i].weight;
+        {
+            boost::shared_lock<boost::shared_mutex> lock(mtx);
+            for (size_t j = 0; j < components.size(); ++j) {
+                for (size_t i = 0; i < batch.size(); ++i) {
+                    double resp = components[j].getWeight() * pdf(batch[i].point, components[j]);
+                    responsibilities(i, j) = resp * batch[i].weight;
+                }
             }
+            // SLog(mitsuba::EInfo, "E-step mutex release");
         }
 
         // Normalize responsibilities
@@ -275,10 +356,15 @@ public:
         }
 
         // M-step
-        updateSufficientStatistics(batch, responsibilities);
+        {
+            boost::unique_lock<boost::shared_mutex> lock(mtx);
+            updateSufficientStatistics(batch, responsibilities);
+            // SLog(mitsuba::EInfo, "Sufficient Statistics mutex release");
+        }
     }
 
     Eigen::VectorXd sample(std::mt19937& gen) const {
+        boost::shared_lock<boost::shared_mutex> lock(mtx);
         std::vector<double> weights;
         for (const auto& comp : components) {
             weights.push_back(comp.getWeight());
