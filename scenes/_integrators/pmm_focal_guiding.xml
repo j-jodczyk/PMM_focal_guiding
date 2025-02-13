@@ -16,7 +16,7 @@
 	<integrator type="pmm_focal_guiding">
 		<boolean name="strictNormals" value="true" />
 		<integer name="maxDepth" value="$maxDepth" />
-		<integer name="rrDepth" value="40" />
+		<integer name="rrDepth" value="14" />
 
 		<float name="budget" value="$budget" />
 		<float name="orth.threshold" value="$splitThreshold" />
@@ -29,8 +29,10 @@
 		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
 
 		<float name="gmm.alpha" value="0.8" />
-		<float name="gmm.splittingThreshold" value="500.0" />
-		<float name="gmm.mergingThreshold" value="0.1" />
+		<float name="gmm.splittingThreshold" value="50.0" />
+		<float name="gmm.mergingThreshold" value="0.01" />
+		<integer name="gmm.minNumComp" value="4" />
+		<integer name="gmm.maxNumComp" value="15" />
 
 		<default name="renderMaxSeconds" value="120"/>
 
