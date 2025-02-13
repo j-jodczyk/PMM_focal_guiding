@@ -1,8 +1,8 @@
 <scene version="0.6.0">
-	<default name="maxDepth" value="40" />
+	<default name="maxDepth" value="14" />
 	<!-- <default name="budget" value="300" /> training + render -->
 	<default name="budget" value="30" /> <!-- training + render -->
-	<default name="splitThreshold" value="1e-3" />
+	<default name="splitThreshold" value="1e-2" /> <!-- affects the number of nodes -->
 	<!-- trainingTime = trainingIterations * iterationTime -->
 	<!-- <default name="trainingIterations" value="15" /> -->
 	<default name="trainingIterations" value="1" />
@@ -16,7 +16,7 @@
 	<integrator type="pmm_focal_guiding">
 		<boolean name="strictNormals" value="true" />
 		<integer name="maxDepth" value="$maxDepth" />
-		<integer name="rrDepth" value="40" />
+		<integer name="rrDepth" value="14" />
 
 		<float name="budget" value="$budget" />
 		<float name="orth.threshold" value="$splitThreshold" />
@@ -28,9 +28,11 @@
 		<integer name="samplingMode" value="$samplingMode" />
 		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
 
-		<float name="gmm.chiSquaredThreshold" value="0.1">
-		<float name="gmm.learingRate" value="0.1" >
-		<float name="gmm.initialVariance" value="10" >
+		<float name="gmm.alpha" value="0.8" />
+		<float name="gmm.splittingThreshold" value="50.0" />
+		<float name="gmm.mergingThreshold" value="0.01" />
+		<integer name="gmm.minNumComp" value="4" />
+		<integer name="gmm.maxNumComp" value="15" />
 
 		<default name="renderMaxSeconds" value="120"/>
 
