@@ -257,14 +257,20 @@ public:
         component.setCovariance(Eigen::MatrixXd::Identity(component.getCovariance().rows(), component.getCovariance().cols()));
     }
 
-     void processBatch(const std::vector<Eigen::VectorXd>& batch) {
+     void processBatch(const std::vector<WeightedSample>& batch) {
+        // TODO: there must be a better way to do this, but for now:
+        boost::unique_lock<boost::shared_mutex> lock(mtx);
+
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
 
         // E-step
-        for (size_t j = 0; j < components.size(); ++j) {
-            for (size_t i = 0; i < batch.size(); ++i) {
-                double resp = components[j].getWeight() * pdf(batch[i], components[j]);
-                responsibilities(i, j) = resp;
+        {
+            // boost::shared_lock<boost::shared_mutex> lock(mtx);
+            for (size_t j = 0; j < components.size(); ++j) {
+                for (size_t i = 0; i < batch.size(); ++i) {
+                    double resp = components[j].getWeight() * pdf(batch[i].point, components[j]);
+                    responsibilities(i, j) = resp * batch[i].weight;
+                }
             }
         }
 
@@ -274,7 +280,11 @@ public:
         }
 
         // M-step
-        updateSufficientStatistics(batch, responsibilities);
+        {
+            // boost::unique_lock<boost::shared_mutex> lock(mtx);
+            updateSufficientStatistics(batch, responsibilities);
+            // SLog(mitsuba::EInfo, "Sufficient Statistics mutex release");
+        }
     }
 
     Eigen::VectorXd sample(std::mt19937& gen) const {
