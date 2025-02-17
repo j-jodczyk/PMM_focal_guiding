@@ -92,7 +92,7 @@ public:
         int integratorResID = sched->registerResource(this);
 
         m_octree.setAABB(scene->getAABB());
-        m_gmm.init(5, 3, scene->getAABB());
+        m_gmm.init(m_gmm.getMinNumComp(), 3, scene->getAABB());
 
         Log(EInfo, m_gmm.toString().c_str());
         Log(EInfo, m_octree.toString().c_str());

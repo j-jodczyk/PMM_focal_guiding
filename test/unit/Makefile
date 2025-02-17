@@ -1,13 +1,8 @@
 CXX = g++
 
-CXXFLAGS = -I/usr/include/python3.8 \
-           -Iinclude \
-           -I/usr/include/python3.8/lib/site-packages/numpy/core/include \
-           -L/usr/include/python3.8/libs \
-           -lpython3.8 \
-           -lm \
-           -pthread \
-           -g
+CXXFLAGS = -pthread \
+           -lgtest \
+           -lgtest_main
 
 SRC_DIR = src
 BUILD_DIR = build

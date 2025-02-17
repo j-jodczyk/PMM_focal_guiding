@@ -53,8 +53,16 @@ namespace pmm_focal
             return mean + covariance.llt().matrixL() * z;
         }
 
+        void deactivate(size_t dims) {
+            weight = 0;
+            mean = Eigen::VectorXd::Zero(dims);
+            covariance = Eigen::MatrixXd::Zero(dims, dims);
+            priorSampleCount = 0;
+        }
+
         std::string toString() const {
             std::ostringstream oss;
+            // todo: apperently now this throws - wtf?
             oss << "weight = " << getWeight() << " mean = " << getMeanStr() << " covaraince = " << getCovarianceStr();
             return oss.str();
         }

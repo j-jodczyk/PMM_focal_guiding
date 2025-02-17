@@ -55,8 +55,9 @@ private:
     double alpha;
     double splittingThreshold;
     double mergingThreshold;
-    u_int16_t minNumComp;
-    u_int16_t maxNumComp;
+    size_t minNumComp;
+    size_t maxNumComp;
+    std::atomic<size_t> numActiveComponents;
     AABB m_aabb;
     size_t m_dimension;
 
@@ -89,47 +90,44 @@ private:
         size_t N = 0;
         size_t NNew = batch.size();
 
-        for (const auto& comp : components) {
-            N += comp.getPriorSampleCount();
+        for (size_t i = 0; i < numActiveComponents; ++i) {
+            N += components[i].getPriorSampleCount();
         }
 
         // double weightSum = 0;
         std::vector<size_t> componentIdxToDelete;
-        for (size_t j = 0; j < components.size(); ++j) {
+        for (size_t j = 0; j < numActiveComponents; ++j) {
             auto& comp = components[j];
-            if (j >= responsibilities.cols()) {
-                SLog(mitsuba::EInfo, "j = %d, responsibilities.cols() = %d", j, responsibilities.cols());
+            if (j >= (size_t)responsibilities.cols()) {
+                // SLog(mitsuba::EInfo, "j = %d, responsibilities.cols() = %d", j, responsibilities.cols());
                 break; // TODO: probably do something better about this - maybe need to resize responsibilities (how do rebust vmm do it?)
             }
 
             double responsibilitySum = responsibilities.col(j).sum();
             if (responsibilitySum < 1e-6) {
-                // SLog(mitsuba::EWarn, "Responsibility sum is close to 0 - deleting the component");
                 componentIdxToDelete.push_back(j);
                 continue;
             }
             if (responsibilitySum != responsibilitySum) {
-                SLog(mitsuba::EInfo, "Crashing program - responsibility is -nan");
-                SLog(mitsuba::EInfo, this->toString().c_str());
+                // SLog(mitsuba::EInfo, "Crashing program - responsibility is -nan");
+                // SLog(mitsuba::EInfo, this->toString().c_str());
+                throw std::runtime_error("Responsibility cannot be nan");
             }
-            assert(responsibilitySum == responsibilitySum);
             double newWeight = responsibilitySum / NNew;
             assert(!std::isinf(newWeight));
-            // weightSum += newWeight;
 
             Eigen::VectorXd newMean(comp.getMean().size());
             newMean.setZero();
             for (size_t i = 0; i < NNew; i++) {
                 newMean += responsibilities(i, j) * batch[i].point;
-                // SLog(mitsuba::EInfo, "Responsibility = %f", responsibilities(i, j));
             }
 
             newMean /= responsibilitySum;
             if(!newMean.allFinite()) {
-                SLog(mitsuba::EInfo, this->toString().c_str());
-                SLog(mitsuba::EInfo, "ResponsibilitySum = %f", responsibilitySum);
-                SLog(mitsuba::EInfo, "Mean: %f, %f, %f", newMean[0], newMean[1], newMean[2]);
-                assert(newMean.allFinite());
+                // SLog(mitsuba::EInfo, this->toString().c_str());
+                // SLog(mitsuba::EInfo, "ResponsibilitySum = %f", responsibilitySum);
+                // SLog(mitsuba::EInfo, "Mean: %f, %f, %f", newMean[0], newMean[1], newMean[2]);
+                throw std::runtime_error("new mean must be finite number");
             }
 
             Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(comp.getMean().size(), comp.getMean().size());
@@ -144,32 +142,23 @@ private:
         }
 
         if (componentIdxToDelete.size() == components.size()) {
-            SLog(mitsuba::EWarn, "All components are supposed to be deleted... not sure what to do about this");
+            // SLog(mitsuba::EWarn, "All components are supposed to be deleted... not sure what to do about this");
         }
 
-        int componentCountAfterDeleting = components.size() - componentIdxToDelete.size();
-        std::sort(componentIdxToDelete.rbegin(), componentIdxToDelete.rend()); // reverse sort so we don't invalidate idxs
-        for (int idx : componentIdxToDelete)
-            components.erase(components.begin() + idx);
-
-        // if (weightSum != 1.0) {
-        //     for (size_t j = 0; j < components.size(); ++j) {
-        //         components[j].setWeight(components[j].getWeight() / weightSum);
-        //     }
-        // }
+        numActiveComponents = components.size() - componentIdxToDelete.size();
+        for (int idx : componentIdxToDelete) {
+            this->deactivateComponent(idx);
+        }
 
         // remove if weight too small
-        components.erase(
-            std::remove_if(components.begin(), components.end(),
-                [](const GaussianComponent& comp) {
-                    return comp.getWeight() < 1e-3;
-                }),
-            components.end()
-        );
+        for (size_t j = 0; j < numActiveComponents; ++j) {
+            if (components[j].getWeight() < 1e-3)
+                this->deactivateComponent(j);
+        }
 
         // splitting
-        for (size_t j = 0; j < components.size(); ++j) {
-            if (components.size() >= maxNumComp)
+        for (size_t j = 0; j < numActiveComponents; ++j) {
+            if (numActiveComponents >= maxNumComp)
                 break;
             // high condition number indicates that matrix is close to being singular (det near 0), or its eigenbalues vary widely in magnitude.
             double conditionNumber = components[j].getCovariance().norm() * components[j].getCovariance().inverse().norm();
@@ -180,53 +169,43 @@ private:
         }
 
         // merging - when components too similar
-        for (size_t i = 0; i < components.size(); ++i) {
-            for (size_t j = i + 1; j < components.size(); ++j) {
-                if (components.size() <= minNumComp)
+        for (size_t i = 0; i < numActiveComponents; ++i) {
+            for (size_t j = i + 1; j < numActiveComponents; ++j) {
+                if (numActiveComponents <= minNumComp)
                     break;
-                if (components[i].getMean().cols() != components[j].getMean().cols()) {
-                    SLog(mitsuba::EInfo, this->toString().c_str());
-                }
                 double distance = (components[i].getMean() - components[j].getMean()).norm();
                 if (distance < mergingThreshold) {
-                    // SLog(mitsuba::EInfo, "Merging");
                     mergeComponents(i, j);
                     break;
                 }
             }
         }
 
-
-        // todo: if this is needed, then weights need to be thought through
-        // if (componentCountAfterDeleting < minNumComp) {
-        //     int componentsToCreateCount = minNumComp - componentCountAfterDeleting;
-        //     // SLog(mitsuba::EInfo, "Too many components to delete, will initialize %d new components", componentsToCreateCount);
-        //     components.resize(components.size() + componentsToCreateCount);
-        //     for (size_t i = componentsToCreateCount; i < components.size(); i++) {
-        //         GaussianComponent& comp = components[i];
-        //         initComponentMean(comp);
-        //         initComponentCovaraince(comp);
-        //     }
-        // }
-
         // final weight recount
         double weightSum = 0;
-        for (auto& component : components) {
-            weightSum += component.getWeight();
+        for (size_t i = 0; i < numActiveComponents; ++i) {
+            weightSum += components[i].getWeight();
         }
 
-        for (size_t j = 0; j < components.size(); ++j) {
+        for (size_t j = 0; j < numActiveComponents; ++j) {
             components[j].setWeight(components[j].getWeight() / weightSum);
         }
+    }
 
+public:
+    void deactivateComponent(int idx) {
+        components[idx].deactivate(m_dimension);
+        numActiveComponents--;
+        std::swap(components[idx], components[numActiveComponents]);
     }
 
     void splitComponent(size_t index) {
         // assert(mtx.try_lock() == false);
         // boost::unique_lock<boost::shared_mutex> lock(mtx);
-        if (components.size() > maxNumComp)
-            SLog(mitsuba::EInfo, "splitting despite too large count of components");
-        if (index >= components.size()) return;
+        if (components.size() == numActiveComponents) {
+            // SLog(mitsuba::EInfo, "Called splitting function at components capacity - returning without split");
+            return;
+        }
 
         GaussianComponent& comp = components[index];
 
@@ -243,42 +222,54 @@ private:
         Eigen::MatrixXd perturbation = Eigen::MatrixXd::Identity(comp.getCovariance().rows(), comp.getCovariance().cols()) * 0.05;
         comp.setCovariance(comp.getCovariance() * 0.5 + perturbation);
 
+        newComp.setWeight(comp.getWeight());
         newComp.setMean(mean - 2 * offset);
         newComp.setCovariance(comp.getCovariance());
         newComp.setPriorSampleCount(comp.getPriorSampleCount());
         newComp.setCovariance(comp.getCovariance());
 
-        components.push_back(newComp);
+        numActiveComponents++;
+        components[numActiveComponents-1] = newComp;
+        // SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
     void mergeComponents(size_t index1, size_t index2) {
         // assert(mtx.try_lock() == false);
         // boost::unique_lock<boost::shared_mutex> lock(mtx);
-        if (components.size() < minNumComp)
-            SLog(mitsuba::EInfo, "merging despite too small count of components");
+        if (numActiveComponents == minNumComp) {
+            // SLog(mitsuba::EInfo, "Called merge function when minumum number of components already reached. Returing without merge");
+            return;
+        }
+        // sanity check:
         if (index1 >= components.size() || index2 >= components.size() || index1 == index2) return;
 
-        GaussianComponent& comp1 = components[index1];
-        GaussianComponent& comp2 = components[index2];
+        size_t earlierIdx = index1 < index2 ? index1 : index2;
+        size_t laterIdx = index1 < index2 ? index2 : index1;
 
-        double totalWeight = comp1.getWeight() + comp2.getWeight();
-        Eigen::VectorXd mergedMean = (comp1.getWeight() * comp1.getMean() + comp2.getWeight() * comp2.getMean()) / totalWeight;
+        GaussianComponent& earlierComponent = components[earlierIdx];
+        GaussianComponent& laterComponent = components[laterIdx];
+
+        double totalWeight = earlierComponent.getWeight() + laterComponent.getWeight();
+        Eigen::VectorXd mergedMean = (
+            earlierComponent.getWeight() * earlierComponent.getMean()
+            + laterComponent.getWeight() * laterComponent.getMean()) / totalWeight;
 
         Eigen::MatrixXd mergedConvs =
-            (comp1.getWeight() * (comp1.getCovariance() + (comp1.getMean() - mergedMean) * (comp1.getMean() - mergedMean).transpose()) +
-             comp2.getWeight() * (comp2.getCovariance() + (comp2.getMean() - mergedMean) * (comp2.getMean() - mergedMean).transpose())) /
+            (earlierComponent.getWeight() * (earlierComponent.getCovariance() + (earlierComponent.getMean() - mergedMean) * (earlierComponent.getMean() - mergedMean).transpose()) +
+             laterComponent.getWeight() * (laterComponent.getCovariance() + (laterComponent.getMean() - mergedMean) * (laterComponent.getMean() - mergedMean).transpose())) /
             totalWeight;
 
-        comp1.setWeight(totalWeight);
-        comp1.setMean(mergedMean);
-        comp1.setCovariance(mergedConvs);
-        comp1.setPriorSampleCount(comp1.getPriorSampleCount() + comp2.getPriorSampleCount());
+        earlierComponent.setWeight(totalWeight);
+        earlierComponent.setMean(mergedMean);
+        earlierComponent.setCovariance(mergedConvs);
+        earlierComponent.setPriorSampleCount(earlierComponent.getPriorSampleCount() + laterComponent.getPriorSampleCount());
 
-        components.erase(components.begin() + index2);
+        deactivateComponent(laterIdx);
+
+        // no need to swap or decrease the number of active components because deactiveComponents already does it
+        // SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
-
-public:
     GaussianMixtureModel() {}
 
     void setAlpha(double newAlpha) { alpha = newAlpha; };
@@ -287,8 +278,13 @@ public:
     double getMergingThreshold() { return mergingThreshold; };
     void setMergingThreshold(double newThreshold) { mergingThreshold = newThreshold; };
 
-    void setMinNumComp(u_int16_t newMinNumComp) { minNumComp = newMinNumComp; };
-    void setMaxNumComp(u_int16_t newMaxNumComp) { maxNumComp = newMaxNumComp; };
+    size_t getMinNumComp() { return minNumComp; };
+    size_t getMaxNumComp() { return maxNumComp; };
+    size_t getNumActiveComponents() { return numActiveComponents; };
+    void setMinNumComp(size_t newMinNumComp) { minNumComp = newMinNumComp; };
+    void setMaxNumComp(size_t newMaxNumComp) { maxNumComp = newMaxNumComp; };
+
+    std::vector<GaussianComponent> getComponents() { return components; };
 
     void initComponentMean(GaussianComponent& comp) {
         std::random_device rd;
@@ -311,13 +307,23 @@ public:
     void init(size_t numComponents, size_t dimension, const AABB& aabb) {
         m_aabb = aabb;
         m_dimension = dimension;
+        if (components.size() != maxNumComp)
+            components.resize(maxNumComp);
 
-        components.resize(numComponents);
-        for (auto& comp : components) {
-            comp.setWeight(1.0 / numComponents);
-            initComponentMean(comp);
-            initComponentCovaraince(comp);
+        for (size_t i = 0; i < numComponents; ++i) {
+            auto& component = components[i];
+            component.setWeight(1.0 / numComponents);
+            initComponentMean(component);
+            initComponentCovaraince(component);
         }
+        numActiveComponents = numComponents;
+
+        // the rest of the components are initated with zero values
+        for (size_t i = numComponents; i < maxNumComp; ++i) {
+            components[i].deactivate(m_dimension);
+        }
+
+        // SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
     void resetComponent(GaussianComponent& component) {
@@ -336,15 +342,17 @@ public:
     }
 
      void processBatch(const std::vector<WeightedSample>& batch) {
+        // unique_lock is used for EXCLUSIVE WRITE access during modifications.
+        // shared_lock is used for READ access in functions like sample and during the E-step of processBatch.
         // TODO: there must be a better way to do this, but for now:
         boost::unique_lock<boost::shared_mutex> lock(mtx);
 
-        Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
+        Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size()); // responsibilities have fixed size - thread friendly
 
         // E-step
         {
             // boost::shared_lock<boost::shared_mutex> lock(mtx);
-            for (size_t j = 0; j < components.size(); ++j) {
+            for (size_t j = 0; j < numActiveComponents; ++j) {
                 for (size_t i = 0; i < batch.size(); ++i) {
                     double resp = components[j].getWeight() * pdf(batch[i].point, components[j]);
                     responsibilities(i, j) = resp * batch[i].weight;
@@ -354,13 +362,14 @@ public:
         }
 
         // Normalize responsibilities
-        for (int i = 0; i < responsibilities.rows(); ++i) {
+        for (int i = 0; i < responsibilities.rows(); ++i) { // rows is batch.size()
             responsibilities.row(i) /= responsibilities.row(i).sum();
         }
 
         // M-step
         {
             // boost::unique_lock<boost::shared_mutex> lock(mtx);
+            // SLog(mitsuba::EInfo, "Sufficient Statistics mutex on");
             updateSufficientStatistics(batch, responsibilities);
             // SLog(mitsuba::EInfo, "Sufficient Statistics mutex release");
         }
@@ -382,9 +391,11 @@ public:
     std::string toString() const
     {
         std::ostringstream oss;
+        oss << "final count of components: " << numActiveComponents << "\n";
+        oss << "true components size: " << components.size() << "\n";
         oss << "GMM[";
-        for (const auto& component : components) {
-            oss << component.toString() << "\n";
+        for (size_t i = 0; i < components.size(); ++i) {
+            oss << components[i].toString() << "\n";
         }
         oss << "]";
         return oss.str();
