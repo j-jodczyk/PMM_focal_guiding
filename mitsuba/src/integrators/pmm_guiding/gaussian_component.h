@@ -46,11 +46,13 @@ namespace pmm_focal
 
         Eigen::VectorXd sample(std::mt19937& gen) const {
             std::normal_distribution<> dist(0.0, 1.0);
-            Eigen::VectorXd z(mean.size());
-            for (int i = 0; i < mean.size(); ++i) {
+            auto meanCopy = mean;
+            size_t meanSize = meanCopy.size();
+            Eigen::VectorXd z(meanSize);
+            for (size_t i = 0; i < meanSize; ++i) {
                 z[i] = dist(gen);
             }
-            return mean + covariance.llt().matrixL() * z;
+            return meanCopy + covariance.llt().matrixL() * z;
         }
 
         void deactivate(size_t dims) {

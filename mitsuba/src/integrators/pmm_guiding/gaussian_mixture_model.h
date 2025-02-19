@@ -252,7 +252,7 @@ public:
         GaussianComponent& laterComponent = components[laterIdx];
 
         if (earlierComponent.getWeight() == 0 || laterComponent.getWeight() == 0) {
-            SLog(mitsuba::EInfo, "Trying to merge components, when one of them is inactive - returing");
+            // SLog(mitsuba::EInfo, "Trying to merge components, when one of them is inactive - returing");
             return;
         }
 
@@ -354,7 +354,7 @@ public:
         // unique_lock is used for EXCLUSIVE WRITE access during modifications.
         // shared_lock is used for READ access in functions like sample and during the E-step of processBatch.
         // TODO: there must be a better way to do this, but for now:
-        // boost::unique_lock<boost::shared_mutex> lock(mtx);
+        boost::unique_lock<boost::shared_mutex> lock(mtx);
 
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
 
@@ -376,7 +376,7 @@ public:
 
         // M-step
         {
-            boost::unique_lock<boost::shared_mutex> lock(mtx);
+            // boost::unique_lock<boost::shared_mutex> lock(mtx);
             updateSufficientStatistics(batch, responsibilities);
         }
     }
@@ -385,14 +385,20 @@ public:
         // boost::shared_lock<boost::shared_mutex> lock(mtx);
         std::vector<double> weights;
         for (size_t i; i < numActiveComponents.load(); ++i) {
-            weights.push_back(components[i].getWeight());
+            if (components.size() < numActiveComponents.load()) {
+                SLog(mitsuba::EInfo, "List of components is smaller than it claims to be: expected %d, but got %d", numActiveComponents.load(), components.size());
+                throw std::runtime_error("List of components is smaller than it claims to be");
+            }
+            auto component = components[i];
+            weights.push_back(component.getWeight());
         }
 
         std::discrete_distribution<> componentDist(weights.begin(), weights.end());
         const GaussianComponent& selectedComponent = components[componentDist(gen)];
 
         if (selectedComponent.getWeight() == 0) {
-            SLog(mitsuba::EInfo, "Sampled component with 0 weight (currently not active)"); // hopefully we'll never see this log
+            // todo: this cannot happen
+            SLog(mitsuba::EInfo, "Sampled component with 0 weight (currently not active)");
         }
 
         return selectedComponent.sample(gen);
