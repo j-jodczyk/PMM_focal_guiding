@@ -46,6 +46,16 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     mutable pmm_focal::GaussianMixtureModel<Scalar, EnvMitsuba3D> m_gmm;
     ref<Timer> m_timer;
     uint32_t m_renderMaxSeconds;
+    AABB sceneSpace;
+    mutable std::vector<std::vector<pmm_focal::WeightedSample>> perThreadSamples;
+    mutable std::vector<std::vector<pmm_focal::WeightedSample>> perThreadZeroValuedSamples;
+    mutable std::atomic<size_t> maxThreadId;
+
+    mutable PrimitiveThreadLocal<bool> threadLocalInitialized;
+    uint32_t minSamplesToStartFitting;
+    uint32_t samplesPerIteration;
+    bool training; // only collecting samples while training
+
 
 public:
     PMMFocalGuidingIntegrator(const Properties &props)
@@ -63,16 +73,148 @@ public:
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 4));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
 
-            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL));
-            this->m_maxDepth = 10;
+            minSamplesToStartFitting = static_cast<uint32_t>(props.getSize("minSamplesToStartFitting", 12)); // todo: change to 128
+            samplesPerIteration = static_cast<uint32_t>(props.getSize("samplesPerIteration", 4));
+
+            Log(EInfo, "minSamplesToStartFitting = %zu", minSamplesToStartFitting);
+
+            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL)); // todo: for now, we don't do anything with this
+            this->m_maxDepth = 3;
+            m_timer = new Timer{false};
             Log(EInfo, this->toString().c_str());
         }
 
     PMMFocalGuidingIntegrator(Stream *stream, InstanceManager *manager)
         : MonteCarloIntegrator(stream, manager) { }
 
-    bool render(Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
+    bool preprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
+        Log(EInfo, "Starting preprocess");
 
+        sceneSpace = scene->getAABB();
+
+        m_octree.setAABB(scene->getAABB());
+        m_gmm.init(m_gmm.getMinNumComp(), 3, scene->getAABB());
+
+        Log(EInfo, m_gmm.toString().c_str());
+
+        // per thread storage for sample data
+        ref<Scheduler> sched = Scheduler::getInstance();
+        const size_t nCores = sched->getCoreCount();
+        // m_perThreadIntersectionData.resize(nCores);
+        perThreadSamples.resize(nCores);
+        perThreadZeroValuedSamples.resize(nCores);
+        maxThreadId.store(0);
+
+        train(static_cast<Scene*>(sched->getResource(sceneResID)), queue, job, sensorResID);
+
+        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
+        iterationPreprocess(sensor->getFilm());
+
+        training = false;
+
+        return true;
+    }
+
+    void train(Scene *scene, RenderQueue *queue, const RenderJob *job, int sensorResID) {
+        training = true;
+
+        ref<Scheduler> sched = Scheduler::getInstance();
+        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
+        ref<Film> film = sensor->getFilm();
+
+        // create copy of the scene
+        ref<Scene> trainingScene = new Scene(scene);
+        const int trainingSceneResID = sched->registerResource(trainingScene);
+
+        Log(EInfo, "Starting training...");
+
+        int trainingSamples = 10; // todo make it parameter
+        for (int i = 0; i < trainingSamples; ++i) {
+            Log(EInfo, "Rendering %i iteration", i);
+
+            Properties trainingSamplerProps = scene->getSampler()->getProperties();
+            ref<Sampler> trainingSampler = static_cast<Sampler*>(PluginManager::getInstance()->createObject(MTS_CLASS(Sampler), trainingSamplerProps));
+            trainingSampler->configure();
+
+            trainingScene->setSampler(trainingSampler);
+
+            /* Create a sampler instance for every core */
+            std::vector<SerializableObject *> samplers(sched->getCoreCount());
+            for (size_t i=0; i<sched->getCoreCount(); ++i) {
+                ref<Sampler> clonedSampler = trainingSampler->clone();
+                clonedSampler->incRef();
+                samplers[i] = clonedSampler.get();
+            }
+
+            int trainingSamplerResID = sched->registerMultiResource(samplers);
+
+            for (size_t i=0; i<sched->getCoreCount(); ++i)
+                samplers[i]->decRef();
+
+            iterationPreprocess(film);
+            // fully render training scene
+            // okay, it does make sence - we update gmm after every render, so each training iteration, gmm should be getting smarter
+            SamplingIntegrator::render(trainingScene, queue, job, trainingSceneResID, sensorResID, trainingSamplerResID);
+            iterationPostprocess(film, samplesPerIteration, job); // this is where we update the gmm
+
+            sched->unregisterResource(trainingSamplerResID);
+        }
+
+        Log(EInfo, "Finished training phase. Starting real rendering.");
+    }
+
+    void iterationPreprocess(ref<Film> film)
+    {
+        film->clear();
+        Statistics::getInstance()->resetAll();
+
+        m_timer->reset();
+    }
+
+    void iterationPostprocess(const ref<Film> film, uint32_t numSPP, const RenderJob *job) {
+        const Float renderTime = m_timer->stop();
+        // Log(EInfo, "Post processing of the rendering iteration");
+        Log(EInfo, "iteration render time: %s", timeString(renderTime, true).c_str());
+
+        if (!training)
+            return;
+
+        const size_t numValidSamples = std::accumulate(perThreadSamples.begin(), perThreadSamples.end(), 0UL,
+            [](size_t sum, const std::vector<pmm_focal::WeightedSample>& samples) -> size_t { return sum+samples.size(); });
+
+        // todo: probably we would like to skip, but honestly idk, maybe not
+        // if (numValidSamples < minSamplesToStartFitting) {
+        //     Log(EInfo, "skipping fit due to insufficient sample data (got %zu/%zu valid samples).", numValidSamples, minSamplesToStartFitting);
+        //     return;
+        // }
+        Log(EInfo, "Collected %i valid samples", numValidSamples);
+
+        m_timer->reset();
+        // flatten the samples vector
+        std::vector<pmm_focal::WeightedSample> iterationSamples = std::accumulate(perThreadSamples.begin(), perThreadSamples.end(), std::vector<pmm_focal::WeightedSample>{},
+        [](std::vector<pmm_focal::WeightedSample>& acc, const std::vector<pmm_focal::WeightedSample>& vec) {
+            acc.insert(acc.end(), vec.begin(), vec.end());
+            return acc;
+        });
+
+        // flatten the zero-samples vector
+        std::vector<pmm_focal::WeightedSample> iterationZeroValuedSamples = std::accumulate(perThreadZeroValuedSamples.begin(), perThreadZeroValuedSamples.end(), std::vector<pmm_focal::WeightedSample>{},
+        [](std::vector<pmm_focal::WeightedSample>& acc, const std::vector<pmm_focal::WeightedSample>& vec) {
+            acc.insert(acc.end(), vec.begin(), vec.end());
+            return acc;
+        });
+
+        Log(EInfo, "Got %i non-zero samples and %i zero samples", iterationSamples.size(), iterationZeroValuedSamples.size());
+        m_gmm.processBatch(iterationSamples);
+        const Float postprocessingTime = m_timer->stop();
+        Log(EInfo, "iteration postprocessing time: %s", timeString(postprocessingTime, true).c_str());
+        m_timer->reset();
+        Log(EInfo, m_gmm.toString().c_str());
+        Log(EInfo, m_octree.toString().c_str());
+        Log(EDebug, m_octree.toStringVerbose().c_str());
+    }
+
+    bool render(Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
         ref<Timer> renderTimer = new Timer{};
 
         ref<Scheduler> sched = Scheduler::getInstance();
@@ -90,12 +232,9 @@ public:
 
         int integratorResID = sched->registerResource(this);
 
-        m_octree.setAABB(scene->getAABB());
-        m_gmm.init(m_gmm.getMinNumComp(), 3, scene->getAABB());
-
-        Log(EInfo, m_gmm.toString().c_str());
-        Log(EInfo, m_octree.toString().c_str());
-        Log(EDebug, m_octree.toStringVerbose().c_str());
+        // Log(EInfo, m_gmm.toString().c_str());
+        // Log(EInfo, m_octree.toString().c_str());
+        // Log(EDebug, m_octree.toStringVerbose().c_str());
 
         Float totalRenderTime;
         Float iterationRenderTime;
@@ -114,13 +253,15 @@ public:
 
             m_process = proc;
             sched->wait(proc);
+            // so here the process is finished - I would then execute the gmm updates...
             m_process = nullptr;
+
             status = proc->getReturnStatus();
 
             iterationRenderTime = renderTimer->lap();
             totalRenderTime = renderTimer->getSeconds();
             ++iterations;
-        } while(status == ParallelProcess::ESuccess && totalRenderTime + iterationRenderTime < m_renderMaxSeconds);
+        } while(status == ParallelProcess::ESuccess); // && totalRenderTime + iterationRenderTime < m_renderMaxSeconds);
 
         Log(EInfo, "rendered %zu samples per pixel in %s.", iterations*sampler->getSampleCount(), timeString(renderTimer->getMilliseconds()/1000.0f, true).c_str());
         sched->unregisterResource(integratorResID);
@@ -144,7 +285,7 @@ public:
         // EDelta means discrete number of directions
         // - unsuitable for guiding or importance sampling based on density distributions
         // that work over ranges of directions
-        if ((type & BSDF::EDelta) == (type & BSDF::EAll)) { // || m_iteration == 0) {
+        if ((type & BSDF::EDelta) == (type & BSDF::EAll)) { // || m_iteration == 0)
             auto result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
             woPdf = bsdfPdf;
             return result; // woPdf and bsdfPdf set - it's fine
@@ -210,9 +351,17 @@ public:
 
     Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
         Spectrum Li(0.0f);
+        Spectrum learnedContribution(0.f);
 
-        if (m_maxDepth >=0 && rRec.depth > m_maxDepth) {
-            return Li;
+        static thread_local std::vector<pmm_focal::WeightedSample>* samples {nullptr};
+        static thread_local std::vector<pmm_focal::WeightedSample>* zeroValuedSamples {nullptr}; // todo: might not be WeigthedSample
+
+        // init thread variables
+        if (training && !threadLocalInitialized.get()) {
+            const size_t threadId = maxThreadId.fetch_add(1, std::memory_order_relaxed);
+            samples = &perThreadSamples.at(threadId);
+            zeroValuedSamples = &perThreadZeroValuedSamples.at(threadId);
+            threadLocalInitialized.get() = true;
         }
 
         /* Some aliases and local variables */
@@ -230,92 +379,88 @@ public:
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
 
-        if (!its.isValid()) {
-            /* If no intersection could be found, potentially return
-                radiance from a environment luminaire if it exists */
-            if ((rRec.type & RadianceQueryRecord::EEmittedRadiance)
+        while (rRec.depth <= m_maxDepth || m_maxDepth < 0) {
+            if (!its.isValid()) {
+                /* If no intersection could be found, potentially return
+                    radiance from a environment luminaire if it exists */
+                if ((rRec.type & RadianceQueryRecord::EEmittedRadiance)
+                    && (!m_hideEmitters || scattered))
+                    Li += throughput * scene->evalEnvironment(ray);
+                break;
+            }
+
+            const BSDF *bsdf = its.getBSDF(ray);
+
+            /* Possibly include emitted radiance if requested */
+            if (its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)
                 && (!m_hideEmitters || scattered))
-                Li += throughput * scene->evalEnvironment(ray);
-            return Li;
-        }
+                Li += throughput * its.Le(-ray.d);
 
-        const BSDF *bsdf = its.getBSDF(ray);
+            /* Include radiance from a subsurface scattering model if requested */
+            if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance))
+                Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
 
-        /* Possibly include emitted radiance if requested */
-        if (its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)
-            && (!m_hideEmitters || scattered))
-            Li += throughput * its.Le(-ray.d);
+            if ((rRec.depth >= m_maxDepth && m_maxDepth > 0)
+                || (m_strictNormals && dot(ray.d, its.geoFrame.n)
+                    * Frame::cosTheta(its.wi) >= 0)) {
 
-        /* Include radiance from a subsurface scattering model if requested */
-        if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance))
-            Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
+                /* Only continue if:
+                    1. The current path length is below the specifed maximum
+                    2. If 'strictNormals'=true, when the geometric and shading
+                        normals classify the incident direction to the same side */
+                break;
+            }
 
-        if ((rRec.depth >= m_maxDepth && m_maxDepth > 0)
-            || (m_strictNormals && dot(ray.d, its.geoFrame.n)
-                * Frame::cosTheta(its.wi) >= 0)) {
+            /* ==================================================================== */
+            /*                     Direct illumination sampling                     */
+            /* ==================================================================== */
 
-            /* Only continue if:
-                1. The current path length is below the specifed maximum
-                2. If 'strictNormals'=true, when the geometric and shading
-                    normals classify the incident direction to the same side */
-            return Li;
-        }
+            /* Estimate the direct illumination if this is requested */
+            DirectSamplingRecord dRec(its);
 
-        Spectrum learnedContribution(0.f);
+            if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
+                (bsdf->getType() & BSDF::ESmooth)) {
+                Spectrum value = scene->sampleEmitterDirect(dRec, rRec.nextSample2D());
+                if (!value.isZero()) {
+                    // so this is almost never true for our scenes - no wonder, it's very difficult to hit the emitter
+                    const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
 
-        /* ==================================================================== */
-        /*                     Direct illumination sampling                     */
-        /* ==================================================================== */
+                    /* Allocate a record for querying the BSDF */
+                    BSDFSamplingRecord bRec(its, its.toLocal(dRec.d), ERadiance);
 
-        /* Estimate the direct illumination if this is requested */
-        DirectSamplingRecord dRec(its);
+                    /* Evaluate BSDF * cos(theta) */
+                    const Spectrum bsdfVal = bsdf->eval(bRec);
 
-        if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
-            (bsdf->getType() & BSDF::ESmooth)) {
-            Spectrum value = scene->sampleEmitterDirect(dRec, rRec.nextSample2D());
-            if (!value.isZero()) {
-                // so this is almost never true for our scenes - no wonder, it's very difficult to hit the emitter
-                const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
+                    /* Prevent light leaks due to the use of shading normals */
+                    if (!bsdfVal.isZero() && (!m_strictNormals
+                            || dot(its.geoFrame.n, dRec.d) * Frame::cosTheta(bRec.wo) > 0)) {
 
-                /* Allocate a record for querying the BSDF */
-                BSDFSamplingRecord bRec(its, its.toLocal(dRec.d), ERadiance);
+                        /* Calculate prob. of having generated that direction
+                            using BSDF sampling */
+                            // it both other solutions here is where pdf is calculated from guided distribution
+                        Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle)
+                            ? bsdf->pdf(bRec) : 0; // should this be also guided somehow?
 
-                /* Evaluate BSDF * cos(theta) */
-                const Spectrum bsdfVal = bsdf->eval(bRec);
-
-                /* Prevent light leaks due to the use of shading normals */
-                if (!bsdfVal.isZero() && (!m_strictNormals
-                        || dot(its.geoFrame.n, dRec.d) * Frame::cosTheta(bRec.wo) > 0)) {
-
-                    /* Calculate prob. of having generated that direction
-                        using BSDF sampling */
-                        // it both other solutions here is where pdf is calculated from guided distribution
-                    Float bsdfPdf = (emitter->isOnSurface() && dRec.measure == ESolidAngle)
-                        ? bsdf->pdf(bRec) : 0;
-
-                    /* Weight using the power heuristic */
-                    Float weight = miWeight(dRec.pdf, bsdfPdf);
-                    // Log(EInfo, ("throughput = " + throughput.toString() + " value = " + value.toString() + " bsdfVal = " + bsdfVal.toString() + " weight = %f").c_str(), weight);
-                    Li += throughput * value * bsdfVal * weight;
+                        /* Weight using the power heuristic */
+                        Float weight = miWeight(dRec.pdf, bsdfPdf);
+                        // Log(EInfo, ("throughput = " + throughput.toString() + " value = " + value.toString() + " bsdfVal = " + bsdfVal.toString() + " weight = %f").c_str(), weight);
+                        Li += throughput * value * bsdfVal * weight;
+                    }
                 }
             }
-        }
 
-        /* ==================================================================== */
-        /*                            BSDF sampling                             */
-        /* ==================================================================== */
+            /* ==================================================================== */
+            /*                            BSDF sampling                             */
+            /* ==================================================================== */
 
-        /* Sample BSDF * cos(theta) */
-        Float bsdfPdf, woPdf;
-        Float bsdfSamplingFraction = 0.5;
+            /* Sample BSDF * cos(theta) */
+            Float bsdfPdf, woPdf;
+            Float bsdfSamplingFraction = 0.5;
 
-        do {
-            thread_local std::vector<pmm_focal::WeightedSample> samples;
             BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
+
             // here is where sampling takes place -- should sample guided
-            // Spectrum bsdfWeight = bsdf->sample(bRec, bsdfPdf, rRec.nextSample2D());
             Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, bsdfSamplingFraction, rRec);
-            // Log(EInfo, "bsdfPdf = %f, woPdf = %f", bsdfPdf, woPdf);
             if (bsdfWeight.isZero()) // this is why woPdf and bsdfPdf doesn't matter here
                 break;
 
@@ -323,6 +468,7 @@ public:
 
             /* Prevent light leaks due to the use of shading normals */
             const Vector wo = its.toWorld(bRec.wo);
+
             Float woDotGeoN = dot(its.geoFrame.n, wo);
             if (m_strictNormals && woDotGeoN * Frame::cosTheta(bRec.wo) <= 0)
                 break;
@@ -371,11 +517,10 @@ public:
                     implemented direct illumination sampling technique */
                 const Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ?
                     scene->pdfEmitterDirect(dRec) : 0;
-
                 Float weight = miWeight(woPdf, lumPdf);
                 Li += throughput * value * weight;
 
-                Log(EInfo, ("Throughput = " + throughput.toString() + " value = " + value.toString() + " weight = %f").c_str(), weight);
+                // Log(EInfo, ("Throughput = " + throughput.toString() + " value = " + value.toString() + " weight = %f").c_str(), weight);
                 learnedContribution += throughput * value * weight;
             }
 
@@ -387,11 +532,8 @@ public:
                 BSDF sample or if indirect illumination was not requested */
             if (!its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance))
                 break;
+
             rRec.type = RadianceQueryRecord::ERadianceNoEmission;
-            rRec.depth ++;
-            auto liNested = this->Li(r, rRec);
-            Li += bsdfWeight * liNested;
-            learnedContribution += bsdfWeight * liNested;
 
             if (rRec.depth++ >= m_rrDepth) {
                 /* Russian roulette: try to keep path weights equal to one,
@@ -405,48 +547,46 @@ public:
                 throughput /= q;
             }
 
-            // splat
-            const BSDF *endpointBSDF = its.getBSDF();
-            Float endpointRoughness = std::numeric_limits<Float>::infinity();
-            if (endpointBSDF) {
-                for (int comp = 0; comp < endpointBSDF->getComponentCount(); ++comp) {
-                    endpointRoughness = std::min(endpointRoughness, endpointBSDF->getRoughness(its, comp));
-                }
-            }
-            const bool endpointIsGlossy = endpointRoughness < 0.3f; // [Ruppert et al. 2020]
-            const Float splatDistance = endpointIsGlossy ?
-                std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
-                its.t;
-
-            float contribution = (learnedContribution * throughput).average();
-
-            if (contribution != 0) {
-                std::vector<AABB> leafAABBs;
-                m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
-                // Log(EInfo, "collect some samples because contribution is %f", contribution);
-                for (size_t i=0; i < leafAABBs.size(); i++) {
-                    auto leaf = leafAABBs[i];
-
-                    Eigen::VectorXd center(3);
-                    center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
-
-                    samples.push_back({center, 1.0}); // for now, everything has contribution 1
-                }
-            }
-
             /* Store statistics */
             avgPathLength.incrementBase();
             avgPathLength += rRec.depth;
 
-            if (samples.size() != 0) {
-                // SLog(EInfo, "process this batch");
-                m_gmm.processBatch(samples);
-                // int thread_id = mitsuba::Thread::getID();
-                // std::ostringstream filename;
-                // filename << "samples_thread_" << thread_id << ".txt";
-                // this->dumpVectorToTextFile(samples, filename.str());
+            if (training) {
+                // collect samples while training
+                const BSDF *endpointBSDF = its.getBSDF();
+                Float endpointRoughness = std::numeric_limits<Float>::infinity();
+                if (endpointBSDF) {
+                    for (int comp = 0; comp < endpointBSDF->getComponentCount(); ++comp) {
+                        endpointRoughness = std::min(endpointRoughness, endpointBSDF->getRoughness(its, comp));
+                    }
+                }
+                const bool endpointIsGlossy = endpointRoughness < 0.3f; // [Ruppert et al. 2020]
+                const Float splatDistance = endpointIsGlossy ?
+                    std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
+                    its.t;
+
+                float contribution = (learnedContribution * throughput).average();
+
+                if (contribution > 1e-6) {
+                    std::vector<AABB> leafAABBs;
+                    m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
+                    Log(EInfo, "collect some samples because contribution is %f", contribution);
+                    for (size_t i=0; i < leafAABBs.size(); i++) {
+                        auto leaf = leafAABBs[i];
+
+                        Eigen::VectorXd center(3);
+                        center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
+
+                        samples->push_back({center, std::log10(contribution)}); // let's try log10 contribution
+                    }
+                    Log(EInfo, "Currently collected %i samples", samples->size());
+                }
             }
-        } while (false);
+
+            // not doing this here anymore
+            // if (samples.size() != 0)
+            //     m_gmm.processBatch(samples);
+        }
         return Li;
     }
 
@@ -479,26 +619,16 @@ public:
         file.close();
     }
 
-    void iterationPreprocess(ref<Film> film)
-    {
-        film->clear();
-        Statistics::getInstance()->resetAll();
-
-        m_timer->reset();
-    }
-
-    bool preprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
-        ref<Scheduler> sched = Scheduler::getInstance();
-        ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
-        ref<Film> film = sensor->getFilm();
-        return true;
-    }
-
     void postprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID)
     {
+
         ref<Scheduler> sched = Scheduler::getInstance();
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
         ref<Film> film = sensor->getFilm();
+
+        iterationPostprocess(film, static_cast<uint32_t>(scene->getSampler()->getSampleCount()), job);
+        perThreadSamples.clear();
+        perThreadZeroValuedSamples.clear();
 
         Log(EInfo, m_gmm.toString().c_str());
     }

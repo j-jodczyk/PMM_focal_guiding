@@ -312,7 +312,6 @@ public:
     }
 
     void init(size_t numComponents, size_t dimension, const AABB& aabb) {
-        // NOTE: this is called outside of threading (todo: check) and therefore doesn't need any synchronization
         if (numComponents > maxNumComp)
             throw std::runtime_error("Too many components on initialization");
         m_aabb = aabb;
@@ -351,10 +350,10 @@ public:
     }
 
      void processBatch(const std::vector<WeightedSample>& batch) {
-        // unique_lock is used for EXCLUSIVE WRITE access during modifications.
-        // shared_lock is used for READ access in functions like sample and during the E-step of processBatch.
-        // TODO: there must be a better way to do this, but for now:
-        boost::unique_lock<boost::shared_mutex> lock(mtx);
+        // just a note:
+        //  unique_lock is used for EXCLUSIVE WRITE access during modifications.
+        //  shared_lock is used for READ access in functions like sample and during the E-step of processBatch.
+        // we do it outside of render - no need for locking - possibly need to parallelize later
 
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
 
@@ -376,7 +375,6 @@ public:
 
         // M-step
         {
-            // boost::unique_lock<boost::shared_mutex> lock(mtx);
             updateSufficientStatistics(batch, responsibilities);
         }
     }
