@@ -91,12 +91,16 @@ private:
         size_t N = 0;
         size_t NNew = batch.size();
 
-        for (size_t i = 0; i < numActiveComponents.load(); ++i) {
+        for (size_t i = 0; i < components.size(); ++i) {
+            if (components[i].getWeight() == 0)
+                continue;
             N += components[i].getPriorSampleCount();
         }
 
         std::vector<size_t> componentIdxToDelete;
-        for (size_t j = 0; j < numActiveComponents.load(); ++j) {
+        for (size_t j = 0; j < components.size(); ++j) {
+            if (components[j].getWeight() == 0)
+                continue;
             auto& comp = components[j];
             if (j >= (size_t)responsibilities.cols()) {
                 // SLog(mitsuba::EInfo, "j = %d, responsibilities.cols() = %d", j, responsibilities.cols());
@@ -140,12 +144,6 @@ private:
 
             comp.updateComponent(N, NNew, newMean, newCov, newWeight, alpha);
         }
-        SLog(mitsuba::EInfo, "Prior to deletion analysis");
-        SLog(mitsuba::EInfo, this->toString().c_str());
-
-        if (componentIdxToDelete.size() == components.size()) {
-            SLog(mitsuba::EWarn, "All components are supposed to be deleted... not sure what to do about this");
-        }
 
         numActiveComponents.store(components.size() - componentIdxToDelete.size());
         for (int idx : componentIdxToDelete) {
@@ -153,17 +151,19 @@ private:
         }
 
         // remove if weight too small
-        for (size_t j = 0; j < numActiveComponents.load(); ++j) {
+        for (size_t j = 0; j < components.size(); ++j) {
+            if (components[j].getWeight() == 0)
+                continue;
             if (components[j].getWeight() < 1e-3)
                 this->deactivateComponent(j);
         }
-        SLog(mitsuba::EInfo, "Prior to splitting analysis");
-        SLog(mitsuba::EInfo, this->toString().c_str());
 
         // splitting
-        for (size_t j = 0; j < numActiveComponents.load(); ++j) {
+        for (size_t j = 0; j < components.size(); ++j) {
             if (numActiveComponents.load() >= maxNumComp)
                 break;
+            if (components[j].getWeight() == 0)
+                continue;
             // high condition number indicates that matrix is close to being singular (det near 0), or its eigenbalues vary widely in magnitude.
             double conditionNumber = components[j].getCovariance().norm() * components[j].getCovariance().inverse().norm();
             if (conditionNumber > splittingThreshold) {
@@ -172,12 +172,13 @@ private:
             }
         }
 
-        SLog(mitsuba::EInfo, "Prior to merging");
-        SLog(mitsuba::EInfo, this->toString().c_str());
-
         // merging - when components too similar
         for (size_t i = 0; i < numActiveComponents.load(); ++i) {
+            if (components[i].getWeight() == 0)
+                continue;
             for (size_t j = i + 1; j < numActiveComponents.load(); ++j) {
+                if (components[j].getWeight() == 0)
+                    continue;
                 if (numActiveComponents.load() <= minNumComp)
                     break;
                 double distance = (components[i].getMean() - components[j].getMean()).norm();
@@ -190,23 +191,19 @@ private:
 
         // final weight recount
         double weightSum = 0;
-        for (size_t i = 0; i < numActiveComponents.load(); ++i) {
+        for (size_t i = 0; i < components.size(); ++i) {
             weightSum += components[i].getWeight();
         }
 
-        for (size_t j = 0; j < numActiveComponents.load(); ++j) {
+        for (size_t j = 0; j < components.size(); ++j) {
             components[j].setWeight(components[j].getWeight() / weightSum);
         }
-
-        SLog(mitsuba::EInfo, "Final");
-        SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
 public:
     void deactivateComponent(int idx) {
         components[idx].deactivate(m_dimension);
         numActiveComponents.fetch_sub(1);
-        std::swap(components[idx], components[numActiveComponents]);
     }
 
     void splitComponent(size_t index) {
@@ -239,10 +236,14 @@ public:
         newComp.setPriorSampleCount(comp.getPriorSampleCount());
         newComp.setCovariance(comp.getCovariance());
 
-        components[numActiveComponents.load()] = newComp; // todo: might need some synchronization around this
-                                                   // or check if components[numActiveComponents] has weight == 0
+        for (size_t i=0; i < components.size(); ++i) {
+            if (components[i].getWeight() == 0) {
+                // found first deactivated component - replace with the new one
+                components[i] = newComp;
+                break;
+            }
+        }
         numActiveComponents.fetch_add(1);
-        // SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
     void mergeComponents(size_t index1, size_t index2) {
@@ -367,8 +368,10 @@ public:
 
         // E-step
         {
-            for (size_t j = 0; j < numActiveComponents.load(); ++j) {
+            for (size_t j = 0; j < components.size(); ++j) {
                 auto component = components[j];
+                if (component.getWeight() == 0)
+                    continue;
                 for (size_t i = 0; i < batch.size(); ++i) {
                     double resp = component.getWeight() * pdf(batch[i].point, component);
                     responsibilities(i, j) = resp * batch[i].weight;
@@ -388,24 +391,18 @@ public:
     }
 
     Eigen::VectorXd sample(std::mt19937& gen) const {
-        // boost::shared_lock<boost::shared_mutex> lock(mtx);
+        // creating temp vector of active components
+        std::vector<std::reference_wrapper<const GaussianComponent>> filtered;
         std::vector<double> weights;
-        for (size_t i; i < numActiveComponents.load(); ++i) {
-            if (components.size() < numActiveComponents.load()) {
-                SLog(mitsuba::EInfo, "List of components is smaller than it claims to be: expected %d, but got %d", numActiveComponents.load(), components.size());
-                throw std::runtime_error("List of components is smaller than it claims to be");
-            }
-            auto component = components[i];
+        for (const auto& component : components) {
+            if (component.getWeight() == 0)
+                continue;
             weights.push_back(component.getWeight());
+            filtered.push_back(component);
         }
 
         std::discrete_distribution<> componentDist(weights.begin(), weights.end());
-        const GaussianComponent& selectedComponent = components[componentDist(gen)];
-
-        if (selectedComponent.getWeight() == 0) {
-            // todo: this cannot happen
-            SLog(mitsuba::EInfo, "Sampled component with 0 weight (currently not active)");
-        }
+        const GaussianComponent& selectedComponent = filtered[componentDist(gen)];
 
         return selectedComponent.sample(gen);
     }
@@ -415,9 +412,12 @@ public:
         std::ostringstream oss;
         oss << "GMM[\n";
         for (size_t i = 0; i < components.size(); ++i) {
+            if (components[i].getWeight() == 0)
+                continue; // no need to print deactivated components
             oss << components[i].toString() << "\n";
         }
-        oss << "]";
+        oss << "]\n";
+        oss << "Active component count: " << numActiveComponents; // sanity check if we do this correclty
         return oss.str();
     }
 

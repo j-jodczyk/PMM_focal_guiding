@@ -69,9 +69,9 @@ public:
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
 
             m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.8));
-            double st = props.getFloat("gmm.splittingThreshold", 500.0);
+            double st = props.getFloat("gmm.splittingThreshold", 1000.0);
             m_gmm.setSplittingThreshold(st);
-            double mt = props.getFloat("gmm.mergingThreshold");
+            double mt = props.getFloat("gmm.mergingThreshold", 0.01);
             m_gmm.setMergingThreshold(mt);
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 4));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
