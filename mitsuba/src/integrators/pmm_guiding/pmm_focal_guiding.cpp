@@ -54,6 +54,9 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     mutable PrimitiveThreadLocal<bool> threadLocalInitialized;
     uint32_t minSamplesToStartFitting;
     uint32_t samplesPerIteration;
+    uint32_t trainingIterations;
+    int maxDepth;
+
     bool training; // only collecting samples while training
 
 
@@ -79,7 +82,8 @@ public:
             Log(EInfo, "minSamplesToStartFitting = %zu", minSamplesToStartFitting);
 
             m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL)); // todo: for now, we don't do anything with this
-            this->m_maxDepth = 3;
+            this->maxDepth = props.getInteger("maxDepth", 5);
+            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 3);
             m_timer = new Timer{false};
             Log(EInfo, this->toString().c_str());
         }
@@ -128,8 +132,7 @@ public:
 
         Log(EInfo, "Starting training...");
 
-        int trainingSamples = 10; // todo make it parameter, and this should be smaller for now
-        for (int i = 0; i < trainingSamples; ++i) {
+        for (int i = 0; i < this->trainingIterations; ++i) {
             Log(EInfo, "Rendering %i iteration", i);
 
             Properties trainingSamplerProps = scene->getSampler()->getProperties();
@@ -382,7 +385,7 @@ public:
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
 
-        while (rRec.depth <= m_maxDepth || m_maxDepth < 0) {
+        while (rRec.depth <= maxDepth || maxDepth < 0) {
             if (!its.isValid()) {
                 /* If no intersection could be found, potentially return
                     radiance from a environment luminaire if it exists */
@@ -403,7 +406,7 @@ public:
             if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance))
                 Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
 
-            if ((rRec.depth >= m_maxDepth && m_maxDepth > 0)
+            if ((rRec.depth >= maxDepth && maxDepth > 0)
                 || (m_strictNormals && dot(ray.d, its.geoFrame.n)
                     * Frame::cosTheta(its.wi) >= 0)) {
 
@@ -651,7 +654,7 @@ public:
     std::string toString() const {
         std::ostringstream oss;
         oss << "PMMFocalGuidingIntegrator" << endl
-            << "  maxDepth = " << m_maxDepth << "," << endl
+            << "  maxDepth = " << maxDepth << "," << endl
             << "  rrDepth = " << m_rrDepth << "," << endl
             << "  strictNormals = " << m_strictNormals << endl
             << "  gmm = " << m_gmm.toString() << endl
