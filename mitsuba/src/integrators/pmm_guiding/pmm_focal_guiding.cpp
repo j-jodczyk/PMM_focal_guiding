@@ -128,7 +128,7 @@ public:
 
         Log(EInfo, "Starting training...");
 
-        int trainingSamples = 10; // todo make it parameter
+        int trainingSamples = 10; // todo make it parameter, and this should be smaller for now
         for (int i = 0; i < trainingSamples; ++i) {
             Log(EInfo, "Rendering %i iteration", i);
 
@@ -196,6 +196,9 @@ public:
             acc.insert(acc.end(), vec.begin(), vec.end());
             return acc;
         });
+        for (auto sample : iterationSamples) {
+            Log(EInfo, sample.toString().c_str());
+        }
 
         // flatten the zero-samples vector
         std::vector<pmm_focal::WeightedSample> iterationZeroValuedSamples = std::accumulate(perThreadZeroValuedSamples.begin(), perThreadZeroValuedSamples.end(), std::vector<pmm_focal::WeightedSample>{},

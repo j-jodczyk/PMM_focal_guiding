@@ -8,6 +8,19 @@ namespace pmm_focal {
     struct WeightedSample {
         Eigen::VectorXd point;
         float weight;
+
+        std::string toString() const {
+            std::ostringstream oss;
+            oss << "point: [";
+            for (int i = 0; i < point.size(); ++i) {
+                oss << point[i];
+                if (i < point.size() - 1) {
+                    oss << ", ";
+                }
+            }
+            oss << "], weight: " << weight << "";
+            return oss.str();
+        }
     };
 }
 

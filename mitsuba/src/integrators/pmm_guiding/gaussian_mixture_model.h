@@ -140,6 +140,8 @@ private:
 
             comp.updateComponent(N, NNew, newMean, newCov, newWeight, alpha);
         }
+        SLog(mitsuba::EInfo, "Prior to deletion analysis");
+        SLog(mitsuba::EInfo, this->toString().c_str());
 
         if (componentIdxToDelete.size() == components.size()) {
             SLog(mitsuba::EWarn, "All components are supposed to be deleted... not sure what to do about this");
@@ -155,6 +157,8 @@ private:
             if (components[j].getWeight() < 1e-3)
                 this->deactivateComponent(j);
         }
+        SLog(mitsuba::EInfo, "Prior to splitting analysis");
+        SLog(mitsuba::EInfo, this->toString().c_str());
 
         // splitting
         for (size_t j = 0; j < numActiveComponents.load(); ++j) {
@@ -167,6 +171,9 @@ private:
                 splitComponent(j);
             }
         }
+
+        SLog(mitsuba::EInfo, "Prior to merging");
+        SLog(mitsuba::EInfo, this->toString().c_str());
 
         // merging - when components too similar
         for (size_t i = 0; i < numActiveComponents.load(); ++i) {
@@ -190,13 +197,16 @@ private:
         for (size_t j = 0; j < numActiveComponents.load(); ++j) {
             components[j].setWeight(components[j].getWeight() / weightSum);
         }
+
+        SLog(mitsuba::EInfo, "Final");
+        SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
 public:
     void deactivateComponent(int idx) {
         components[idx].deactivate(m_dimension);
         numActiveComponents.fetch_sub(1);
-        std::swap(components[idx], components[numActiveComponents]); // todo: some sort of safer swap
+        std::swap(components[idx], components[numActiveComponents]);
     }
 
     void splitComponent(size_t index) {
@@ -273,7 +283,7 @@ public:
         earlierComponent.setCovariance(mergedConvs);
         earlierComponent.setPriorSampleCount(earlierComponent.getPriorSampleCount() + laterComponent.getPriorSampleCount());
 
-        deactivateComponent(laterIdx); // todo: this needs synchronization
+        deactivateComponent(laterIdx);
 
         // no need to swap or decrease the number of active components because deactiveComponents already does it
         // SLog(mitsuba::EInfo, this->toString().c_str());
@@ -336,9 +346,7 @@ public:
     void resetComponent(GaussianComponent& component) {
         std::random_device rd;
         std::mt19937 gen(rd());
-
-        // todo: first, create a component and then swap it atomically
-        component.setWeight(1.0 / components.size());
+        component.setWeight(1.0 / numActiveComponents.load());
 
         Eigen::VectorXd compMean(component.getMean().size());
         for (int d = 0; d < component.getMean().size(); ++d) {
