@@ -81,7 +81,7 @@ public:
 
             Log(EInfo, "minSamplesToStartFitting = %zu", minSamplesToStartFitting);
 
-            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 0UL)); // todo: for now, we don't do anything with this
+            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 7200)); // 2 hours (for now - because we're super slow)
             this->maxDepth = props.getInteger("maxDepth", 5);
             this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 3);
             m_timer = new Timer{false};
@@ -246,7 +246,7 @@ public:
         Float iterationRenderTime;
         ParallelProcess::EStatus status;
         size_t iterations = 0;
-        do {
+        do { // it's going to be at least one iteration
             /* This is a sampling-based integrator - parallelize */
             ref<ParallelProcess> proc = new BlockedRenderProcess(job,
                 queue, scene->getBlockSize());
@@ -259,7 +259,6 @@ public:
 
             m_process = proc;
             sched->wait(proc);
-            // so here the process is finished - I would then execute the gmm updates...
             m_process = nullptr;
 
             status = proc->getReturnStatus();
@@ -267,7 +266,7 @@ public:
             iterationRenderTime = renderTimer->lap();
             totalRenderTime = renderTimer->getSeconds();
             ++iterations;
-        } while(status == ParallelProcess::ESuccess); // && totalRenderTime + iterationRenderTime < m_renderMaxSeconds);
+        } while(status == ParallelProcess::ESuccess && totalRenderTime + iterationRenderTime < m_renderMaxSeconds);
 
         Log(EInfo, "rendered %zu samples per pixel in %s.", iterations*sampler->getSampleCount(), timeString(renderTimer->getMilliseconds()/1000.0f, true).c_str());
         sched->unregisterResource(integratorResID);
