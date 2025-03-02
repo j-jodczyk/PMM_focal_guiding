@@ -136,7 +136,7 @@ public:
         build();
     }
 
-    void splat(const Point &origin, const Vector &direction, Float distance, std::vector<AABB>& leafAABBs) {
+    void splat(const Point &origin, const Vector &direction, Float distance, std::vector<Eigen::VectorXd>& points) {
         Float alpha = 1;
 
         Traversal traversal{*this, origin, direction};
@@ -147,7 +147,7 @@ public:
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
-                leafAABBs.push_back(child.m_aabb);
+                points.push_back(child.getRayIntersection(origin, direction));
             }
         });
     }
@@ -227,6 +227,69 @@ private:
                 // this is because upon construction we initialize index as 0
                 // and only when we divide a node in `builder` function, we overwrite index
                 return index == 0;
+            }
+
+            Vector getNormal(const Point &A, const Point &B, const Point &C) const {
+                Vector v1 = B-A;
+                Vector v2 = C-A;
+                return mitsuba::normalize(mitsuba::cross(v1, v2));
+            }
+
+            Point getPlaneLineIntersection(const Vector &planeNormal, const Point &pointOnPlane, const Point &lineOrigin, const Vector &lineDirection) {
+                float denominator = mitsuba::dot(planeNormal, lineDirection);
+                float t = (mitsuba::dot(planeNormal, pointOnPlane - lineOrigin)) / denominator;
+                return lineOrigin + t * lineDirection;
+            }
+
+            bool isPointInsideAABB(const Point &point) {
+                Point min = m_aabb.min;
+                Point max = m_aabb.max;
+                return (
+                    point.x >= min.x && point.x <= max.x &&
+                    point.y >= min.y && point.y <= max.y &&
+                    point.z >= min.z && point.z <= max.z)
+                ;
+            }
+
+            Eigen::VectorXd getRayIntersection(const Point &origin, const Vector &direction) {
+                Point intersect1;
+                Point intersect2;
+                bool intersect1Taken = false;
+                bool intersect2Taken = false;
+                Point min = m_aabb.min;
+                Point max = m_aabb.max;
+
+                std::vector<std::tuple<Point, Point, Point>> planes = {
+                    {min, {max.x, min.y, min.z}, {max.x, max.y, min.z}}, // XY min
+                    {min, {min.x, min.y, max.z}, {max.x, min.y, max.z}}, // XZ min
+                    {min, {min.x, max.y, min.z}, {min.x, max.y, max.z}}, // YZ min
+                    {{min.x, min.y, max.z}, {max.x, min.y, max.z}, {max.x, max.y, max.z}}, // XY max
+                    {{min.x, min.y, max.z}, {min.x, max.y, max.z}, {max.x, max.y, max.z}}, // YZ max
+                    {{min.x, max.y, min.z}, {max.x, max.y, min.z}, {max.x, max.y, max.z}}  // XZ max
+                };
+
+                auto processIntersection = [&](const Point &A, const Point &B, const Point &C) {
+                    Point intersect = getPlaneLineIntersection(getNormal(A, B, C), A, origin, direction);
+                    if (isPointInsideAABB(intersect)) {
+                        if (!intersect1Taken) {
+                            intersect1 = intersect;
+                            intersect1Taken = true;
+                        } else if (!intersect2Taken) {
+                            intersect2 = intersect;
+                            intersect2Taken = true;
+                        }
+                    }
+                };
+
+                for (size_t i = 0; i < planes.size(); ++i) {
+                    const Point &A = std::get<0>(planes[i]);
+                    const Point &B = std::get<1>(planes[i]);
+                    const Point &C = std::get<2>(planes[i]);
+                    processIntersection(A, B, C);
+                }
+
+                SLog(mitsuba::EInfo, "Intersection between a ray and aabb not found.");
+                return Eigen::VectorXd();
             }
         };
 

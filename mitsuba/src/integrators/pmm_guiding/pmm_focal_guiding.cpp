@@ -132,7 +132,7 @@ public:
 
         Log(EInfo, "Starting training...");
 
-        for (int i = 0; i < this->trainingIterations; ++i) {
+        for (size_t i = 0; i < this->trainingIterations; ++i) {
             Log(EInfo, "Rendering %i iteration", i);
 
             Properties trainingSamplerProps = scene->getSampler()->getProperties();
@@ -573,17 +573,11 @@ public:
                 float contribution = (learnedContribution * throughput).average();
 
                 if (contribution > 1e-6) {
-                    std::vector<AABB> leafAABBs;
-                    m_octree.splat(ray.o, ray.d, splatDistance, leafAABBs);
+                    std::vector<Eigen::VectorXd> points;
+                    m_octree.splat(ray.o, ray.d, splatDistance, points);
                     Log(EInfo, "collect some samples because contribution is %f", contribution);
-                    for (size_t i=0; i < leafAABBs.size(); i++) {
-                        auto leaf = leafAABBs[i];
-
-                        Eigen::VectorXd center(3);
-                        center << (leaf.min[0] + leaf.max[0]) / 2, (leaf.min[1] + leaf.max[1]) / 2, (leaf.min[2] + leaf.max[2]) / 2;
-
-                        samples->push_back({center, std::log10(contribution)}); // let's try log10 contribution
-                    }
+                    for(auto& point : points)
+                        samples->push_back({point, std::log10(contribution)});
                     Log(EInfo, "Currently collected %i samples", samples->size());
                 }
             }
