@@ -237,7 +237,7 @@ private:
 
             Point getPlaneLineIntersection(const Vector &planeNormal, const Point &pointOnPlane, const Point &lineOrigin, const Vector &lineDirection) {
                 float denominator = mitsuba::dot(planeNormal, lineDirection);
-                if (denominator < 1e-6)
+                if (std::abs(denominator) < 1e-6)
                     return lineOrigin; // if we return lineOrigin, then we will not get true in isPointInsideAABB
                 float t = (mitsuba::dot(planeNormal, pointOnPlane - lineOrigin)) / denominator;
                 return lineOrigin + t * lineDirection;
