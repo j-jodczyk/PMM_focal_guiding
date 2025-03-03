@@ -9,8 +9,6 @@ CXXFLAGS = -I/usr/include/python3.8 \
            -pthread \
            -g
 
-OPENCV_FLAGS = `pkg-config --cflags --libs opencv4`
-
 SRC_DIR = src
 BUILD_DIR = build
 LIB_DIR = lib
@@ -24,7 +22,7 @@ all: $(OUTPUT)
 
 $(OUTPUT): $(SRC_FILES)
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(SRC_FILES) -o $(OUTPUT) $(CXXFLAGS) $(OPENCV_FLAGS)
+	$(CXX) $(SRC_FILES) -o $(OUTPUT) $(CXXFLAGS)
 
 clean:
 	rm -rf $(BUILD_DIR)/*.o $(OUTPUT)

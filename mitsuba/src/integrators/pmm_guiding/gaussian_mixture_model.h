@@ -57,8 +57,6 @@ private:
     double mergingThreshold;
     size_t minNumComp;
     size_t maxNumComp;
-    std::atomic<size_t> numActiveComponents;
-                                             // todo granual mutexes - only on modifications of the vector, right?
     AABB m_aabb;
     size_t m_dimension;
 
@@ -67,22 +65,15 @@ private:
         double det = component.getCovariance().determinant();
 
         if (det <= 1e-6) {
-            // SLog(mitsuba::EInfo, component.toString().c_str());
-            // SLog(mitsuba::EWarn, "Unexpected non positive value of determinant, reseting component");
             resetComponent(component);
             det = component.getCovariance().determinant();
         }
 
         double logNormConst = -0.5 * (d * std::log(2 * M_PI) +std::log(det));
-        // SLog(mitsuba::EInfo, "det: %f", det);
 
         Eigen::VectorXd diff = x - component.getMean();
-        // SLog(mitsuba::EInfo, "diff: %f, %f, %f", diff(0), diff(1), diff(2));
         double exponent = -0.5 * diff.transpose() * component.getCovariance().inverse() * diff;
-        // SLog(mitsuba::EInfo, "exponent: %f", exponent);
         double logPdf = logNormConst + exponent;
-        // SLog(mitsuba::EInfo, "logPdf: %f", logPdf);
-        // SLog(mitsuba::EInfo, "exp(logPdf): %f", std::exp(logPdf));
 
         return std::exp(logPdf);
     }
@@ -145,7 +136,6 @@ private:
             comp.updateComponent(N, NNew, newMean, newCov, newWeight, alpha);
         }
 
-        numActiveComponents.store(components.size() - componentIdxToDelete.size());
         for (int idx : componentIdxToDelete) {
             this->deactivateComponent(idx);
         }
@@ -158,9 +148,12 @@ private:
                 this->deactivateComponent(j);
         }
 
+        if (getNumActiveComponents() < minNumComp)
+            fillMissingComponents(); // if after deletion there are less then minNumComp, we need to reinitiate some
+
         // splitting
         for (size_t j = 0; j < components.size(); ++j) {
-            if (numActiveComponents.load() >= maxNumComp)
+            if (getNumActiveComponents() >= maxNumComp)
                 break;
             if (components[j].getWeight() == 0)
                 continue;
@@ -173,13 +166,13 @@ private:
         }
 
         // merging - when components too similar
-        for (size_t i = 0; i < numActiveComponents.load(); ++i) {
+        for (size_t i = 0; i < components.size(); ++i) {
             if (components[i].getWeight() == 0)
                 continue;
-            for (size_t j = i + 1; j < numActiveComponents.load(); ++j) {
+            for (size_t j = i + 1; j < components.size(); ++j) {
                 if (components[j].getWeight() == 0)
                     continue;
-                if (numActiveComponents.load() <= minNumComp)
+                if (getNumActiveComponents() <= minNumComp)
                     break;
                 double distance = (components[i].getMean() - components[j].getMean()).norm();
                 if (distance < mergingThreshold) {
@@ -200,17 +193,15 @@ private:
         }
     }
 
-public:
     void deactivateComponent(int idx) {
         components[idx].deactivate(m_dimension);
-        numActiveComponents.fetch_sub(1);
     }
 
     void splitComponent(size_t index) {
         // assert(mtx.try_lock() == false);
         // boost::unique_lock<boost::shared_mutex> lock(mtx);
         // todo: components.size() can be replaced with maxNumComp
-        if (components.size() == numActiveComponents.load()) {
+        if (components.size() == getNumActiveComponents()) {
             // SLog(mitsuba::EInfo, "Called splitting function at components capacity - returning without split");
             return;
         }
@@ -243,13 +234,12 @@ public:
                 break;
             }
         }
-        numActiveComponents.fetch_add(1);
     }
 
     void mergeComponents(size_t index1, size_t index2) {
         // assert(mtx.try_lock() == false);
         // boost::unique_lock<boost::shared_mutex> lock(mtx);
-        if (numActiveComponents.load() == minNumComp) {
+        if (getNumActiveComponents() == minNumComp) {
             // SLog(mitsuba::EInfo, "Called merge function when minumum number of components already reached. Returing without merge");
             return;
         }
@@ -273,14 +263,14 @@ public:
             earlierComponent.getWeight() * earlierComponent.getMean()
             + laterComponent.getWeight() * laterComponent.getMean()) / totalWeight;
 
-        Eigen::MatrixXd mergedConvs =
+            Eigen::MatrixXd mergedConvs =
             (earlierComponent.getWeight() * (earlierComponent.getCovariance() + (earlierComponent.getMean() - mergedMean) * (earlierComponent.getMean() - mergedMean).transpose()) +
-             laterComponent.getWeight() * (laterComponent.getCovariance() + (laterComponent.getMean() - mergedMean) * (laterComponent.getMean() - mergedMean).transpose())) /
+            laterComponent.getWeight() * (laterComponent.getCovariance() + (laterComponent.getMean() - mergedMean) * (laterComponent.getMean() - mergedMean).transpose())) /
             totalWeight;
 
-        // todo: probably safer to first create a new component and then atomically try to replace it with a new one
-        earlierComponent.setWeight(totalWeight);
-        earlierComponent.setMean(mergedMean);
+            // todo: probably safer to first create a new component and then atomically try to replace it with a new one
+            earlierComponent.setWeight(totalWeight);
+            earlierComponent.setMean(mergedMean);
         earlierComponent.setCovariance(mergedConvs);
         earlierComponent.setPriorSampleCount(earlierComponent.getPriorSampleCount() + laterComponent.getPriorSampleCount());
 
@@ -290,6 +280,27 @@ public:
         // SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
+    void fillMissingComponents() {
+        size_t numComponentsToActivate = minNumComp - getNumActiveComponents();
+        if (numComponentsToActivate <= 0)
+            return;
+        std::vector<size_t> zeroWeightIndexes;
+        for (size_t i = 0; i < components.size(); i++) {
+            if (components[i].getWeight() == 0)
+                zeroWeightIndexes.push_back(i);
+        }
+
+        size_t j = 0;
+        for (size_t i=0; i < numComponentsToActivate; ++i) {
+            GaussianComponent component = GaussianComponent();
+            initComponentMean(component);
+            initComponentCovaraince(component);
+            component.setWeight(1.0 / minNumComp);
+            components[zeroWeightIndexes[j]] = component;
+            j++;
+        }
+    }
+public:
     GaussianMixtureModel() {}
 
     void setAlpha(double newAlpha) { alpha = newAlpha; };
@@ -300,7 +311,11 @@ public:
 
     size_t getMinNumComp() { return minNumComp; };
     size_t getMaxNumComp() { return maxNumComp; };
-    size_t getNumActiveComponents() { return numActiveComponents.load(); };
+    size_t getNumActiveComponents() {
+        return std::accumulate(components.begin(), components.end(), 0, [](int count, const GaussianComponent& component) {
+            return count + (component.getWeight() > 0 ? 1 : 0);
+        });
+     };
     void setMinNumComp(size_t newMinNumComp) { minNumComp = newMinNumComp; };
     void setMaxNumComp(size_t newMaxNumComp) { maxNumComp = newMaxNumComp; };
 
@@ -336,7 +351,6 @@ public:
             initComponentMean(component);
             initComponentCovaraince(component);
         }
-        numActiveComponents.store(numComponents);
 
         // the rest of the components are initated with zero values
         for (size_t i = numComponents; i < maxNumComp; ++i) {
@@ -347,7 +361,8 @@ public:
     void resetComponent(GaussianComponent& component) {
         std::random_device rd;
         std::mt19937 gen(rd());
-        component.setWeight(1.0 / numActiveComponents.load());
+
+        component.setWeight(1.0 / getNumActiveComponents());
 
         Eigen::VectorXd compMean(component.getMean().size());
         for (int d = 0; d < component.getMean().size(); ++d) {
@@ -416,8 +431,7 @@ public:
                 continue; // no need to print deactivated components
             oss << components[i].toString() << "\n";
         }
-        oss << "]\n";
-        oss << "Active component count: " << numActiveComponents; // sanity check if we do this correclty
+        oss << "]";
         return oss.str();
     }
 
