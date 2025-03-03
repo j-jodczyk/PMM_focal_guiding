@@ -237,6 +237,8 @@ private:
 
             Point getPlaneLineIntersection(const Vector &planeNormal, const Point &pointOnPlane, const Point &lineOrigin, const Vector &lineDirection) {
                 float denominator = mitsuba::dot(planeNormal, lineDirection);
+                if (denominator < 1e-6)
+                    return lineOrigin; // if we return lineOrigin, then we will not get true in isPointInsideAABB
                 float t = (mitsuba::dot(planeNormal, pointOnPlane - lineOrigin)) / denominator;
                 return lineOrigin + t * lineDirection;
             }
@@ -252,8 +254,10 @@ private:
             }
 
             Eigen::VectorXd getRayIntersection(const Point &origin, const Vector &direction) {
-                Point intersect1;
-                Point intersect2;
+                // Eigen::VectorXd intersect1(Dimensionality);
+                // Eigen::VectorXd intersect2(Dimensionality);
+                Eigen::VectorXd intersect1(3);
+                Eigen::VectorXd intersect2(3);
                 bool intersect1Taken = false;
                 bool intersect2Taken = false;
                 Point min = m_aabb.min;
@@ -272,10 +276,10 @@ private:
                     Point intersect = getPlaneLineIntersection(getNormal(A, B, C), A, origin, direction);
                     if (isPointInsideAABB(intersect)) {
                         if (!intersect1Taken) {
-                            intersect1 = intersect;
+                            intersect1 << intersect.x, intersect.y, intersect.z;
                             intersect1Taken = true;
                         } else if (!intersect2Taken) {
-                            intersect2 = intersect;
+                            intersect2 << intersect.x, intersect.y, intersect.z;
                             intersect2Taken = true;
                         }
                     }
@@ -288,7 +292,12 @@ private:
                     processIntersection(A, B, C);
                 }
 
+                if (intersect1Taken && intersect2Taken)
+                    return (intersect1 + intersect2) / 2;
+
                 SLog(mitsuba::EInfo, "Intersection between a ray and aabb not found.");
+                SLog(mitsuba::EInfo, m_aabb.toString().c_str());
+                SLog(mitsuba::EInfo, ("origin: " + origin.toString() + " direction: " + direction.toString()).c_str());
                 return Eigen::VectorXd();
             }
         };

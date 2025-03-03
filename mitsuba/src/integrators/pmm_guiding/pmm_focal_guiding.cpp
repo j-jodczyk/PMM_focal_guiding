@@ -576,8 +576,12 @@ public:
                     std::vector<Eigen::VectorXd> points;
                     m_octree.splat(ray.o, ray.d, splatDistance, points);
                     Log(EInfo, "collect some samples because contribution is %f", contribution);
-                    for(auto& point : points)
+                    for(auto& point : points) {
+                        if (point.size() == 0)
+                            continue; // if for some reason the intersection was not found, don't save the point
                         samples->push_back({point, std::log10(contribution)});
+                        Log(EInfo, "[%f, %f, %f]", point[0], point[1], point[2]);
+                    }
                     Log(EInfo, "Currently collected %i samples", samples->size());
                 }
             }
