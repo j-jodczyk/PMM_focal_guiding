@@ -27,6 +27,7 @@
 MTS_NAMESPACE_BEGIN
 
 static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage);
+static StatsCounter samplesFromGMMCount("Path tracer", "Sampled from GMM");
 
 #include <vector>
 #include <Eigen/Dense>
@@ -83,7 +84,7 @@ public:
 
             m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 7200)); // 2 hours (for now - because we're super slow)
             this->maxDepth = props.getInteger("maxDepth", 5);
-            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 3);
+            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 5);
             m_timer = new Timer{false};
             Log(EInfo, this->toString().c_str());
         }
@@ -317,6 +318,8 @@ public:
 
         } else {
             // sample guiding distribution
+            avgPathLength++; // add to statistics
+
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
             std::random_device rd;
             std::mt19937 gen(rd());
