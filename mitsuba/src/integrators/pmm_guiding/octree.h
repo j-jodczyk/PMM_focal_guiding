@@ -230,8 +230,8 @@ private:
             }
 
             Vector getNormal(const Point &A, const Point &B, const Point &C) const {
-                Vector v1 = B-A;
-                Vector v2 = C-A;
+                Vector v1 = B - A;
+                Vector v2 = C - A;
                 return mitsuba::normalize(mitsuba::cross(v1, v2));
             }
 
@@ -267,9 +267,9 @@ private:
                     {min, {max.x, min.y, min.z}, {max.x, max.y, min.z}}, // XY min
                     {min, {min.x, min.y, max.z}, {max.x, min.y, max.z}}, // XZ min
                     {min, {min.x, max.y, min.z}, {min.x, max.y, max.z}}, // YZ min
-                    {{min.x, min.y, max.z}, {max.x, min.y, max.z}, {max.x, max.y, max.z}}, // XY max
-                    {{min.x, min.y, max.z}, {min.x, max.y, max.z}, {max.x, max.y, max.z}}, // YZ max
-                    {{min.x, max.y, min.z}, {max.x, max.y, min.z}, {max.x, max.y, max.z}}  // XZ max
+                    {{min.x, min.y, max.z}, {max.x, min.y, max.z}, max}, // XY max
+                    {{max.x, min.y, max.z}, {max.x, min.y, min.z}, max}, // YZ max
+                    {{min.x, max.y, min.z}, {max.x, max.y, min.z}, max}  // XZ max
                 };
 
                 auto processIntersection = [&](const Point &A, const Point &B, const Point &C) {
