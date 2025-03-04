@@ -27,7 +27,7 @@
 MTS_NAMESPACE_BEGIN
 
 static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage);
-static StatsCounter samplesFromGMMCount("Path tracer", "Sampled from GMM");
+static StatsCounter samplesFromGMMCount("Path tracer", "Sampled from GMM", ENumberValue);
 
 #include <vector>
 #include <Eigen/Dense>
@@ -217,7 +217,7 @@ public:
         Log(EInfo, "iteration postprocessing time: %s", timeString(postprocessingTime, true).c_str());
         m_timer->reset();
         Log(EInfo, m_gmm.toString().c_str());
-        Log(EInfo, m_octree.toString().c_str());
+        Log(EInfo, m_octree.toStringVerbose().c_str());
         Log(EDebug, m_octree.toStringVerbose().c_str());
     }
 
@@ -579,6 +579,8 @@ public:
                     std::vector<Eigen::VectorXd> points;
                     m_octree.splat(ray.o, ray.d, splatDistance, points);
                     Log(EInfo, "collect some samples because contribution is %f", contribution);
+                    Log(EInfo, ("Intersection coordinates: " + its.p.toString()).c_str());
+                    Log(EInfo, ("Ray data: origin: " + ray.o.toString() + " direction: " + ray.d.toString()));
                     for(auto& point : points) {
                         if (point.size() == 0)
                             continue; // if for some reason the intersection was not found, don't save the point
