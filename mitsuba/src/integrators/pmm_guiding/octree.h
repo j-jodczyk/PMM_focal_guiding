@@ -148,6 +148,7 @@ public:
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
                 points.push_back(child.getRayIntersection(origin, direction));
+                child.accumulator += 1; // count the ammount of points comming through the node
             }
         });
     }

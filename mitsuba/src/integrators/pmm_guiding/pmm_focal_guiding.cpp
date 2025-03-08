@@ -56,6 +56,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     uint32_t minSamplesToStartFitting;
     uint32_t samplesPerIteration;
     uint32_t trainingIterations;
+    uint32_t trainingSamples;
     int maxDepth;
 
     bool training; // only collecting samples while training
@@ -66,7 +67,7 @@ public:
         : MonteCarloIntegrator(props) {
             m_octree.configuration.threshold = props.getFloat("orth.threshold", 1e-3);
             m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
-            m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 14);
+            m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 40);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
 
             m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.8));
@@ -77,14 +78,15 @@ public:
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 4));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
 
-            minSamplesToStartFitting = static_cast<uint32_t>(props.getSize("minSamplesToStartFitting", 12)); // todo: change to 128
+            minSamplesToStartFitting = static_cast<uint32_t>(props.getSize("minSamplesToStartFitting", 12)); // todo: use
             samplesPerIteration = static_cast<uint32_t>(props.getSize("samplesPerIteration", 4));
 
             Log(EInfo, "minSamplesToStartFitting = %zu", minSamplesToStartFitting);
 
-            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 7200)); // 2 hours (for now - because we're super slow)
-            this->maxDepth = props.getInteger("maxDepth", 5);
-            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 5);
+            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 300)); // 5 min
+            this->maxDepth = props.getInteger("maxDepth", 40);
+            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 10);
+            this->trainingSamples = static_cast<uint32_t>(props.getSize("trainingSamples", 4));
             m_timer = new Timer{false};
             Log(EInfo, this->toString().c_str());
         }
@@ -137,6 +139,8 @@ public:
             Log(EInfo, "Rendering %i iteration", i);
 
             Properties trainingSamplerProps = scene->getSampler()->getProperties();
+            trainingSamplerProps.removeProperty("sampleCount");
+            trainingSamplerProps.setSize("sampleCount", trainingSamples);
             ref<Sampler> trainingSampler = static_cast<Sampler*>(PluginManager::getInstance()->createObject(MTS_CLASS(Sampler), trainingSamplerProps));
             trainingSampler->configure();
 
@@ -576,11 +580,13 @@ public:
                 float contribution = (learnedContribution * throughput).average();
 
                 if (contribution > 1e-6) {
+                    ref<Timer> trainingTimer = new Timer(false);
+                    trainingTimer->start();
                     std::vector<Eigen::VectorXd> points;
                     m_octree.splat(ray.o, ray.d, splatDistance, points);
                     Log(EInfo, "collect some samples because contribution is %f", contribution);
                     Log(EInfo, ("Intersection coordinates: " + its.p.toString()).c_str());
-                    Log(EInfo, ("Ray data: origin: " + ray.o.toString() + " direction: " + ray.d.toString()));
+                    Log(EInfo, ("Ray data: origin: " + ray.o.toString() + " direction: " + ray.d.toString()).c_str());
                     for(auto& point : points) {
                         if (point.size() == 0)
                             continue; // if for some reason the intersection was not found, don't save the point
@@ -588,12 +594,10 @@ public:
                         Log(EInfo, "[%f, %f, %f]", point[0], point[1], point[2]);
                     }
                     Log(EInfo, "Currently collected %i samples", samples->size());
+                    const Float trainingTime = trainingTimer->stop();
+                    Log(EInfo, "Training took %f seconds", trainingTime);
                 }
             }
-
-            // not doing this here anymore
-            // if (samples.size() != 0)
-            //     m_gmm.processBatch(samples);
         }
         return Li;
     }

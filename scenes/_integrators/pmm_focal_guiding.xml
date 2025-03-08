@@ -1,6 +1,6 @@
 <scene version="0.6.0">
 	<!-- <default name="maxDepth" value="14" /> -->
-	<default name="maxDepth" value="3" />
+	<default name="maxDepth" value="40" />
 	<!-- <default name="budget" value="300" /> training + render -->
 	<default name="budget" value="30" /> <!-- training + render -->
 	<default name="splitThreshold" value="1e-2" /> <!-- affects the number of nodes -->
@@ -13,6 +13,7 @@
 	<default name="dumpPrimaryRays" value="false"/>
 	<default name="unboundedSplatting" value="true"/>
 	<default name="samplingMode" value="2"/>
+	<default name="trainingSamples" value="4"/>
 
 	<integrator type="pmm_focal_guiding">
 		<boolean name="strictNormals" value="true" />
@@ -40,6 +41,7 @@
 		<default name="minSamplesToStartFitting" value="12"/>
 		<default name="samplesPerIteration" value="4"/>
 
+		<integer name="trainingSamples" value="$trainingSamples" />
 
 		<integer name="orth.outliers" value="0" />
 		<integer name="orth.minDepth" value="0" />

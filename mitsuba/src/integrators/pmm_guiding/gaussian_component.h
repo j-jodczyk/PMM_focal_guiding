@@ -23,7 +23,7 @@ namespace pmm_focal
         double getWeight() const { return weight; }
         size_t getPriorSampleCount() const { return priorSampleCount; }
 
-        void setCovariance(Eigen::MatrixXd newCovaraince) { covariance = newCovaraince; }
+        void setCovariance(Eigen::MatrixXd newCovariance) { covariance = newCovariance; }
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
         void setWeight(double newWeight) { weight = newWeight; }
         void setPriorSampleCount(size_t newPSC) { priorSampleCount = newPSC; }
@@ -64,7 +64,7 @@ namespace pmm_focal
         std::string toString() const {
             std::ostringstream oss;
             // todo: apperently now this throws - wtf?
-            oss << "weight = " << getWeight() << " mean = " << getMeanStr() << " covaraince = " << getCovarianceStr();
+            oss << "weight = " << getWeight() << " mean = " << getMeanStr() << " covariance = " << getCovarianceStr();
             return oss.str();
         }
 

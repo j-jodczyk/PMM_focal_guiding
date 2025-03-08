@@ -294,7 +294,7 @@ private:
         for (size_t i=0; i < numComponentsToActivate; ++i) {
             GaussianComponent component = GaussianComponent();
             initComponentMean(component);
-            initComponentCovaraince(component);
+            initComponentCovariance(component);
             component.setWeight(1.0 / minNumComp);
             components[zeroWeightIndexes[j]] = component;
             j++;
@@ -333,7 +333,7 @@ public:
         comp.setMean(compMean);
     }
 
-    void initComponentCovaraince(GaussianComponent& comp) {
+    void initComponentCovariance(GaussianComponent& comp) {
         comp.setCovariance(Eigen::MatrixXd::Identity(m_dimension, m_dimension));
     }
 
@@ -349,7 +349,7 @@ public:
             auto& component = components[i];
             component.setWeight(1.0 / numComponents);
             initComponentMean(component);
-            initComponentCovaraince(component);
+            initComponentCovariance(component);
         }
 
         // the rest of the components are initated with zero values
