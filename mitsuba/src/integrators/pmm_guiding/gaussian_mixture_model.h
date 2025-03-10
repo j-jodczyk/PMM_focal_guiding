@@ -190,6 +190,7 @@ private:
         SLog(mitsuba::EInfo, "components before the merge: %d", getNumActiveComponents());
         int mergeCount = 0;
         do {
+            SLog(mitsuba::EInfo, "Merging %d and %d, because their BC is %f", i, j, maxBC);
             mergeComponents(i, j);
             mergeCount++;
             bhattacharyyaCoefficients.col(j).setZero();
@@ -197,7 +198,7 @@ private:
 
             for (size_t k = 0; k < components.size(); ++k) {
                 if (k != i && components[k].getWeight() > 0) {
-                    auto dist = bhattacharyyaDistance(i, k);
+                    auto dist = exp(-bhattacharyyaDistance(i, k));
                     bhattacharyyaCoefficients(i, k) = dist;
                     bhattacharyyaCoefficients(k, i) = dist;
                 }
@@ -243,6 +244,7 @@ private:
         double maxEigenvalue = eigenvalues.maxCoeff();
 
         double ratio = maxEigenvalue / minEigenvalue;
+        SLog(mitsuba::EInfo, "Ratio is %f", ratio);
         if (ratio < splittingThreshold)
             return; // below threshold - do nothing
 
@@ -411,11 +413,6 @@ public:
     }
 
      void processBatch(const std::vector<WeightedSample>& batch) {
-        // just a note:
-        //  unique_lock is used for EXCLUSIVE WRITE access during modifications.
-        //  shared_lock is used for READ access in functions like sample and during the E-step of processBatch.
-        // we do it outside of render - no need for locking - possibly need to parallelize later
-
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
 
         // E-step

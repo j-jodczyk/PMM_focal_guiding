@@ -5,8 +5,8 @@
 	<default name="budget" value="30" /> <!-- training + render -->
 	<default name="splitThreshold" value="1e-2" /> <!-- affects the number of nodes -->
 	<!-- trainingTime = trainingIterations * iterationTime -->
-	<!-- <default name="trainingIterations" value="15" /> -->
-	<default name="trainingIterations" value="3" />
+	<default name="trainingIterations" value="15" />
+	<!-- <default name="trainingIterations" value="3" /> -->
 	<default name="iterationTime" value="10" />
 	<default name="normalBinning" value="disabled" />
 	<default name="dumpScene" value="false"/>
@@ -14,6 +14,8 @@
 	<default name="unboundedSplatting" value="true"/>
 	<default name="samplingMode" value="2"/>
 	<default name="trainingSamples" value="4"/>
+	<default name="gmmSplittingThreshold" value="3"/>
+	<default name="gmmMergingThreshold" value="0.5"/>
 
 	<integrator type="pmm_focal_guiding">
 		<boolean name="strictNormals" value="true" />
@@ -30,10 +32,10 @@
 		<integer name="samplingMode" value="$samplingMode" />
 		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
 
-		<float name="gmm.alpha" value="0.8" />
-		<float name="gmm.splittingThreshold" value="1000.0" />
-		<float name="gmm.mergingThreshold" value="0.01" />
-		<integer name="gmm.minNumComp" value="4" />
+		<float name="gmm.alpha" value="0.25" />
+		<float name="gmm.splittingThreshold" value="$gmmSplittingThreshold" /> <!-- this is ratio max/min eigenvalue - lower if you want more splits -->
+		<float name="gmm.mergingThreshold" value="$gmmMergingThreshold" /> <!-- this is Bhattacharyya coeff aka the similarity between two probability distributions (0, 1). The closer BC between to values to 1 the more similar they are. So if you want less merging, choose values closer to 1 -->
+		<integer name="gmm.minNumComp" value="3" />
 		<integer name="gmm.maxNumComp" value="15" />
 
 		<default name="renderMaxSeconds" value="7200"/>
