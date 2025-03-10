@@ -13,7 +13,6 @@ namespace pmm_focal
         Eigen::VectorXd mean;
         Eigen::MatrixXd covariance;
         double weight;
-        size_t priorSampleCount;
 
     public:
         GaussianComponent() {}
@@ -21,16 +20,13 @@ namespace pmm_focal
         Eigen::MatrixXd getCovariance() const { return covariance; }
         Eigen::VectorXd getMean() const { return mean; }
         double getWeight() const { return weight; }
-        size_t getPriorSampleCount() const { return priorSampleCount; }
 
         void setCovariance(Eigen::MatrixXd newCovariance) { covariance = newCovariance; }
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
         void setWeight(double newWeight) { weight = newWeight; }
-        void setPriorSampleCount(size_t newPSC) { priorSampleCount = newPSC; }
 
         void updateComponent(double N, double N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, double new_weight, double alpha) {
-            N *= alpha;
-            priorSampleCount *= alpha;
+            N *= alpha; // Ruppert 2020
 
             weight = (N * weight + N_new * new_weight) / (N + N_new);
             Eigen::VectorXd priorMean = mean;
@@ -40,8 +36,6 @@ namespace pmm_focal
             covariance = (N * covariance + N_new * new_cov) / (N + N_new) + correction;
 
             covariance += 1e-6 * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
-
-            priorSampleCount += N_new;
         }
 
         Eigen::VectorXd sample(std::mt19937& gen) const {
@@ -58,7 +52,6 @@ namespace pmm_focal
             weight = 0;
             mean = Eigen::VectorXd::Zero(dims);
             covariance = Eigen::MatrixXd::Zero(dims, dims);
-            priorSampleCount = 0;
         }
 
         std::string toString() const {
