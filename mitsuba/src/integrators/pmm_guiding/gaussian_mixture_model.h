@@ -14,6 +14,7 @@
 #include <random>
 #include <deque>
 #include <mutex>
+#include <queue>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
@@ -59,6 +60,7 @@ private:
     size_t maxNumComp;
     AABB m_aabb;
     size_t m_dimension;
+    size_t sampleCount = 0;
 
     double pdf(const Eigen::VectorXd& x, GaussianComponent& component) {
         int d = x.size();
@@ -79,33 +81,21 @@ private:
     }
 
     void updateSufficientStatistics(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
-        size_t N = 0;
         size_t NNew = batch.size();
 
-        for (size_t i = 0; i < components.size(); ++i) {
-            if (components[i].getWeight() == 0)
-                continue;
-            N += components[i].getPriorSampleCount();
-        }
-
-        std::vector<size_t> componentIdxToDelete;
+        // std::vector<size_t> componentIdxToDelete;
         for (size_t j = 0; j < components.size(); ++j) {
             if (components[j].getWeight() == 0)
                 continue;
             auto& comp = components[j];
-            if (j >= (size_t)responsibilities.cols()) {
-                // SLog(mitsuba::EInfo, "j = %d, responsibilities.cols() = %d", j, responsibilities.cols());
-                break; // TODO: probably do something better about this - maybe need to resize responsibilities (how do rebust vmm do it?)
-            }
 
             double responsibilitySum = responsibilities.col(j).sum();
             if (responsibilitySum < 1e-6) {
-                componentIdxToDelete.push_back(j);
+                SLog(mitsuba::EInfo, "Responsibility sum is below threshold");
+                // componentIdxToDelete.push_back(j);
                 continue;
             }
             if (responsibilitySum != responsibilitySum) {
-                // SLog(mitsuba::EInfo, "Crashing program - responsibility is -nan");
-                // SLog(mitsuba::EInfo, this->toString().c_str());
                 throw std::runtime_error("Responsibility cannot be nan");
             }
             double newWeight = responsibilitySum / NNew;
@@ -119,9 +109,6 @@ private:
 
             newMean /= responsibilitySum;
             if(!newMean.allFinite()) {
-                // SLog(mitsuba::EInfo, this->toString().c_str());
-                // SLog(mitsuba::EInfo, "ResponsibilitySum = %f", responsibilitySum);
-                // SLog(mitsuba::EInfo, "Mean: %f, %f, %f", newMean[0], newMean[1], newMean[2]);
                 throw std::runtime_error("new mean must be finite number");
             }
 
@@ -133,151 +120,201 @@ private:
             newCov /= responsibilitySum;
             assert(newCov.allFinite());
 
-            comp.updateComponent(N, NNew, newMean, newCov, newWeight, alpha);
+            comp.updateComponent(sampleCount, NNew, newMean, newCov, newWeight, alpha);
         }
 
-        for (int idx : componentIdxToDelete) {
-            this->deactivateComponent(idx);
-        }
+        sampleCount += NNew; // update sample count
+
+        // for (int idx : componentIdxToDelete) {
+        //     this->deactivateComponent(idx);
+        // }
 
         // remove if weight too small
-        for (size_t j = 0; j < components.size(); ++j) {
-            if (components[j].getWeight() == 0)
-                continue;
-            if (components[j].getWeight() < 1e-3)
-                this->deactivateComponent(j);
-        }
+        // for (size_t j = 0; j < components.size(); ++j) {
+        //     if (components[j].getWeight() == 0)
+        //         continue;
+        //     if (components[j].getWeight() < 1e-3)
+        //         this->deactivateComponent(j);
+        // }
 
-        if (getNumActiveComponents() < minNumComp)
-            fillMissingComponents(); // if after deletion there are less then minNumComp, we need to reinitiate some
-
-        // splitting
-        for (size_t j = 0; j < components.size(); ++j) {
-            if (getNumActiveComponents() >= maxNumComp)
-                break;
-            if (components[j].getWeight() == 0)
-                continue;
-            // high condition number indicates that matrix is close to being singular (det near 0), or its eigenbalues vary widely in magnitude.
-            double conditionNumber = components[j].getCovariance().norm() * components[j].getCovariance().inverse().norm();
-            if (conditionNumber > splittingThreshold) {
-                // SLog(mitsuba::EInfo, "Splitting");
-                splitComponent(j);
-            }
-        }
-
-        // merging - when components too similar
-        for (size_t i = 0; i < components.size(); ++i) {
-            if (components[i].getWeight() == 0)
-                continue;
-            for (size_t j = i + 1; j < components.size(); ++j) {
-                if (components[j].getWeight() == 0)
-                    continue;
-                if (getNumActiveComponents() <= minNumComp)
-                    break;
-                double distance = (components[i].getMean() - components[j].getMean()).norm();
-                if (distance < mergingThreshold) {
-                    mergeComponents(i, j);
-                    break;
-                }
-            }
-        }
-
-        // final weight recount
-        double weightSum = 0;
-        for (size_t i = 0; i < components.size(); ++i) {
-            weightSum += components[i].getWeight();
-        }
-
-        for (size_t j = 0; j < components.size(); ++j) {
-            components[j].setWeight(components[j].getWeight() / weightSum);
-        }
+        mergeAllComponents();
+        splitAllComponents();
     }
 
     void deactivateComponent(int idx) {
         components[idx].deactivate(m_dimension);
     }
 
-    void splitComponent(size_t index) {
-        // assert(mtx.try_lock() == false);
-        // boost::unique_lock<boost::shared_mutex> lock(mtx);
-        // todo: components.size() can be replaced with maxNumComp
-        if (components.size() == getNumActiveComponents()) {
-            // SLog(mitsuba::EInfo, "Called splitting function at components capacity - returning without split");
-            return;
+    double bhattacharyyaDistance(int idx1, int idx2) {
+        const auto& comp1 = components[idx1];
+        const auto& comp2 = components[idx2];
+
+        Eigen::VectorXd meanDiff = comp1.getMean() - comp2.getMean();
+
+        Eigen::MatrixXd covMean = 0.5 * (comp1.getCovariance() + comp2.getCovariance());
+        Eigen::MatrixXd covMeanInv = covMean.inverse();
+
+        double cov1Det = comp1.getCovariance().determinant();
+        double cov2Det = comp2.getCovariance().determinant();
+
+        double multiply = meanDiff.transpose() * covMeanInv * meanDiff;
+        double first =  multiply / 8;
+
+        double second = 0.5 * log(covMean.determinant() / sqrt(cov1Det * cov2Det));
+
+        return first + second;
+    }
+
+    void mergeAllComponents() {
+        int maxMergeCount = maxNumComp; // todo: think through / parametrize
+        // table of bhattacharyya coefficients between all components
+        // the closer BC is to 1 the more similar the distributions are
+        Eigen::MatrixXd bhattacharyyaCoefficients(components.size(), components.size());
+        for (size_t i = 0; i < components.size(); ++i) {
+            for (size_t j = i + 1; j < components.size(); ++j) {
+                if (components[j].getWeight() == 0 || components[i].getWeight() == 0 || j == i) {
+                    bhattacharyyaCoefficients(i, j) = 0;
+                    bhattacharyyaCoefficients(j, i) = 0;
+                    continue;
+                }
+                auto dist = exp(-bhattacharyyaDistance(i, j)); // BC = 1/exp(BD)
+                bhattacharyyaCoefficients(i, j) = dist;
+                bhattacharyyaCoefficients(j, i) = dist;
+                SLog(mitsuba::EInfo, "exp(-dist) between %d and %d is %f", i, j, dist);
+            }
         }
 
-        GaussianComponent& comp = components[index];
+        size_t i, j;
+        bhattacharyyaCoefficients.maxCoeff(&i, &j);
+        double maxBC = bhattacharyyaCoefficients(i, j);
+        SLog(mitsuba::EInfo, "components before the merge: %d", getNumActiveComponents());
+        int mergeCount = 0;
+        do {
+            mergeComponents(i, j);
+            mergeCount++;
+            bhattacharyyaCoefficients.col(j).setZero();
+            bhattacharyyaCoefficients.row(j).setZero();
 
-        // Split into two components
-        Eigen::VectorXd offset = Eigen::VectorXd::Random(comp.getMean().size()) * 0.1; // Small random offset
-        GaussianComponent newComp;
+            for (size_t k = 0; k < components.size(); ++k) {
+                if (k != i && components[k].getWeight() > 0) {
+                    auto dist = bhattacharyyaDistance(i, k);
+                    bhattacharyyaCoefficients(i, k) = dist;
+                    bhattacharyyaCoefficients(k, i) = dist;
+                }
+            }
 
-        Eigen::VectorXd mean = comp.getMean();
+            bhattacharyyaCoefficients.maxCoeff(&i, &j);
+            maxBC = bhattacharyyaCoefficients(i, j);
+        } while(maxBC > mergingThreshold && mergeCount < maxMergeCount);
+        SLog(mitsuba::EInfo, "components after the merge: %d, merged %d component", getNumActiveComponents(), mergeCount);
+    }
 
+    void splitAllComponents() {
+        int maxSplitCount = maxNumComp; // todo: think through / parametrize
+        std::queue<size_t> splitCandidates;
+        for (size_t i = 0; i < components.size(); ++i) {
+            if (components[i].getWeight() > 0)
+                splitCandidates.push(i);
+        }
+        int splitCount = 0;
+
+        while(!splitCandidates.empty() && splitCount < maxSplitCount) {
+            int i = splitCandidates.front();
+            splitCandidates.pop();
+
+            splitComponent(i, splitCandidates, splitCount);
+        }
+        SLog(mitsuba::EInfo, "components after the split: %d, split %d components", getNumActiveComponents(), splitCount);
+    }
+
+    void splitComponent(size_t index, std::queue<size_t> &splitCandidates, int &splitCount) {
+        if (getNumActiveComponents() >= maxNumComp) return;
+
+        // using PCA
+        auto cov = components[index].getCovariance();
+        auto mean = components[index].getMean();
+
+        Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(cov);
+        Eigen::VectorXd eigenvalues = solver.eigenvalues();
+        Eigen::MatrixXd eigenvectors = solver.eigenvectors();
+
+        // check if to split
+        double minEigenvalue = eigenvalues.minCoeff();
+        double maxEigenvalue = eigenvalues.maxCoeff();
+
+        double ratio = maxEigenvalue / minEigenvalue;
+        if (ratio < splittingThreshold)
+            return; // below threshold - do nothing
+
+        splitCount++;
+
+        // Identify the principal eigenvector (largest eigenvalue)
+        int maxIndex;
+        eigenvalues.maxCoeff(&maxIndex);
+        Eigen::VectorXd principalAxis = eigenvectors.col(maxIndex);
+
+        double alpha = 0.5 * std::sqrt(maxEigenvalue);  // Scaling factor
+        Eigen::VectorXd deltaMean = alpha * principalAxis;
+
+        auto newMean1 = mean + deltaMean;
+        auto newMean2 = mean - deltaMean;
+
+        //  Adjust the covariance matrix
+        Eigen::MatrixXd principalCov = maxEigenvalue * (principalAxis * principalAxis.transpose());
+        auto newCov1 = cov - (0.5 * principalCov);
+        auto newCov2 = newCov1; // keeping symmetric structure
+
+        auto comp = components[index];
         comp.setWeight(comp.getWeight() / 2.0);
-        comp.setMean(mean + offset);
-        comp.setPriorSampleCount(comp.getPriorSampleCount() / 2);
+        comp.setMean(newMean1);
+        comp.setCovariance(newCov1);
+        splitCandidates.push(index);
 
-        Eigen::MatrixXd perturbation = Eigen::MatrixXd::Identity(comp.getCovariance().rows(), comp.getCovariance().cols()) * 0.05;
-        comp.setCovariance(comp.getCovariance() * 0.5 + perturbation);
-
+        GaussianComponent newComp;
         newComp.setWeight(comp.getWeight());
-        newComp.setMean(mean - 2 * offset);
-        newComp.setCovariance(comp.getCovariance());
-        newComp.setPriorSampleCount(comp.getPriorSampleCount());
-        newComp.setCovariance(comp.getCovariance());
+        newComp.setMean(newMean2);
+        newComp.setCovariance(newCov2);
 
         for (size_t i=0; i < components.size(); ++i) {
             if (components[i].getWeight() == 0) {
                 // found first deactivated component - replace with the new one
                 components[i] = newComp;
+                splitCandidates.push(i);
                 break;
             }
         }
     }
 
     void mergeComponents(size_t index1, size_t index2) {
-        // assert(mtx.try_lock() == false);
-        // boost::unique_lock<boost::shared_mutex> lock(mtx);
-        if (getNumActiveComponents() == minNumComp) {
-            // SLog(mitsuba::EInfo, "Called merge function when minumum number of components already reached. Returing without merge");
-            return;
-        }
-        // sanity check:
+        if (getNumActiveComponents() == minNumComp) return;
+
         if (index1 >= components.size() || index2 >= components.size() || index1 == index2) return;
 
-        size_t earlierIdx = index1 < index2 ? index1 : index2;
-        size_t laterIdx = index1 < index2 ? index2 : index1;
+        GaussianComponent& component1 = components[index1];
+        GaussianComponent& component2 = components[index2];
 
-        GaussianComponent& earlierComponent = components[earlierIdx];
-        GaussianComponent& laterComponent = components[laterIdx];
-
-        if (earlierComponent.getWeight() == 0 || laterComponent.getWeight() == 0) {
-            // SLog(mitsuba::EInfo, "Trying to merge components, when one of them is inactive - returing");
-            return;
-        }
-
-        double totalWeight = earlierComponent.getWeight() + laterComponent.getWeight();
+        // new values based on:
+        // Z. Zhang, C. Chen, J. Sun, and K. L. Chan, “EM algorithms for Gaussian mixtures with split-and-merge operation,” Pattern Recognition, vol. 36, no. 9, pp. 1973 – 1983, 2003.
+        double totalWeight = component1.getWeight() + component2.getWeight();
 
         Eigen::VectorXd mergedMean = (
-            earlierComponent.getWeight() * earlierComponent.getMean()
-            + laterComponent.getWeight() * laterComponent.getMean()) / totalWeight;
+            component1.getWeight() * component1.getMean() +
+            component2.getWeight() * component2.getMean()) / totalWeight;
 
-            Eigen::MatrixXd mergedConvs =
-            (earlierComponent.getWeight() * (earlierComponent.getCovariance() + (earlierComponent.getMean() - mergedMean) * (earlierComponent.getMean() - mergedMean).transpose()) +
-            laterComponent.getWeight() * (laterComponent.getCovariance() + (laterComponent.getMean() - mergedMean) * (laterComponent.getMean() - mergedMean).transpose())) /
-            totalWeight;
+        Eigen::MatrixXd correction = mergedMean * mergedMean.transpose();
+        Eigen::MatrixXd weightedCovaraince1 = component1.getWeight() * component1.getCovariance();
+        Eigen::MatrixXd weightedCovaraince2 = component2.getWeight() * component2.getCovariance();
 
-            // todo: probably safer to first create a new component and then atomically try to replace it with a new one
-            earlierComponent.setWeight(totalWeight);
-            earlierComponent.setMean(mergedMean);
-        earlierComponent.setCovariance(mergedConvs);
-        earlierComponent.setPriorSampleCount(earlierComponent.getPriorSampleCount() + laterComponent.getPriorSampleCount());
+        Eigen::MatrixXd weightedMean1TimesTransposed = component1.getWeight() * component1.getMean() * component1.getMean().transpose();
+        Eigen::MatrixXd weightedMean2TimesTransposed = component2.getWeight() * component2.getMean() * component2.getMean().transpose();
 
-        deactivateComponent(laterIdx);
+        Eigen::MatrixXd mergedConvs = (weightedCovaraince1 + weightedCovaraince2 + weightedMean1TimesTransposed + weightedMean2TimesTransposed) / totalWeight - correction;
 
-        // no need to swap or decrease the number of active components because deactiveComponents already does it
-        // SLog(mitsuba::EInfo, this->toString().c_str());
+        component1.setWeight(totalWeight);
+        component1.setMean(mergedMean);
+        component1.setCovariance(mergedConvs);
+
+        deactivateComponent(index2);
     }
 
     void fillMissingComponents() {
