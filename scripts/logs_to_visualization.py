@@ -5,15 +5,25 @@ from rays_on_image import plot_rays_on_image
 import os
 from datetime import datetime
 import argparse
+from pathlib import Path
 
 def create_visualization_folders(root):
     date_str = datetime.today().strftime("%d-%m")
-    gmm_dir_path = f"{root}/visualizations/{date_str}/gmm"
-    points_dir_path = f"{root}/visualizations/{date_str}/points"
-    os.makedirs(gmm_dir_path, exist_ok=True)
-    os.makedirs(points_dir_path, exist_ok=True)
+    base_dir = Path(f"{root}/visualizations/{date_str}")
 
-    return (gmm_dir_path, points_dir_path)
+    if base_dir.exists():
+        counter = 1
+        while Path(f"{root}/visualizations/{date_str}_{counter:02d}").exists():
+            counter += 1
+        base_dir = Path(f"{root}/visualizations/{date_str}_{counter:02d}")
+
+    final_dir_gmm = base_dir / "gmm"
+    final_dir_gmm.mkdir(parents=True, exist_ok=True)
+
+    final_dir_points = base_dir / "points"
+    final_dir_points.mkdir(parents=True, exist_ok=True)
+
+    return (str(final_dir_gmm), str(final_dir_points))
 
 
 def main(root_dir):
@@ -29,9 +39,9 @@ def main(root_dir):
         output_path = f"{gmm_path}/{i}.png"
         plot_gmm_on_image_2d(gmm, image_path, aabb, output_path)
 
-    for (i, iter) in enumerate(valid_samples):
-        output_path = f'{point_path}/{i}.png'
-        plot_points_in_itration(image_path, iter, aabb, output_path, False, True, nodes)
+    # for (i, iter) in enumerate(valid_samples):
+    #     output_path = f'{point_path}/{i}.png'
+    #     plot_points_in_itration(image_path, iter, aabb, output_path, False, True, nodes)
 
     # plot_rays_on_image(image_path, aabb, nodes, intersection_data)
 
