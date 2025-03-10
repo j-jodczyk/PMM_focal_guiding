@@ -9,6 +9,7 @@
 #include <cassert>
 
 namespace pmm_focal {
+
 // there seems to be no easy way to calculate AABB without traversing the whole tree
 // let's calculate AABB for each leaf upon creation -- how will this effect memory?
 template<typename Env>
@@ -230,76 +231,50 @@ private:
                 return index == 0;
             }
 
-            Vector getNormal(const Point &A, const Point &B, const Point &C) const {
-                Vector v1 = B - A;
-                Vector v2 = C - A;
-                return mitsuba::normalize(mitsuba::cross(v1, v2));
-            }
-
-            Point getPlaneLineIntersection(const Vector &planeNormal, const Point &pointOnPlane, const Point &lineOrigin, const Vector &lineDirection) {
-                float denominator = mitsuba::dot(planeNormal, lineDirection);
-                if (std::abs(denominator) < 1e-6)
-                    return lineOrigin; // if we return lineOrigin, then we will not get true in isPointInsideAABB
-                float t = (mitsuba::dot(planeNormal, pointOnPlane - lineOrigin)) / denominator;
-                return lineOrigin + t * lineDirection;
-            }
-
-            bool isPointInsideAABB(const Point &point) {
-                Point min = m_aabb.min;
-                Point max = m_aabb.max;
-                return (
-                    point.x >= min.x && point.x <= max.x &&
-                    point.y >= min.y && point.y <= max.y &&
-                    point.z >= min.z && point.z <= max.z)
-                ;
-            }
-
+            // Slab Method (or Ray-AABB Intersection via Parameterized Planes).
             Eigen::VectorXd getRayIntersection(const Point &origin, const Vector &direction) {
-                // Eigen::VectorXd intersect1(Dimensionality);
-                // Eigen::VectorXd intersect2(Dimensionality);
-                Eigen::VectorXd intersect1(3);
-                Eigen::VectorXd intersect2(3);
-                bool intersect1Taken = false;
-                bool intersect2Taken = false;
                 Point min = m_aabb.min;
                 Point max = m_aabb.max;
 
-                std::vector<std::tuple<Point, Point, Point>> planes = {
-                    {min, {max.x, min.y, min.z}, {max.x, max.y, min.z}}, // XY min
-                    {min, {min.x, min.y, max.z}, {max.x, min.y, max.z}}, // XZ min
-                    {min, {min.x, max.y, min.z}, {min.x, max.y, max.z}}, // YZ min
-                    {{min.x, min.y, max.z}, {max.x, min.y, max.z}, max}, // XY max
-                    {{max.x, min.y, max.z}, {max.x, min.y, min.z}, max}, // YZ max
-                    {{min.x, max.y, min.z}, {max.x, max.y, min.z}, max}  // XZ max
-                };
+                double tmin = (min.x - origin.x) / direction[0];
+                double tmax = (max.x - origin.x) / direction[0];
+                if (tmin > tmax) std::swap(tmin, tmax);
 
-                auto processIntersection = [&](const Point &A, const Point &B, const Point &C) {
-                    Point intersect = getPlaneLineIntersection(getNormal(A, B, C), A, origin, direction);
-                    if (isPointInsideAABB(intersect)) {
-                        if (!intersect1Taken) {
-                            intersect1 << intersect.x, intersect.y, intersect.z;
-                            intersect1Taken = true;
-                        } else if (!intersect2Taken) {
-                            intersect2 << intersect.x, intersect.y, intersect.z;
-                            intersect2Taken = true;
-                        }
-                    }
-                };
+                double tymin = (min.y - origin.y) / direction[1];
+                double tymax = (max.y - origin.y) / direction[1];
+                if (tymin > tymax) std::swap(tymin, tymax);
 
-                for (size_t i = 0; i < planes.size(); ++i) {
-                    const Point &A = std::get<0>(planes[i]);
-                    const Point &B = std::get<1>(planes[i]);
-                    const Point &C = std::get<2>(planes[i]);
-                    processIntersection(A, B, C);
+                if ((tmin > tymax) || (tymin > tmax)) {
+                    SLog(mitsuba::EInfo, "No intersection found");
+                    return Eigen::VectorXd();  // No intersection
                 }
 
-                if (intersect1Taken && intersect2Taken)
-                    return (intersect1 + intersect2) / 2;
+                if (tymin > tmin) tmin = tymin;
+                if (tymax < tmax) tmax = tymax;
 
-                SLog(mitsuba::EInfo, "Intersection between a ray and aabb not found.");
-                SLog(mitsuba::EInfo, m_aabb.toString().c_str());
-                SLog(mitsuba::EInfo, ("origin: " + origin.toString() + " direction: " + direction.toString()).c_str());
-                return Eigen::VectorXd();
+                double tzmin = (min.z - origin.z) / direction[2];
+                double tzmax = (max.z - origin.z) / direction[2];
+                if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+                if ((tmin > tzmax) || (tzmin > tmax)) {
+                    SLog(mitsuba::EInfo, "No intersection found");
+                    return Eigen::VectorXd();  // No intersection
+                }
+
+                if (tzmin > tmin) tmin = tzmin;
+                if (tzmax < tmax) tmax = tzmax;
+
+                if (tmin < 0 && tmax < 0) {
+                    SLog(mitsuba::EInfo, "No intersection found");
+                    return Eigen::VectorXd();  // Intersection is behind the ray
+                }
+
+                Eigen::Vector3d originVec(origin.x, origin.y, origin.z);  // Convert Point to Vector
+                Eigen::Vector3d directionVec(direction.x, direction.y, direction.z);
+                Eigen::Vector3d intersect1 = originVec + tmin * directionVec;
+                Eigen::Vector3d intersect2 = originVec + tmax * directionVec;
+
+                return (intersect1 + intersect2) / 2;
             }
         };
 
