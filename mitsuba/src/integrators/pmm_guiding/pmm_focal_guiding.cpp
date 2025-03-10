@@ -35,6 +35,36 @@ static StatsCounter samplesFromGMMCount("Path tracer", "Sampled from GMM", ENumb
 #include <sstream>
 #include <string>
 
+struct ContributionAndThroughput {
+    Spectrum contribution {0.0f};
+    Spectrum throughput   {1.0f};
+
+    explicit ContributionAndThroughput(const Spectrum& contribution, const Spectrum& throughput)
+        : contribution{contribution}, throughput{throughput} {}
+
+    Spectrum getClamped(const float maxThroughput)
+    {
+        if (throughput.max() > maxThroughput)
+            return contribution*throughput*(maxThroughput/throughput.max());
+        return contribution*throughput;
+    }
+};
+
+struct IntersectionData {
+    //direct light from next its, bsdf*miWeight
+    ContributionAndThroughput bsdfDirectLight;
+    //direct light from next event estimation, bsdf*miWeight
+    ContributionAndThroughput neeDirectLight;
+    //self emission
+    ContributionAndThroughput emission;
+    float bsdfMiWeight {1.0f};
+
+    IntersectionData()
+        : bsdfDirectLight(Spectrum(0.0f), Spectrum(1.0f)),
+          neeDirectLight(Spectrum(0.0f), Spectrum(1.0f)),
+          emission(Spectrum(0.0f), Spectrum(1.0f)) {}
+};
+
 /* Based on MIPathTracer */
 class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     using Tree = pmm_focal::Octree<EnvMitsuba3D>;
@@ -49,7 +79,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     uint32_t m_renderMaxSeconds;
     AABB sceneSpace;
     mutable std::vector<std::vector<pmm_focal::WeightedSample>> perThreadSamples;
-    mutable std::vector<std::vector<pmm_focal::WeightedSample>> perThreadZeroValuedSamples;
+    mutable std::vector<std::vector<mitsuba::RayDifferential>> perThreadZeroValuedSamples;
     mutable std::atomic<size_t> maxThreadId;
 
     mutable PrimitiveThreadLocal<bool> threadLocalInitialized;
@@ -57,9 +87,11 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     uint32_t samplesPerIteration;
     uint32_t trainingIterations;
     uint32_t trainingSamples;
+    uint32_t allCollectedSamplesCount = 0;
     int maxDepth;
 
     bool training; // only collecting samples while training
+    bool shouldUseGuiding = false; // no use in using guiding for the first iteration
 
 
 public:
@@ -70,12 +102,12 @@ public:
             m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 40);
             m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
 
-            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.8));
-            double st = props.getFloat("gmm.splittingThreshold", 1000.0);
+            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.25));
+            double st = props.getFloat("gmm.splittingThreshold", 7.0);
             m_gmm.setSplittingThreshold(st);
-            double mt = props.getFloat("gmm.mergingThreshold", 0.01);
+            double mt = props.getFloat("gmm.mergingThreshold", 0.25);
             m_gmm.setMergingThreshold(mt);
-            m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 4));
+            m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
 
             minSamplesToStartFitting = static_cast<uint32_t>(props.getSize("minSamplesToStartFitting", 12)); // todo: use
@@ -85,7 +117,7 @@ public:
 
             m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 300)); // 5 min
             this->maxDepth = props.getInteger("maxDepth", 40);
-            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 10);
+            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 3);
             this->trainingSamples = static_cast<uint32_t>(props.getSize("trainingSamples", 4));
             m_timer = new Timer{false};
             Log(EInfo, this->toString().c_str());
@@ -100,8 +132,11 @@ public:
         sceneSpace = scene->getAABB();
 
         m_octree.setAABB(scene->getAABB());
-        m_gmm.init(m_gmm.getMinNumComp(), 3, scene->getAABB());
+        Log(EInfo, m_octree.toStringVerbose().c_str());
 
+        // we initialize with an avarage of max and min
+        size_t initialComponentCount = (m_gmm.getMaxNumComp() + m_gmm.getMinNumComp()) / 2;
+        m_gmm.init(initialComponentCount, 3, scene->getAABB());
         Log(EInfo, m_gmm.toString().c_str());
 
         // per thread storage for sample data
@@ -166,6 +201,7 @@ public:
             iterationPostprocess(film, samplesPerIteration, job); // this is where we update the gmm
 
             sched->unregisterResource(trainingSamplerResID);
+            shouldUseGuiding = true;
         }
 
         Log(EInfo, "Finished training phase. Starting real rendering.");
@@ -190,12 +226,17 @@ public:
         const size_t numValidSamples = std::accumulate(perThreadSamples.begin(), perThreadSamples.end(), 0UL,
             [](size_t sum, const std::vector<pmm_focal::WeightedSample>& samples) -> size_t { return sum+samples.size(); });
 
-        // todo: probably we would like to skip, but honestly idk, maybe not
-        // if (numValidSamples < minSamplesToStartFitting) {
-        //     Log(EInfo, "skipping fit due to insufficient sample data (got %zu/%zu valid samples).", numValidSamples, minSamplesToStartFitting);
-        //     return;
-        // }
-        Log(EInfo, "Collected %i valid samples", numValidSamples);
+        allCollectedSamplesCount += numValidSamples;
+        if (allCollectedSamplesCount == 0) {
+            Log(EInfo, "No samples found during training, resetting gmm.");
+            m_gmm.init(m_gmm.getMinNumComp(), 3, sceneSpace);
+        }
+
+
+        if (numValidSamples < minSamplesToStartFitting) {
+            Log(EInfo, "skipping fit due to insufficient sample data (got %zu/%d valid samples).", numValidSamples, minSamplesToStartFitting);
+            return;
+        }
 
         m_timer->reset();
         // flatten the samples vector
@@ -204,13 +245,13 @@ public:
             acc.insert(acc.end(), vec.begin(), vec.end());
             return acc;
         });
-        for (auto sample : iterationSamples) {
-            Log(EInfo, sample.toString().c_str());
-        }
+        // for (auto sample : iterationSamples) {
+        //     Log(EInfo, sample.toString().c_str());
+        // }
 
         // flatten the zero-samples vector
-        std::vector<pmm_focal::WeightedSample> iterationZeroValuedSamples = std::accumulate(perThreadZeroValuedSamples.begin(), perThreadZeroValuedSamples.end(), std::vector<pmm_focal::WeightedSample>{},
-        [](std::vector<pmm_focal::WeightedSample>& acc, const std::vector<pmm_focal::WeightedSample>& vec) {
+        std::vector<RayDifferential> iterationZeroValuedSamples = std::accumulate(perThreadZeroValuedSamples.begin(), perThreadZeroValuedSamples.end(), std::vector<RayDifferential>{},
+        [](std::vector<RayDifferential>& acc, const std::vector<RayDifferential>& vec) {
             acc.insert(acc.end(), vec.begin(), vec.end());
             return acc;
         });
@@ -221,7 +262,7 @@ public:
         Log(EInfo, "iteration postprocessing time: %s", timeString(postprocessingTime, true).c_str());
         m_timer->reset();
         Log(EInfo, m_gmm.toString().c_str());
-        Log(EInfo, m_octree.toStringVerbose().c_str());
+        Log(EInfo, m_octree.toString().c_str());
         Log(EDebug, m_octree.toStringVerbose().c_str());
     }
 
@@ -295,20 +336,20 @@ public:
         // EDelta means discrete number of directions
         // - unsuitable for guiding or importance sampling based on density distributions
         // that work over ranges of directions
-        if ((type & BSDF::EDelta) == (type & BSDF::EAll)) { // || m_iteration == 0)
+        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding) { // first iteration we should not use guiding
             auto result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
             woPdf = bsdfPdf;
-            return result; // woPdf and bsdfPdf set - it's fine
+            return result;
         }
 
         Spectrum result;
         if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
             // sample BSDF
             sample.x /= bsdfSamplingFraction;
-            result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
+            result = bsdf->sample(bRec, bsdfPdf, sample);
             if (result.isZero()) {
                 woPdf = bsdfPdf = 0;
-                return Spectrum{0.0f}; // woPdf and bsdfPdf set - it's fine
+                return Spectrum{0.0f};
             }
 
             // If we sampled a delta component, then we have a 0 probability
@@ -363,10 +404,10 @@ public:
 
     Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
         Spectrum Li(0.0f);
-        Spectrum learnedContribution(0.f);
+        IntersectionData intersectionData;
 
         static thread_local std::vector<pmm_focal::WeightedSample>* samples {nullptr};
-        static thread_local std::vector<pmm_focal::WeightedSample>* zeroValuedSamples {nullptr}; // todo: might not be WeigthedSample
+        static thread_local std::vector<RayDifferential>* zeroValuedSamples {nullptr}; // todo: might not be WeigthedSample
 
         // init thread variables
         if (training && !threadLocalInitialized.get()) {
@@ -405,12 +446,20 @@ public:
 
             /* Possibly include emitted radiance if requested */
             if (its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)
-                && (!m_hideEmitters || scattered))
-                Li += throughput * its.Le(-ray.d);
+                && (!m_hideEmitters || scattered)) {
+                const Spectrum emittedRadiance = its.Le(-ray.d);
+                Li += throughput * emittedRadiance;
+                intersectionData.emission.contribution = emittedRadiance;
+            }
+
 
             /* Include radiance from a subsurface scattering model if requested */
-            if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance))
-                Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
+            if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance)) {
+                const Spectrum subsurfaceScatteredRadiance = its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
+                Li += throughput * subsurfaceScatteredRadiance;
+
+                intersectionData.emission.contribution += subsurfaceScatteredRadiance;
+            }
 
             if ((rRec.depth >= maxDepth && maxDepth > 0)
                 || (m_strictNormals && dot(ray.d, its.geoFrame.n)
@@ -457,6 +506,7 @@ public:
                         Float weight = miWeight(dRec.pdf, bsdfPdf);
                         // Log(EInfo, ("throughput = " + throughput.toString() + " value = " + value.toString() + " bsdfVal = " + bsdfVal.toString() + " weight = %f").c_str(), weight);
                         Li += throughput * value * bsdfVal * weight;
+                        intersectionData.neeDirectLight = ContributionAndThroughput{value, bsdfVal*weight};
                     }
                 }
             }
@@ -533,7 +583,8 @@ public:
                 Li += throughput * value * weight;
 
                 // Log(EInfo, ("Throughput = " + throughput.toString() + " value = " + value.toString() + " weight = %f").c_str(), weight);
-                learnedContribution += throughput * value * weight;
+                intersectionData.bsdfDirectLight = ContributionAndThroughput{value, bsdfWeight*weight};
+                intersectionData.bsdfMiWeight =weight;
             }
 
             /* ==================================================================== */
@@ -559,10 +610,6 @@ public:
                 throughput /= q;
             }
 
-            /* Store statistics */
-            avgPathLength.incrementBase();
-            avgPathLength += rRec.depth;
-
             if (training) {
                 // collect samples while training
                 const BSDF *endpointBSDF = its.getBSDF();
@@ -577,28 +624,36 @@ public:
                     std::numeric_limits<Float>::infinity() : /// virtual image possible, need to splat entire ray
                     its.t;
 
-                float contribution = (learnedContribution * throughput).average();
+                    // todo: vmm had some more restrains for samples (sampel type and roughness)
+                    Spectrum clampedLight {0.0f};
+                    const float maxThroughput = 10.0f;
 
-                if (contribution > 1e-6) {
-                    ref<Timer> trainingTimer = new Timer(false);
-                    trainingTimer->start();
+                clampedLight += intersectionData.bsdfDirectLight.getClamped(maxThroughput);
+                clampedLight += intersectionData.neeDirectLight.getClamped(maxThroughput);
+                clampedLight += intersectionData.emission.getClamped(maxThroughput);
+                clampedLight += intersectionData.bsdfDirectLight.contribution*intersectionData.bsdfMiWeight;
+
+                if (clampedLight.average() < 1e-6) {
+                    // do nothing
+                } else {
                     std::vector<Eigen::VectorXd> points;
                     m_octree.splat(ray.o, ray.d, splatDistance, points);
-                    Log(EInfo, "collect some samples because contribution is %f", contribution);
-                    Log(EInfo, ("Intersection coordinates: " + its.p.toString()).c_str());
-                    Log(EInfo, ("Ray data: origin: " + ray.o.toString() + " direction: " + ray.d.toString()).c_str());
                     for(auto& point : points) {
-                        if (point.size() == 0)
+                        if (point.size() == 0) {
+                            SLog(EInfo, "Intersection was not found");
                             continue; // if for some reason the intersection was not found, don't save the point
-                        samples->push_back({point, std::log10(contribution)});
-                        Log(EInfo, "[%f, %f, %f]", point[0], point[1], point[2]);
+                        }
+                        samples->push_back({point, clampedLight.average()});
+                        // Log(EInfo, "[%f, %f, %f]", point[0], point[1], point[2]);
                     }
-                    Log(EInfo, "Currently collected %i samples", samples->size());
-                    const Float trainingTime = trainingTimer->stop();
-                    Log(EInfo, "Training took %f seconds", trainingTime);
                 }
             }
         }
+
+        /* Store statistics */
+        avgPathLength.incrementBase();
+        avgPathLength += rRec.depth;
+
         return Li;
     }
 
