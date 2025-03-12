@@ -137,7 +137,7 @@ public:
         build();
     }
 
-    void splat(const Point &origin, const Vector &direction, Float distance, std::vector<Eigen::VectorXd>& points) {
+    void splat(const Point &origin, const Vector &direction, Float distance,  Float contribution, std::vector<Eigen::VectorXd>& points) {
         Float alpha = 1;
 
         Traversal traversal{*this, origin, direction};
@@ -149,7 +149,7 @@ public:
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
                 points.push_back(child.getRayIntersection(origin, direction));
-                child.accumulator += 1; // count the ammount of points comming through the node
+                child.accumulator += contribution; // count the ammount of points comming through the node
             }
         });
     }
@@ -304,7 +304,8 @@ private:
             oss << "Node[" << std::endl;
             for (auto &child: children) {
                 oss << "Index: " << child.index << "\t";
-                oss << "AABB: " << child.m_aabb.toString() << std::endl;
+                oss << "AABB: " << child.m_aabb.toString()  << "\t";
+                oss << "DensityTimesVolume: " << child.densityTimesVolume << " (" << std::setprecision(3) << child.densityTimesVolume << ")" << std::endl;
             }
             oss << "]";
             return oss.str();
@@ -463,7 +464,7 @@ private:
 
         void sumDensities() {
             if (Env::volume(tree.getAABB()) == 0) {
-                printf("empty volume\n");
+                SLog(mitsuba::EInfo, "empty volume\n");
                 return;
             }
 
@@ -478,12 +479,13 @@ private:
             rootWeight = sumDensities(0, rootAccumulator, rootChildVolume);
             splittingThreshold = tree.configuration.threshold * rootWeight;
 
-            printf("root weight: %.3e\n", rootWeight);
+            SLog(mitsuba::EInfo, "root weight: %.3e (%f)", rootWeight, rootWeight);
+            SLog(mitsuba::EInfo, "splitting threshold: %.3e (%f)", splittingThreshold, splittingThreshold);
         }
 
         void build() {
             if (rootChildVolume == 0) {
-                printf("trying to build tree without samples!\n");
+                SLog(mitsuba::EInfo, "trying to build tree without samples!\n");
                 return;
             }
 
@@ -493,7 +495,7 @@ private:
             pruneTree();
             const auto nodesAfterPrune = NodeIndex(tree.m_nodes.size());
 
-            printf("node count: %d -> %d -> %d\n", nodesBeforeSplit, nodesAfterSplit, nodesAfterPrune);
+            SLog(mitsuba::EInfo, "node count: %d -> %d -> %d\n", nodesBeforeSplit, nodesAfterSplit, nodesAfterPrune);
         }
 
         Octree &tree;

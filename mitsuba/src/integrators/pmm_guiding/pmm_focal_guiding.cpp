@@ -70,6 +70,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     using Tree = pmm_focal::Octree<EnvMitsuba3D>;
 
     mutable Tree m_octree;
+    mutable Tree m_octreeDiverging;
     // todo
     // probably not double
     using Scalar = double;
@@ -92,31 +93,32 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
 
     bool training; // only collecting samples while training
     bool shouldUseGuiding = false; // no use in using guiding for the first iteration
+    float divergeProbability = 0.5f;
 
 
 public:
     PMMFocalGuidingIntegrator(const Properties &props)
         : MonteCarloIntegrator(props) {
-            m_octree.configuration.threshold = props.getFloat("orth.threshold", 1e-3);
-            m_octree.configuration.minDepth = props.getInteger("orth.minDepth", 0);
-            m_octree.configuration.maxDepth = props.getInteger("orth.maxDepth", 40);
-            m_octree.configuration.decay = props.getFloat("orth.decay", 0.5f);
+            m_octree.configuration.threshold = props.getFloat("tree.threshold", 1e-3);
+            m_octree.configuration.minDepth = props.getInteger("tree.minDepth", 0);
+            m_octree.configuration.maxDepth = props.getInteger("tree.maxDepth", 40);
+            m_octree.configuration.decay = props.getFloat("tree.decay", 0.5f);
 
-            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.25));
+            m_octreeDiverging.configuration = m_octree.configuration;
+
+            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.5));
             m_gmm.setSplittingThreshold(props.getFloat("gmm.splittingThreshold", 7.0));
             m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold", 0.25));
-            Log(EInfo, "merging threshold: %f, splitting theshold: %f", m_gmm.getMergingThreshold(), m_gmm.getSplittingThreshold());
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
 
-            minSamplesToStartFitting = static_cast<uint32_t>(props.getSize("minSamplesToStartFitting", 12)); // todo: use
+            minSamplesToStartFitting = static_cast<uint32_t>(props.getInteger("minSamplesToStartFitting", 12));
             samplesPerIteration = static_cast<uint32_t>(props.getSize("samplesPerIteration", 4));
 
-            Log(EInfo, "minSamplesToStartFitting = %zu", minSamplesToStartFitting);
-
-            m_renderMaxSeconds = static_cast<uint32_t>(props.getSize("renderMaxSeconds", 300)); // 5 min
+            m_renderMaxSeconds = static_cast<uint32_t>(props.getInteger("renderMaxSeconds", 3000)); // 5 min
             this->maxDepth = props.getInteger("maxDepth", 40);
-            this->trainingIterations = static_cast<uint32_t>(props.getSize("iterationCount"), 3);
+            this->trainingIterations = static_cast<uint32_t>(props.getInteger("iterationCount", 10));
+            Log(EInfo, "iterationCount: %d", this->trainingIterations);
             this->trainingSamples = static_cast<uint32_t>(props.getSize("trainingSamples", 4));
             m_timer = new Timer{false};
             Log(EInfo, this->toString().c_str());
@@ -131,7 +133,9 @@ public:
         sceneSpace = scene->getAABB();
 
         m_octree.setAABB(scene->getAABB());
-        Log(EInfo, m_octree.toStringVerbose().c_str());
+        m_octreeDiverging.setAABB(scene->getAABB());
+        Log(EInfo, m_octree.toString().c_str());
+        Log(EInfo, m_octreeDiverging.toString().c_str());
 
         // we initialize with an avarage of max and min
         size_t initialComponentCount = (m_gmm.getMaxNumComp() + m_gmm.getMinNumComp()) / 2;
@@ -256,13 +260,28 @@ public:
         });
 
         Log(EInfo, "Got %i non-zero samples and %i zero samples", iterationSamples.size(), iterationZeroValuedSamples.size());
+
         m_gmm.processBatch(iterationSamples);
+
+        const Float convThreshold = m_octree.sumDensities();
+        const Float divThreshold = m_octreeDiverging.sumDensities();
+        const Float threshold = convThreshold + divThreshold;
+
+        m_octree.build(threshold);
+        m_octreeDiverging.build(threshold);
+
+        divergeProbability = divThreshold / (divThreshold + convThreshold);
+        Log(EInfo, "diverge probability: %.3f\n", divergeProbability);
+
         const Float postprocessingTime = m_timer->stop();
         Log(EInfo, "iteration postprocessing time: %s", timeString(postprocessingTime, true).c_str());
         m_timer->reset();
         Log(EInfo, m_gmm.toString().c_str());
         Log(EInfo, m_octree.toString().c_str());
         Log(EDebug, m_octree.toStringVerbose().c_str());
+
+        Log(EInfo, m_octreeDiverging.toString().c_str());
+        Log(EDebug, m_octreeDiverging.toStringVerbose().c_str());
     }
 
     bool render(Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
@@ -282,10 +301,6 @@ public:
             nCores == 1 ? "core" : "cores");
 
         int integratorResID = sched->registerResource(this);
-
-        // Log(EInfo, m_gmm.toString().c_str());
-        // Log(EInfo, m_octree.toString().c_str());
-        // Log(EDebug, m_octree.toStringVerbose().c_str());
 
         Float totalRenderTime;
         Float iterationRenderTime;
@@ -374,6 +389,11 @@ public:
             bRec.wo = normalize(endPoint - bRec.its.p);
             bRec.wo = bRec.its.toLocal(bRec.wo);
 
+            bool isDiverging = sample.x < divergeProbability;
+            if (isDiverging) {
+                bRec.wo *= -1;
+            }
+
             // // idk - they say it's hack
             bRec.eta = 1; // eta is Relative index of refraction in the sampled direction. Refractive index determines how much the path of light is bent, or refracted, when entering a material.
             bRec.sampledType = BSDF::EDiffuse;
@@ -381,17 +401,16 @@ public:
             result = bsdf->eval(bRec);
 
             if (result.isZero()) {
-                // invalid (aka zero contribution) direction - so we don't set wo and bdfPdf I guess
+                // invalid (aka zero contribution) direction
                 return result;
             }
         }
 
-        pdfMat(woPdf, bsdfPdf, bsdf, bRec); // woPdf and bsdfPdf set - it's fine
+        pdfMat(woPdf, bsdfPdf, bsdf, bRec);
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
         return result / woPdf;
-        // from what I can tell right now, always: woPdf == bsdfPdf
     }
 
     void pdfMat(
@@ -632,17 +651,24 @@ public:
                 clampedLight += intersectionData.emission.getClamped(maxThroughput);
                 clampedLight += intersectionData.bsdfDirectLight.contribution*intersectionData.bsdfMiWeight;
 
-                if (clampedLight.average() < 1e-6) {
+                float weight = log(clampedLight.average());
+
+                if (weight < 1e-6) {
                     // do nothing
                 } else {
                     std::vector<Eigen::VectorXd> points;
-                    m_octree.splat(ray.o, ray.d, splatDistance, points);
+                    if (endpointIsGlossy) {
+                        m_octreeDiverging.splat(ray.o, ray.d, splatDistance, weight, points);
+                    } else {
+                        // splat converging
+                        m_octree.splat(ray.o, ray.d, splatDistance, weight, points);
+                    }
                     for(auto& point : points) {
                         if (point.size() == 0) {
                             SLog(EInfo, "Intersection was not found");
                             continue; // if for some reason the intersection was not found, don't save the point
                         }
-                        samples->push_back({point, clampedLight.average()});
+                        samples->push_back({point, weight});
                         // Log(EInfo, "[%f, %f, %f]", point[0], point[1], point[2]);
                     }
                 }

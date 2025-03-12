@@ -255,8 +255,8 @@ private:
         eigenvalues.maxCoeff(&maxIndex);
         Eigen::VectorXd principalAxis = eigenvectors.col(maxIndex);
 
-        double alpha = 0.5 * std::sqrt(maxEigenvalue);  // Scaling factor
-        Eigen::VectorXd deltaMean = alpha * principalAxis;
+        double scalingFactor = 0.5 * std::sqrt(maxEigenvalue);
+        Eigen::VectorXd deltaMean = scalingFactor * principalAxis;
 
         auto newMean1 = mean + deltaMean;
         auto newMean2 = mean - deltaMean;
@@ -342,6 +342,7 @@ private:
 public:
     GaussianMixtureModel() {}
 
+    double getAlpha() { return alpha; }
     void setAlpha(double newAlpha) { alpha = newAlpha; };
     double getSplittingThreshold() { return splittingThreshold; };
     void setSplittingThreshold(double newThreshold) { splittingThreshold = newThreshold; };

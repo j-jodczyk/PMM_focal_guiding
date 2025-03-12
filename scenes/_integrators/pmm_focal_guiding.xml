@@ -1,51 +1,50 @@
 <scene version="0.6.0">
-	<!-- <default name="maxDepth" value="14" /> -->
 	<default name="maxDepth" value="40" />
 	<!-- <default name="budget" value="300" /> training + render -->
 	<default name="budget" value="30" /> <!-- training + render -->
-	<default name="splitThreshold" value="1e-2" /> <!-- affects the number of nodes -->
+	<default name="treeThreshold" value="1e-3" /> <!-- affects the number of nodes -->
 	<!-- trainingTime = trainingIterations * iterationTime -->
 	<default name="trainingIterations" value="15" />
 	<!-- <default name="trainingIterations" value="3" /> -->
-	<default name="iterationTime" value="10" />
+	<!-- <default name="iterationTime" value="10" /> -->
 	<default name="normalBinning" value="disabled" />
 	<default name="dumpScene" value="false"/>
 	<default name="dumpPrimaryRays" value="false"/>
 	<default name="unboundedSplatting" value="true"/>
 	<default name="samplingMode" value="2"/>
 	<default name="trainingSamples" value="4"/>
-	<default name="gmmSplittingThreshold" value="3"/>
-	<default name="gmmMergingThreshold" value="0.5"/>
+
+	<default name="gmmAlpha" value="0.25"/> <!-- defines decay of previous samples -->
+	<default name="gmmSplittingThreshold" value="4.0"/>
+	<default name="gmmMergingThreshold" value="0.7"/>
+	<default name="gmmMinNumComp" value="3"/>
+	<default name="gmmMaxNumComp" value="15"/>
 
 	<integrator type="pmm_focal_guiding">
 		<boolean name="strictNormals" value="true" />
 		<integer name="maxDepth" value="$maxDepth" />
 		<integer name="rrDepth" value="14" />
-
+		<integer name="minSamplesToStartFitting" value="128"/>
+		<default name="samplesPerIteration" value="4"/>
+		<integer name="trainingSamples" value="$trainingSamples" />
 		<float name="budget" value="$budget" />
-		<float name="orth.threshold" value="$splitThreshold" />
 		<integer name="iterationCount" value="$trainingIterations" />
-		<float name="iterationBudget" value="$iterationTime" />
+		<!-- <float name="iterationBudget" value="$iterationTime" /> -->
 		<string name="normalBinning" value="$normalBinning" />
 		<boolean name="dumpScene" value="$dumpScene" />
 		<boolean name="unboundedSplatting" value="$unboundedSplatting" />
 		<integer name="samplingMode" value="$samplingMode" />
 		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
+		<integer name="renderMaxSeconds" value="7200"/> <!-- There's always going to be at least 1 iteration, but after that, the time will not exceed 2 minutes -->
 
-		<float name="gmm.alpha" value="0.25" />
+		<!-- GMM -->
+		<float name="gmm.alpha" value="$gmmAlpha" />
 		<float name="gmm.splittingThreshold" value="$gmmSplittingThreshold" /> <!-- this is ratio max/min eigenvalue - lower if you want more splits -->
 		<float name="gmm.mergingThreshold" value="$gmmMergingThreshold" /> <!-- this is Bhattacharyya coeff aka the similarity between two probability distributions (0, 1). The closer BC between to values to 1 the more similar they are. So if you want less merging, choose values closer to 1 -->
-		<integer name="gmm.minNumComp" value="3" />
-		<integer name="gmm.maxNumComp" value="15" />
+		<integer name="gmm.minNumComp" value="$gmmMinNumComp" />
+		<integer name="gmm.maxNumComp" value="$gmmMaxNumComp" />
 
-		<default name="renderMaxSeconds" value="7200"/>
-		<!-- <default name="minSamplesToStartFitting" value="128"/> -->
-		<default name="minSamplesToStartFitting" value="12"/>
-		<default name="samplesPerIteration" value="4"/>
-
-		<integer name="trainingSamples" value="$trainingSamples" />
-
-		<integer name="orth.outliers" value="0" />
-		<integer name="orth.minDepth" value="0" />
+		<!-- tree -->
+		<float name="tree.threshold" value="$treeThreshold" />
 	</integrator>
 </scene>
