@@ -1,0 +1,1050 @@
+2025-03-16 00:12:47 INFO  main [mitsuba.cpp:274] Mitsuba version 0.6.0 (Linux, 64 bit), Copyright (c) 2017 Wenzel Jakob
+2025-03-16 00:12:47 INFO  main [mitsuba.cpp:377] Parsing scene description from "../../scenes/dining-room/dining-room.xml" ..
+2025-03-16 00:12:47 INFO  main [scenehandler.cpp:675] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/dining-room.xml" (near line 18): Parsing included file "pmm_focal_guiding.xml" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/pmm_focal_guiding.so" ..
+2025-03-16 00:12:47 INFO  main [octree.h:482] root weight: 8.000e-20 (0.000000)
+2025-03-16 00:12:47 INFO  main [octree.h:483] splitting threshold: 8.000e-23 (0.000000)
+2025-03-16 00:12:47 INFO  main [octree.h:498] node count: 1 -> 585 -> 585
+
+2025-03-16 00:12:47 INFO  main [octree.h:482] root weight: 8.000e-20 (0.000000)
+2025-03-16 00:12:47 INFO  main [octree.h:483] splitting threshold: 8.000e-23 (0.000000)
+2025-03-16 00:12:47 INFO  main [octree.h:498] node count: 1 -> 585 -> 585
+
+2025-03-16 00:12:47 INFO  main [pmm_focal_guiding.cpp:109] Will save the GMM to file in directory ../scenes/dining-room/
+2025-03-16 00:12:47 INFO  main [PMMFocalGuidingIntegrator] GMM params: alpha = 0.250000, split_th = 1.000000, merge_th = 0.500000, min_num_comp = 3, max_num_comp = 10
+2025-03-16 00:12:47 INFO  main [PMMFocalGuidingIntegrator] iterationCount: 8
+2025-03-16 00:12:47 INFO  main [PMMFocalGuidingIntegrator] PMMFocalGuidingIntegrator
+  maxDepth = 40,
+  rrDepth = 14,
+  strictNormals = 1
+  gmm = GMM[
+]
+]
+2025-03-16 00:12:47 WARN  main [scenehandler.cpp:795] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 50): Unqueried attribute "budget" in element "integrator"
+2025-03-16 00:12:47 WARN  main [scenehandler.cpp:795] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 50): Unqueried attribute "dumpPrimaryRays" in element "integrator"
+2025-03-16 00:12:47 WARN  main [scenehandler.cpp:795] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 50): Unqueried attribute "dumpScene" in element "integrator"
+2025-03-16 00:12:47 WARN  main [scenehandler.cpp:795] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 50): Unqueried attribute "normalBinning" in element "integrator"
+2025-03-16 00:12:47 WARN  main [scenehandler.cpp:795] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 50): Unqueried attribute "samplingMode" in element "integrator"
+2025-03-16 00:12:47 WARN  main [scenehandler.cpp:795] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 50): Unqueried attribute "unboundedSplatting" in element "integrator"
+2025-03-16 00:12:47 WARN  main [scenehandler.cpp:795] In file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 51): Unqueried attribute "saveGMMDirectory" in element "scene"
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/independent.so" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/box.so" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/hdrfilm.so" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/perspective.so" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/roughplastic.so" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/twosided.so" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/roughconductor.so" ..
+2025-03-16 00:12:47 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:47 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/diffuse.so" ..
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/bitmap.so" ..
+2025-03-16 00:12:47 INFO  main [BitmapTexture] Loading texture "picture3.jpg"
+2025-03-16 00:12:47 INFO  main [MIPMap] Mapped MIP map cache file "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/textures/picture3.mip" into memory (18.8 MiB).
+2025-03-16 00:12:47 INFO  main [BitmapTexture] Loading texture "Tiles.jpg"
+2025-03-16 00:12:47 INFO  main [PluginManager] Loading plugin "plugins/lanczos.so" ..
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:48 INFO  main [PluginManager] Loading plugin "plugins/conductor.so" ..
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Ir.eta.spd": loaded a spectral power distribution with 28 entries (between 302.389984 and 885.570984 nm)
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Ir.k.spd": loaded a spectral power distribution with 28 entries (between 302.389984 and 885.570984 nm)
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:48 INFO  main [BitmapTexture] Loading texture "Teacup.png"
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:48 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-03-16 00:12:48 INFO  main [PluginManager] Loading plugin "plugins/area.so" ..
+2025-03-16 00:12:48 INFO  main [PluginManager] Loading plugin "plugins/disk.so" ..
+2025-03-16 00:12:48 INFO  main [PluginManager] Loading plugin "plugins/ply.so" ..
+2025-03-16 00:12:48 INFO  main [PLYLoader] Loading geometry from "parabol1.ply" ..
+2025-03-16 00:12:48 INFO  main [PLYLoader] "parabol1": Loaded 25856 triangles, 13057 vertices (456.0 KiB in 26 ms).
+2025-03-16 00:12:48 INFO  main [PLYLoader] Loading geometry from "parabol2.ply" ..
+2025-03-16 00:12:48 INFO  main [PLYLoader] "parabol2": Loaded 25856 triangles, 13057 vertices (456.0 KiB in 25 ms).
+2025-03-16 00:12:48 INFO  main [PluginManager] Loading plugin "plugins/obj.so" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh013.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh013: 1056 triangles, 577 vertices (merged 2591 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh013.obj" (took 9 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh016.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh016: 384 triangles, 768 vertices (merged 384 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh016.obj" (took 8 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh015.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh015: 3136 triangles, 1680 vertices (merged 7728 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh015.obj" (took 24 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh023.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh023: 1056 triangles, 577 vertices (merged 2591 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh023.obj" (took 9 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh020.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh020: 384 triangles, 768 vertices (merged 384 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh020.obj" (took 4 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh017.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh017: 3136 triangles, 1680 vertices (merged 7728 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh017.obj" (took 26 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh024.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh024: 34 triangles, 68 vertices (merged 34 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh024.obj" (took 0 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh041.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh041: 8 triangles, 16 vertices (merged 8 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh041.obj" (took 0 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh011.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh011: 8992 triangles, 4544 vertices (merged 22432 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh011.obj" (took 65 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh026.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh026: 7624 triangles, 4070 vertices (merged 18802 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh026.obj" (took 56 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh018.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh018: 2016 triangles, 1260 vertices (merged 4788 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh018.obj" (took 20 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh007.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh007: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh007.obj" (took 30 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh005.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh005: 160 triangles, 144 vertices (merged 336 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh005.obj" (took 1 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh019.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh019: 560 triangles, 400 vertices (merged 1280 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh019.obj" (took 4 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh021.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh021: 720 triangles, 482 vertices (merged 1678 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh021.obj" (took 8 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh037.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh037: 7624 triangles, 4070 vertices (merged 18802 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh037.obj" (took 47 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh004.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh004: 2016 triangles, 1260 vertices (merged 4788 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh004.obj" (took 14 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh014.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh014: 160 triangles, 144 vertices (merged 336 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh014.obj" (took 3 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh012.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh012: 560 triangles, 400 vertices (merged 1280 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh012.obj" (took 4 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh028.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh028: 720 triangles, 482 vertices (merged 1678 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh028.obj" (took 5 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh025.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh025: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh025.obj" (took 31 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh008.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh008: 6320 triangles, 3270 vertices (merged 15690 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh008.obj" (took 40 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh032.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh032: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh032.obj" (took 95 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh035.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh035: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh035.obj" (took 104 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh042.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh042: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh042.obj" (took 22 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh010.obj" ..
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Mesh010: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Done with "Mesh010.obj" (took 125 ms)
+2025-03-16 00:12:48 INFO  main [WavefrontOBJ] Loading geometry from "Mesh036.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh036: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh036.obj" (took 120 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh027.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh027: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh027.obj" (took 19 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh043.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh043: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh043.obj" (took 113 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh044.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh044: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh044.obj" (took 112 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh031.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh031: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh031.obj" (took 21 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh022.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh022: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh022.obj" (took 112 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh038.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh038: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh038.obj" (took 108 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh030.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh030: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh030.obj" (took 23 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh046.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh046: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh046.obj" (took 96 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh047.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh047: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh047.obj" (took 96 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh034.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh034: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh034.obj" (took 17 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh033.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh033: 44 triangles, 96 vertices (merged 36 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh033.obj" (took 0 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh006.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh006: 4 triangles, 6 vertices (merged 6 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh006.obj" (took 0 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh048.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh048: 30 triangles, 38 vertices (merged 52 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh048.obj" (took 0 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh049.obj" ..
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Mesh049: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Done with "Mesh049.obj" (took 81 ms)
+2025-03-16 00:12:49 INFO  main [WavefrontOBJ] Loading geometry from "Mesh051.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh051: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh051.obj" (took 93 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh040.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh040: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh040.obj" (took 15 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh003.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh003: 18176 triangles, 9150 vertices (merged 45378 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh003.obj" (took 111 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh002.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh002: 7624 triangles, 4070 vertices (merged 18802 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh002.obj" (took 47 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh009.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh009: 2016 triangles, 1260 vertices (merged 4788 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh009.obj" (took 13 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh045.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh045: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh045.obj" (took 30 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh029.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh029: 160 triangles, 144 vertices (merged 336 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh029.obj" (took 1 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh039.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh039: 560 triangles, 400 vertices (merged 1280 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh039.obj" (took 3 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh050.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh050: 720 triangles, 482 vertices (merged 1678 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh050.obj" (took 4 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh001.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh001: 170 triangles, 340 vertices (merged 170 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh001.obj" (took 3 ms)
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Loading geometry from "Mesh000.obj" ..
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Mesh000: 22 triangles, 44 vertices (merged 22 vertices).
+2025-03-16 00:12:50 INFO  main [WavefrontOBJ] Done with "Mesh000.obj" (took 0 ms)
+2025-03-16 00:12:50 INFO  main [PluginManager] Loading plugin "plugins/rectangle.so" ..
+2025-03-16 00:12:50 INFO  ren0 [KDTreeBase] Constructing a SAH kd-tree (321251 primitives) ..
+2025-03-16 00:12:54 INFO  ren0 [KDTreeBase] Finished -- took 4088 ms.
+2025-03-16 00:12:54 INFO  ren0 [PMMFocalGuidingIntegrator] Starting preprocess
+2025-03-16 00:12:54 INFO  ren0 [octree.h:482] root weight: 8.000e-20 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:483] splitting threshold: 8.000e-23 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:498] node count: 1 -> 585 -> 585
+
+2025-03-16 00:12:54 INFO  ren0 [octree.h:482] root weight: 4.096e-17 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:483] splitting threshold: 4.096e-20 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:498] node count: 585 -> 585 -> 585
+
+2025-03-16 00:12:54 INFO  ren0 [octree.h:482] root weight: 8.000e-20 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:483] splitting threshold: 8.000e-23 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:498] node count: 1 -> 585 -> 585
+
+2025-03-16 00:12:54 INFO  ren0 [octree.h:482] root weight: 4.096e-17 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:483] splitting threshold: 4.096e-20 (0.000000)
+2025-03-16 00:12:54 INFO  ren0 [octree.h:498] node count: 585 -> 585 -> 585
+
+2025-03-16 00:12:54 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 585
+]
+2025-03-16 00:12:54 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 585
+]
+2025-03-16 00:12:54 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.166667 mean = [1.50731 2.29284 2.96829] covariance = [[1 0 0][0 1 0][0 0 1]]
+weight = 0.166667 mean = [-2.39331 1.50441 4.86005] covariance = [[1 0 0][0 1 0][0 0 1]]
+weight = 0.166667 mean = [-3.0143 2.55508 0.585406] covariance = [[1 0 0][0 1 0][0 0 1]]
+weight = 0.166667 mean = [-2.90047 7.18583 5.26202] covariance = [[1 0 0][0 1 0][0 0 1]]
+weight = 0.166667 mean = [-6.17266 3.02434 -0.0981818] covariance = [[1 0 0][0 1 0][0 0 1]]
+weight = 0.166667 mean = [-2.36947 3.64657 1.99364] covariance = [[1 0 0][0 1 0][0 0 1]]
+]
+2025-03-16 00:12:54 INFO  ren0 [PMMFocalGuidingIntegrator] Starting training... (8) iterations
+2025-03-16 00:12:54 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 0 iteration
+2025-03-16 00:12:54 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:13:19 INFO  wrk7 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:13:23 INFO  wrk4 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:13:30 INFO  wrk2 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:13:36 INFO  wrk3 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:13:52 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 58.1996s
+2025-03-16 00:13:52 INFO  ren0 [PMMFocalGuidingIntegrator] Got 35061 non-zero samples and 0 zero samples
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.330129
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.274619
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.201575
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.018335
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.299999
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.262866
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.220509
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.111786
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.346902
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.084765
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.361960
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.553019
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.077845
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.213250
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.155674
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 6
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:183] Merging 5 and 2, because their BC is 0.553019
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 1 component
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.088606
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 3.586893
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 6.329725
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 9.965655
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 5.243841
+2025-03-16 00:13:58 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:13:58 INFO  ren0 [octree.h:482] root weight: 5.890e+04 (58900.871094)
+2025-03-16 00:13:58 INFO  ren0 [octree.h:483] splitting threshold: 5.890e+01 (58.900875)
+2025-03-16 00:13:58 INFO  ren0 [octree.h:482] root weight: 9.917e+03 (9916.853516)
+2025-03-16 00:13:58 INFO  ren0 [octree.h:483] splitting threshold: 9.917e+00 (9.916854)
+2025-03-16 00:13:58 INFO  ren0 [octree.h:498] node count: 585 -> 600 -> 505
+
+2025-03-16 00:13:58 INFO  ren0 [octree.h:498] node count: 585 -> 589 -> 270
+
+2025-03-16 00:13:58 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.144
+
+2025-03-16 00:13:58 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 6.0416s
+2025-03-16 00:13:58 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.148458 mean = [2.64167 2.67832 1.08755] covariance = [[3.56364 0.777812 0.127587][0.777812 5.9582 -0.0410258][0.127587 -0.0410258 6.79824]]
+weight = 0.103152 mean = [-2.13856 1.30907 8.37686] covariance = [[4.71532 0.125766 -0.0867359][0.125766 2.3593 -0.0545259][-0.0867359 -0.0545259 4.23143]]
+weight = 0.148458 mean = [2.77286 2.62013 4.7735] covariance = [[3.56364 0.777812 0.127587][0.777812 5.9582 -0.0410258][0.127587 -0.0410258 6.79824]]
+weight = 0.0566552 mean = [-0.919081 6.06457 7.37635] covariance = [[4.82922 0.509382 -0.405289][0.509382 1.90412 -1.23722][-0.405289 -1.23722 4.56185]]
+weight = 0.0404815 mean = [-5.60733 2.67822 -0.700133] covariance = [[1.31702 0.0382397 -1.26541][0.0382397 5.12345 0.887339][-1.26541 0.887339 4.38767]]
+weight = 0.151253 mean = [-0.743968 3.34753 -2.45531] covariance = [[3.11282 0.782563 -1.35948][0.782563 5.65327 0.441155][-1.35948 0.441155 4.91531]]
+weight = 0.103152 mean = [-2.64847 1.35846 5.5183] covariance = [[4.71532 0.125766 -0.0867359][0.125766 2.3593 -0.0545259][-0.0867359 -0.0545259 4.23143]]
+weight = 0.0566552 mean = [-3.16758 6.535 5.50703] covariance = [[4.82922 0.509382 -0.405289][0.509382 1.90412 -1.23722][-0.405289 -1.23722 4.56185]]
+weight = 0.0404815 mean = [-4.68172 4.51225 -2.72612] covariance = [[1.31702 0.0382397 -1.26541][0.0382397 5.12345 0.887339][-1.26541 0.887339 4.38767]]
+weight = 0.151253 mean = [-2.38734 3.10577 0.465045] covariance = [[3.11282 0.782563 -1.35948][0.782563 5.65327 0.441155][-1.35948 0.441155 4.91531]]
+]
+2025-03-16 00:13:58 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 505
+]
+2025-03-16 00:13:58 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 270
+]
+2025-03-16 00:13:58 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 1 iteration
+2025-03-16 00:13:58 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:14:55 INFO  wrk7 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:15:11 INFO  wrk0 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:15:29 INFO  wrk2 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:16:38 INFO  wrk3 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:16:40 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.7020m
+2025-03-16 00:16:40 INFO  ren0 [PMMFocalGuidingIntegrator] Got 50885 non-zero samples and 0 zero samples
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.153690
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.719604
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.159451
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.018816
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.470100
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 6 is 0.280690
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 7 is 0.121431
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 8 is 0.022182
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 9 is 0.379724
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.381160
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.254251
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.014936
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.013884
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 6 is 0.791393
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 7 is 0.197379
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 8 is 0.001735
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 9 is 0.115227
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.318913
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.006441
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.162327
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 6 is 0.386564
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 7 is 0.156023
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 8 is 0.006390
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 9 is 0.194737
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.016056
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.026110
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 6 is 0.226632
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 7 is 0.779977
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 8 is 0.005285
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 9 is 0.129448
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.284756
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 6 is 0.101747
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 7 is 0.093699
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 8 is 0.805683
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 9 is 0.397686
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 6 is 0.126551
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 7 is 0.090392
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 8 is 0.301479
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 9 is 0.810835
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 7 is 0.231208
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 8 is 0.030586
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 9 is 0.403734
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 8 is 0.057262
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 9 is 0.285410
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 8 and 9 is 0.308076
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 10
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:183] Merging 9 and 5, because their BC is 0.810835
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:183] Merging 8 and 4, because their BC is 0.805683
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:183] Merging 6 and 1, because their BC is 0.791393
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:183] Merging 7 and 3, because their BC is 0.779977
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:183] Merging 2 and 0, because their BC is 0.719604
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 5 component
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.372356
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 2.284332
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.779672
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 7.482582
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 2.879411
+2025-03-16 00:16:55 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:16:55 INFO  ren0 [octree.h:482] root weight: 5.807e+04 (58074.046875)
+2025-03-16 00:16:55 INFO  ren0 [octree.h:483] splitting threshold: 5.807e+01 (58.074051)
+2025-03-16 00:16:55 INFO  ren0 [octree.h:482] root weight: 7.346e+03 (7346.179199)
+2025-03-16 00:16:55 INFO  ren0 [octree.h:483] splitting threshold: 7.346e+00 (7.346179)
+2025-03-16 00:16:55 INFO  ren0 [octree.h:498] node count: 505 -> 522 -> 485
+
+2025-03-16 00:16:55 INFO  ren0 [octree.h:498] node count: 270 -> 275 -> 256
+
+2025-03-16 00:16:55 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.112
+
+2025-03-16 00:16:55 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 14.2499s
+2025-03-16 00:16:55 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.148196 mean = [2.55114 2.53824 4.91484] covariance = [[3.01598 0.283314 0.189982][0.283314 5.68964 -0.0440266][0.189982 -0.0440266 6.49391]]
+weight = 0.100665 mean = [-1.27576 1.49685 7.36681] covariance = [[3.36705 0.12738 -1.04513][0.12738 2.3793 -0.188463][-1.04513 -0.188463 4.32014]]
+weight = 0.148196 mean = [2.36568 2.66814 1.31494] covariance = [[3.01598 0.283314 0.189982][0.283314 5.68964 -0.0440266][0.189982 -0.0440266 6.49391]]
+weight = 0.0525384 mean = [-0.632383 6.17781 6.7451] covariance = [[3.37303 0.246354 -0.250468][0.246354 1.62322 -0.853704][-0.250468 -0.853704 4.88201]]
+weight = 0.0392165 mean = [-4.89799 5.00773 -1.80168] covariance = [[1.11473 0.152559 -0.915895][0.152559 3.11284 -0.0339034][-0.915895 -0.0339034 3.90468]]
+weight = 0.159385 mean = [-0.894847 3.43069 -1.92121] covariance = [[2.70673 0.51357 -0.334929][0.51357 4.75164 0.53865][-0.334929 0.53865 3.24084]]
+weight = 0.100665 mean = [-3.22634 1.46116 6.10823] covariance = [[3.36705 0.12738 -1.04513][0.12738 2.3793 -0.188463][-1.04513 -0.188463 4.32014]]
+weight = 0.0525384 mean = [-3.16793 6.0527 6.26469] covariance = [[3.37303 0.246354 -0.250468][0.246354 1.62322 -0.853704][-0.250468 -0.853704 4.88201]]
+weight = 0.0392165 mean = [-4.98982 2.52234 -2.01505] covariance = [[1.11473 0.152559 -0.915895][0.152559 3.11284 -0.0339034][-0.915895 -0.0339034 3.90468]]
+weight = 0.159385 mean = [-2.26364 3.09088 0.257202] covariance = [[2.70673 0.51357 -0.334929][0.51357 4.75164 0.53865][-0.334929 0.53865 3.24084]]
+]
+2025-03-16 00:16:55 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 485
+]
+2025-03-16 00:16:55 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 256
+]
+2025-03-16 00:16:55 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 2 iteration
+2025-03-16 00:16:55 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:18:39 INFO  wrk3 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:19:38 INFO  wrk3 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:19:51 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.9398m
+2025-03-16 00:19:51 INFO  ren0 [PMMFocalGuidingIntegrator] Got 70015 non-zero samples and 0 zero samples
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.495055
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.721554
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.336713
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.005557
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.154719
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 6 is 0.227447
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 7 is 0.122805
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 8 is 0.006007
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 9 is 0.190034
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.266882
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.238554
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.006723
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.027136
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 6 is 0.753548
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 7 is 0.218388
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 8 is 0.008686
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 9 is 0.135079
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.204744
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.017302
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.467928
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 6 is 0.186772
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 7 is 0.094739
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 8 is 0.018620
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 9 is 0.370022
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.023112
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.045873
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 6 is 0.191342
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 7 is 0.738618
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 8 is 0.009281
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 9 is 0.150066
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.254092
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 6 is 0.043587
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 7 is 0.099170
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 8 is 0.728391
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 9 is 0.339545
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 6 is 0.085702
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 7 is 0.059096
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 8 is 0.290030
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 9 is 0.766229
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 7 is 0.284520
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 8 is 0.063576
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 9 is 0.325203
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 8 is 0.041689
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 9 is 0.219433
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 8 and 9 is 0.407183
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 10
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:183] Merging 9 and 5, because their BC is 0.766229
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:183] Merging 6 and 1, because their BC is 0.753548
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:183] Merging 7 and 3, because their BC is 0.738618
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:183] Merging 8 and 4, because their BC is 0.728391
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:183] Merging 2 and 0, because their BC is 0.721554
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 5 component
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.607344
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 2.056223
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.313024
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 6.793614
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 2.162104
+2025-03-16 00:20:11 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:20:11 INFO  ren0 [octree.h:482] root weight: 6.139e+04 (61393.707031)
+2025-03-16 00:20:11 INFO  ren0 [octree.h:483] splitting threshold: 6.139e+01 (61.393711)
+2025-03-16 00:20:11 INFO  ren0 [octree.h:482] root weight: 8.771e+03 (8771.291016)
+2025-03-16 00:20:11 INFO  ren0 [octree.h:483] splitting threshold: 8.771e+00 (8.771292)
+2025-03-16 00:20:11 INFO  ren0 [octree.h:498] node count: 485 -> 512 -> 474
+
+2025-03-16 00:20:11 INFO  ren0 [octree.h:498] node count: 256 -> 263 -> 257
+
+2025-03-16 00:20:11 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.125
+
+2025-03-16 00:20:11 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 19.7204s
+2025-03-16 00:20:11 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.145849 mean = [2.48694 2.53394 4.99254] covariance = [[2.8091 0.149999 0.19335][0.149999 5.58102 -0.0523859][0.19335 -0.0523859 6.41554]]
+weight = 0.100161 mean = [-3.25563 1.50295 7.08194] covariance = [[2.80706 -0.0478068 0.815996][-0.0478068 2.36301 -0.110843][0.815996 -0.110843 4.15157]]
+weight = 0.145849 mean = [2.30372 2.72262 1.41661] covariance = [[2.8091 0.149999 0.19335][0.149999 5.58102 -0.0523859][0.19335 -0.0523859 6.41554]]
+weight = 0.048803 mean = [-0.753553 6.1874 6.50694] covariance = [[2.967 0.209765 -0.110567][0.209765 1.50424 -0.590783][-0.110567 -0.590783 4.88236]]
+weight = 0.0372977 mean = [-4.87396 5.04938 -1.7812] covariance = [[0.986175 0.0991665 -0.650455][0.0991665 2.82126 -0.0304392][-0.650455 -0.0304392 3.63303]]
+weight = 0.167889 mean = [-0.828308 3.66938 -1.71346] covariance = [[2.49127 0.131227 -0.0371023][0.131227 3.99319 0.759603][-0.0371023 0.759603 2.94159]]
+weight = 0.100161 mean = [-1.26548 1.63773 6.15147] covariance = [[2.80706 -0.0478068 0.815996][-0.0478068 2.36301 -0.110843][0.815996 -0.110843 4.15157]]
+weight = 0.048803 mean = [-3.1711 5.93162 6.2871] covariance = [[2.967 0.209765 -0.110567][0.209765 1.50424 -0.590783][-0.110567 -0.590783 4.88236]]
+weight = 0.0372977 mean = [-4.94907 2.67935 -1.93048] covariance = [[0.986175 0.0991665 -0.650455][0.0991665 2.82126 -0.0304392][-0.650455 -0.0304392 3.63303]]
+weight = 0.167889 mean = [-2.18522 2.88316 -0.0502714] covariance = [[2.49127 0.131227 -0.0371023][0.131227 3.99319 0.759603][-0.0371023 0.759603 2.94159]]
+]
+2025-03-16 00:20:11 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 474
+]
+2025-03-16 00:20:11 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 257
+]
+2025-03-16 00:20:11 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 3 iteration
+2025-03-16 00:20:11 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:20:43 INFO  wrk5 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:23:02 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.8465m
+2025-03-16 00:23:02 INFO  ren0 [PMMFocalGuidingIntegrator] Got 89599 non-zero samples and 0 zero samples
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.166648
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.731365
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.321735
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.005245
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.156176
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 6 is 0.482245
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 7 is 0.120445
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 8 is 0.005750
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 9 is 0.184689
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.093430
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.184836
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.037646
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.022482
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 6 is 0.750197
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 7 is 0.290198
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 8 is 0.060136
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 9 is 0.144296
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.209567
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.016067
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.472784
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 6 is 0.287085
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 7 is 0.092781
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 8 is 0.017021
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 9 is 0.362104
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.031048
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.067072
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 6 is 0.242436
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 7 is 0.738405
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 8 is 0.013169
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 9 is 0.149522
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.242746
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 6 is 0.041700
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 7 is 0.112052
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 8 is 0.728026
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 9 is 0.344226
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 6 is 0.072121
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 7 is 0.067877
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 8 is 0.252806
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 9 is 0.764491
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 7 is 0.236283
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 8 is 0.063491
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 9 is 0.267123
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 8 is 0.049136
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 9 is 0.188521
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 8 and 9 is 0.430304
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 10
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:183] Merging 9 and 5, because their BC is 0.764491
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:183] Merging 6 and 1, because their BC is 0.750197
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:183] Merging 7 and 3, because their BC is 0.738405
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:183] Merging 2 and 0, because their BC is 0.731365
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:183] Merging 8 and 4, because their BC is 0.728026
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 5 component
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.494666
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 2.072753
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 3.973548
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 6.544260
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.725007
+2025-03-16 00:23:27 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:23:27 INFO  ren0 [octree.h:482] root weight: 6.283e+04 (62827.390625)
+2025-03-16 00:23:27 INFO  ren0 [octree.h:483] splitting threshold: 6.283e+01 (62.827393)
+2025-03-16 00:23:27 INFO  ren0 [octree.h:482] root weight: 8.623e+03 (8622.994141)
+2025-03-16 00:23:27 INFO  ren0 [octree.h:483] splitting threshold: 8.623e+00 (8.622994)
+2025-03-16 00:23:27 INFO  ren0 [octree.h:498] node count: 474 -> 489 -> 467
+
+2025-03-16 00:23:27 INFO  ren0 [octree.h:498] node count: 257 -> 260 -> 252
+
+2025-03-16 00:23:27 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.121
+
+2025-03-16 00:23:27 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 25.0647s
+2025-03-16 00:23:27 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.14317 mean = [2.44639 2.53422 5.00375] covariance = [[2.73686 0.091498 0.17728][0.091498 5.53575 -0.0466224][0.17728 -0.0466224 6.11043]]
+weight = 0.101403 mean = [-3.00552 1.63799 5.67412] covariance = [[3.4475 0.0721082 -0.780991][0.0721082 2.37522 -0.0595491][-0.780991 -0.0595491 3.07144]]
+weight = 0.14317 mean = [2.27061 2.78371 1.51774] covariance = [[2.73686 0.091498 0.17728][0.091498 5.53575 -0.0466224][0.17728 -0.0466224 6.11043]]
+weight = 0.0463913 mean = [-1.03373 6.09059 6.82542] covariance = [[3.16124 0.360949 -0.91051][0.360949 1.47115 -0.526856][-0.91051 -0.526856 4.42605]]
+weight = 0.0361284 mean = [-4.86904 5.03846 -1.77584] covariance = [[0.916817 0.0814807 -0.534312][0.0814807 2.65576 -0.0158121][-0.534312 -0.0158121 3.63548]]
+weight = 0.172907 mean = [-0.78422 3.74499 -1.6533] covariance = [[2.36148 -0.0866791 0.142162][-0.0866791 3.50407 0.798777][0.142162 0.798777 2.80136]]
+weight = 0.101403 mean = [-1.63182 1.5828 7.41261] covariance = [[3.4475 0.0721082 -0.780991][0.0721082 2.37522 -0.0595491][-0.780991 -0.0595491 3.07144]]
+weight = 0.0463913 mean = [-3.06891 5.96539 5.72057] covariance = [[3.16124 0.360949 -0.91051][0.360949 1.47115 -0.526856][-0.91051 -0.526856 4.42605]]
+weight = 0.0361284 mean = [-4.95153 2.73571 -1.85819] covariance = [[0.916817 0.0814807 -0.534312][0.0814807 2.65576 -0.0158121][-0.534312 -0.0158121 3.63548]]
+weight = 0.172907 mean = [-2.06441 2.85657 -0.285556] covariance = [[2.36148 -0.0866791 0.142162][-0.0866791 3.50407 0.798777][0.142162 0.798777 2.80136]]
+]
+2025-03-16 00:23:27 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 467
+]
+2025-03-16 00:23:27 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 252
+]
+2025-03-16 00:23:27 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 4 iteration
+2025-03-16 00:23:27 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:23:43 INFO  wrk2 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:26:16 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.8252m
+2025-03-16 00:26:16 INFO  ren0 [PMMFocalGuidingIntegrator] Got 111703 non-zero samples and 0 zero samples
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.262115
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.734167
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.300743
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.005008
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.152777
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 6 is 0.427939
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 7 is 0.133495
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 8 is 0.005689
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 9 is 0.176314
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.217301
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.214500
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.052510
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.073977
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 6 is 0.746787
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 7 is 0.294753
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 8 is 0.095173
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 9 is 0.263181
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.197719
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.015510
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.470714
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 6 is 0.222206
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 7 is 0.122712
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 8 is 0.016281
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 9 is 0.359070
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.018002
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.045766
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 6 is 0.249870
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 7 is 0.745650
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 8 is 0.008483
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 9 is 0.097842
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.231643
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 6 is 0.006172
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 7 is 0.120452
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 8 is 0.729011
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 9 is 0.346774
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 6 is 0.012555
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 7 is 0.097089
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 8 is 0.220355
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 9 is 0.763374
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 7 is 0.216980
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 8 is 0.011053
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 9 is 0.069214
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 8 is 0.056449
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 9 is 0.198189
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 8 and 9 is 0.429415
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 10
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:183] Merging 9 and 5, because their BC is 0.763374
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:183] Merging 6 and 1, because their BC is 0.746787
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:183] Merging 7 and 3, because their BC is 0.745650
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:183] Merging 2 and 0, because their BC is 0.734167
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:183] Merging 8 and 4, because their BC is 0.729011
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 5 component
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.399176
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.866774
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 3.786812
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 6.610549
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.472144
+2025-03-16 00:26:47 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:26:47 INFO  ren0 [octree.h:482] root weight: 7.059e+04 (70592.828125)
+2025-03-16 00:26:47 INFO  ren0 [octree.h:483] splitting threshold: 7.059e+01 (70.592834)
+2025-03-16 00:26:47 INFO  ren0 [octree.h:482] root weight: 9.104e+03 (9103.580078)
+2025-03-16 00:26:47 INFO  ren0 [octree.h:483] splitting threshold: 9.104e+00 (9.103580)
+2025-03-16 00:26:47 INFO  ren0 [octree.h:498] node count: 467 -> 485 -> 468
+
+2025-03-16 00:26:47 INFO  ren0 [octree.h:498] node count: 252 -> 253 -> 252
+
+2025-03-16 00:26:47 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.114
+
+2025-03-16 00:26:47 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 31.1702s
+2025-03-16 00:26:47 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.140008 mean = [2.42371 2.53776 5.06075] covariance = [[2.71333 0.0694495 0.171589][0.0694495 5.52821 -0.0379244][0.171589 -0.0379244 5.93224]]
+weight = 0.101897 mean = [-1.79716 1.61606 7.35257] covariance = [[3.66368 0.0673639 -0.899876][0.0673639 2.38304 -0.0392667][-0.899876 -0.0392667 2.78271]]
+weight = 0.140008 mean = [2.24755 2.82122 1.62899] covariance = [[2.71333 0.0694495 0.171589][0.0694495 5.52821 -0.0379244][0.171589 -0.0379244 5.93224]]
+weight = 0.0442222 mean = [-2.69204 5.82845 7.10434] covariance = [[4.19122 0.29997 1.07579][0.29997 1.37874 -0.0429728][1.07579 -0.0429728 3.1642]]
+weight = 0.0365212 mean = [-4.86531 4.98764 -1.82867] covariance = [[0.853365 0.041752 -0.467291][0.041752 2.60648 0.211256][-0.467291 0.211256 3.90757]]
+weight = 0.177352 mean = [-1.72822 3.73885 -0.24604] covariance = [[2.76108 0.587566 0.0844271][0.587566 3.18705 -0.426894][0.0844271 -0.426894 2.13601]]
+weight = 0.101897 mean = [-2.91371 1.64715 5.56515] covariance = [[3.66368 0.0673639 -0.899876][0.0673639 2.38304 -0.0392667][-0.899876 -0.0392667 2.78271]]
+weight = 0.0442222 mean = [-1.54255 6.20218 5.21315] covariance = [[4.19122 0.29997 1.07579][0.29997 1.37874 -0.0429728][1.07579 -0.0429728 3.1642]]
+weight = 0.0365212 mean = [-5.00323 2.74141 -1.51977] covariance = [[0.853365 0.041752 -0.467291][0.041752 2.60648 0.211256][-0.467291 0.211256 3.90757]]
+weight = 0.177352 mean = [-1.02137 2.90254 -1.84329] covariance = [[2.76108 0.587566 0.0844271][0.587566 3.18705 -0.426894][0.0844271 -0.426894 2.13601]]
+]
+2025-03-16 00:26:47 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 468
+]
+2025-03-16 00:26:47 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 252
+]
+2025-03-16 00:26:47 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 5 iteration
+2025-03-16 00:26:47 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:27:06 INFO  wrk3 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:27:33 INFO  wrk7 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:28:28 INFO  wrk1 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:29:37 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.8242m
+2025-03-16 00:29:37 INFO  ren0 [PMMFocalGuidingIntegrator] Got 133046 non-zero samples and 0 zero samples
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.415658
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.739274
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.170505
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.005061
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.185126
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 6 is 0.284730
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 7 is 0.268537
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 8 is 0.006043
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 9 is 0.126199
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.215781
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.277226
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.005790
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.054401
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 6 is 0.744369
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 7 is 0.181480
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 8 is 0.015402
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 9 is 0.008929
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.094385
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.015865
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.404958
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 6 is 0.240925
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 7 is 0.203754
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 8 is 0.016827
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 9 is 0.424877
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.052464
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.047382
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 6 is 0.277923
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 7 is 0.757982
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 8 is 0.042655
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 9 is 0.004970
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.332557
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 6 is 0.045409
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 7 is 0.145692
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 8 is 0.734493
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 9 is 0.212304
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 6 is 0.236547
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 7 is 0.171810
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 8 is 0.375441
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 9 is 0.771319
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 7 is 0.235242
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 8 is 0.103992
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 9 is 0.073979
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 8 is 0.090086
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 9 is 0.032400
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 8 and 9 is 0.279479
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 10
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:183] Merging 9 and 5, because their BC is 0.771319
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:183] Merging 7 and 3, because their BC is 0.757982
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:183] Merging 6 and 1, because their BC is 0.744369
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:183] Merging 2 and 0, because their BC is 0.739274
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:183] Merging 8 and 4, because their BC is 0.734493
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 5 component
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.187126
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.834486
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 4.215171
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 6.541430
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.516941
+2025-03-16 00:30:14 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:30:14 INFO  ren0 [octree.h:482] root weight: 7.011e+04 (70112.507812)
+2025-03-16 00:30:14 INFO  ren0 [octree.h:483] splitting threshold: 7.011e+01 (70.112511)
+2025-03-16 00:30:14 INFO  ren0 [octree.h:482] root weight: 9.150e+03 (9149.666992)
+2025-03-16 00:30:14 INFO  ren0 [octree.h:483] splitting threshold: 9.150e+00 (9.149668)
+2025-03-16 00:30:14 INFO  ren0 [octree.h:498] node count: 468 -> 478 -> 463
+
+2025-03-16 00:30:14 INFO  ren0 [octree.h:498] node count: 252 -> 254 -> 254
+
+2025-03-16 00:30:14 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.115
+
+2025-03-16 00:30:14 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 37.2751s
+2025-03-16 00:30:14 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.136013 mean = [2.39342 2.5605 5.10871] covariance = [[2.72207 0.0147164 0.164594][0.0147164 5.49563 -0.0123817][0.164594 -0.0123817 5.66957]]
+weight = 0.101474 mean = [-3.10777 1.60851 7.15604] covariance = [[3.09656 -0.0389546 0.919377][-0.0389546 2.38044 -0.0253983][0.919377 -0.0253983 3.10867]]
+weight = 0.136013 mean = [2.20755 2.77183 1.75018] covariance = [[2.72207 0.0147164 0.164594][0.0147164 5.49563 -0.0123817][0.164594 -0.0123817 5.66957]]
+weight = 0.0431054 mean = [-3.06432 5.94209 5.2688] covariance = [[3.30958 0.345568 -0.653374][0.345568 1.39286 -0.287205][-0.653374 -0.287205 3.56913]]
+weight = 0.0362284 mean = [-4.891 4.99567 -1.61772] covariance = [[0.80586 0.0518343 -0.40648][0.0518343 2.47957 0.15123][-0.40648 0.15123 4.22641]]
+weight = 0.183179 mean = [-1.93222 2.65513 -0.716992] covariance = [[2.3234 -0.296405 0.108799][-0.296405 2.43999 0.362585][0.108799 0.362585 2.672]]
+weight = 0.101474 mean = [-1.62552 1.71186 5.68712] covariance = [[3.09656 -0.0389546 0.919377][-0.0389546 2.38044 -0.0253983][0.919377 -0.0253983 3.10867]]
+weight = 0.0431054 mean = [-1.27308 6.07247 6.79532] covariance = [[3.30958 0.345568 -0.653374][0.345568 1.39286 -0.287205][-0.653374 -0.287205 3.56913]]
+weight = 0.0362284 mean = [-5.00032 2.78155 -1.4523] covariance = [[0.80586 0.0518343 -0.40648][0.0518343 2.47957 0.15123][-0.40648 0.15123 4.22641]]
+weight = 0.183179 mean = [-0.710161 3.95925 -1.53788] covariance = [[2.3234 -0.296405 0.108799][-0.296405 2.43999 0.362585][0.108799 0.362585 2.672]]
+]
+2025-03-16 00:30:14 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 463
+]
+2025-03-16 00:30:14 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 254
+]
+2025-03-16 00:30:14 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 6 iteration
+2025-03-16 00:30:14 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:30:31 INFO  wrk7 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:32:06 INFO  wrk7 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:33:06 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.8682m
+2025-03-16 00:33:06 INFO  ren0 [PMMFocalGuidingIntegrator] Got 153487 non-zero samples and 0 zero samples
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.194769
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.743297
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.147403
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.005534
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.153986
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 6 is 0.449022
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 7 is 0.289039
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 8 is 0.006501
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 9 is 0.148326
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.100428
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.250272
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.033577
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.055752
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 6 is 0.754521
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 7 is 0.232559
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 8 is 0.072165
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 9 is 0.010810
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.146724
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.016050
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.353445
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 6 is 0.285603
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 7 is 0.192514
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 8 is 0.016956
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 9 is 0.461459
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.153942
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.139540
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 6 is 0.254166
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 7 is 0.753996
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 8 is 0.086662
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 9 is 0.114297
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.325105
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 6 is 0.068217
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 7 is 0.026606
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 8 is 0.732968
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 9 is 0.216703
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 6 is 0.204886
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 7 is 0.050964
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 8 is 0.404789
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 9 is 0.776117
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 7 is 0.245648
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 8 is 0.132421
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 9 is 0.063179
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 8 is 0.015893
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 9 is 0.038880
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 8 and 9 is 0.176503
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 10
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:183] Merging 9 and 5, because their BC is 0.776117
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:183] Merging 6 and 1, because their BC is 0.754521
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:183] Merging 7 and 3, because their BC is 0.753996
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:183] Merging 2 and 0, because their BC is 0.743297
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:183] Merging 8 and 4, because their BC is 0.732968
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 5 component
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 3.914347
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.938330
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 3.699286
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 6.766662
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.254791
+2025-03-16 00:33:49 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:33:49 INFO  ren0 [octree.h:482] root weight: 6.581e+04 (65811.617188)
+2025-03-16 00:33:49 INFO  ren0 [octree.h:483] splitting threshold: 6.581e+01 (65.811623)
+2025-03-16 00:33:49 INFO  ren0 [octree.h:482] root weight: 1.024e+04 (10235.912109)
+2025-03-16 00:33:49 INFO  ren0 [octree.h:483] splitting threshold: 1.024e+01 (10.235912)
+2025-03-16 00:33:49 INFO  ren0 [octree.h:498] node count: 463 -> 470 -> 451
+
+2025-03-16 00:33:49 INFO  ren0 [octree.h:498] node count: 254 -> 260 -> 259
+
+2025-03-16 00:33:49 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.135
+
+2025-03-16 00:33:49 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 43.3011s
+2025-03-16 00:33:49 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.133366 mean = [2.37585 2.57139 5.11579] covariance = [[2.74334 0.0119871 0.161128][0.0119871 5.53592 0.0130723][0.161128 0.0130723 5.34068]]
+weight = 0.101087 mean = [-3.0198 1.67437 5.50769] covariance = [[3.24046 0.0447275 -0.650137][0.0447275 2.38806 -0.0303119][-0.650137 -0.0303119 2.76767]]
+weight = 0.133366 mean = [2.17567 2.81273 1.85989] covariance = [[2.74334 0.0119871 0.161128][0.0119871 5.53592 0.0130723][0.161128 0.0130723 5.34068]]
+weight = 0.0412199 mean = [-1.67983 5.99803 6.92442] covariance = [[3.95367 0.451063 -0.844321][0.451063 1.38976 -0.246272][-0.844321 -0.246272 2.87644]]
+weight = 0.0363974 mean = [-4.89732 4.92142 -1.62657] covariance = [[0.762667 0.0322672 -0.320982][0.0322672 2.54833 0.38207][-0.320982 0.38207 4.32941]]
+weight = 0.18793 mean = [-0.65908 3.58222 -1.80898] covariance = [[2.13552 -0.148033 0.460983][-0.148033 2.72625 0.333994][0.460983 0.333994 2.21196]]
+weight = 0.101087 mean = [-1.78536 1.65006 7.2684] covariance = [[3.24046 0.0447275 -0.650137][0.0447275 2.38806 -0.0303119][-0.650137 -0.0303119 2.76767]]
+weight = 0.0412199 mean = [-2.73562 5.99635 4.99766] covariance = [[3.95367 0.451063 -0.844321][0.451063 1.38976 -0.246272][-0.844321 -0.246272 2.87644]]
+weight = 0.0363974 mean = [-5.01865 2.74148 -1.19841] covariance = [[0.762667 0.0322672 -0.320982][0.0322672 2.54833 0.38207][-0.320982 0.38207 4.32941]]
+weight = 0.18793 mean = [-1.86994 3.05855 -0.593587] covariance = [[2.13552 -0.148033 0.460983][-0.148033 2.72625 0.333994][0.460983 0.333994 2.21196]]
+]
+2025-03-16 00:33:49 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 451
+]
+2025-03-16 00:33:49 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 259
+]
+2025-03-16 00:33:49 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 7 iteration
+2025-03-16 00:33:49 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:33:53 INFO  wrk6 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:33:55 INFO  wrk3 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:34:20 INFO  wrk5 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:34:25 INFO  wrk1 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:35:19 INFO  wrk0 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:36:34 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.7456m
+2025-03-16 00:36:34 INFO  ren0 [PMMFocalGuidingIntegrator] Got 173061 non-zero samples and 0 zero samples
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:126] Components accumulated weight is: 1.000000
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 1 is 0.264861
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 2 is 0.744196
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 3 is 0.265592
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 4 is 0.005588
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 5 is 0.127391
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 6 is 0.412745
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 7 is 0.181373
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 8 is 0.007217
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 0 and 9 is 0.156929
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 2 is 0.235575
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 3 is 0.235655
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 4 is 0.064910
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 5 is 0.057504
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 6 is 0.747131
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 7 is 0.287320
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 8 is 0.157727
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 1 and 9 is 0.192869
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 3 is 0.171324
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 4 is 0.016507
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 5 is 0.439520
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 6 is 0.228962
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 7 is 0.187747
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 8 is 0.018104
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 2 and 9 is 0.355138
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 4 is 0.025971
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 5 is 0.012486
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 6 is 0.271160
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 7 is 0.745719
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 8 is 0.021552
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 3 and 9 is 0.040839
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 5 is 0.179449
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 6 is 0.010158
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 7 is 0.142081
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 8 is 0.737209
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 4 and 9 is 0.332309
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 6 is 0.008639
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 7 is 0.069345
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 8 is 0.154639
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 5 and 9 is 0.762755
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 7 is 0.197553
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 8 is 0.028390
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 6 and 9 is 0.044380
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 8 is 0.097540
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 7 and 9 is 0.154685
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:173] exp(-dist) between 8 and 9 is 0.369690
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:180] components before the merge: 10
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:183] Merging 9 and 5, because their BC is 0.762755
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:183] Merging 6 and 1, because their BC is 0.747131
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:183] Merging 7 and 3, because their BC is 0.745719
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:183] Merging 2 and 0, because their BC is 0.744196
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:183] Merging 8 and 4, because their BC is 0.737209
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:200] components after the merge: 5, merged 5 component
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 3.745703
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.799196
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 3.611586
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 6.903622
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:237] Ratio is 1.106974
+2025-03-16 00:37:23 INFO  ren0 [gaussian_mixture_model.h:218] components after the split: 10, split 5 components
+2025-03-16 00:37:23 INFO  ren0 [octree.h:482] root weight: 6.493e+04 (64933.738281)
+2025-03-16 00:37:23 INFO  ren0 [octree.h:483] splitting threshold: 6.493e+01 (64.933739)
+2025-03-16 00:37:23 INFO  ren0 [octree.h:482] root weight: 9.696e+03 (9696.243164)
+2025-03-16 00:37:23 INFO  ren0 [octree.h:483] splitting threshold: 9.696e+00 (9.696243)
+2025-03-16 00:37:23 INFO  ren0 [octree.h:498] node count: 451 -> 457 -> 446
+
+2025-03-16 00:37:23 INFO  ren0 [octree.h:498] node count: 259 -> 261 -> 259
+
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.130
+
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 48.3485s
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.132084 mean = [2.35162 2.56803 5.16175] covariance = [[2.771 0.00726047 0.141092][0.00726047 5.52233 0.0299892][0.141092 0.0299892 5.16853]]
+weight = 0.100669 mean = [-2.23071 1.64377 7.3548] covariance = [[3.80494 0.05992 -0.277818][0.05992 2.38272 -0.00394815][-0.277818 -0.00394815 2.188]]
+weight = 0.132084 mean = [2.16463 2.84749 1.9625] covariance = [[2.771 0.00726047 0.141092][0.00726047 5.52233 0.0299892][0.141092 0.0299892 5.16853]]
+weight = 0.0396216 mean = [-1.36554 6.15799 5.26596] covariance = [[3.03812 0.193179 0.97241][0.193179 1.32518 -0.00641063][0.97241 -0.00641063 3.62657]]
+weight = 0.0372313 mean = [-4.9017 4.72132 -1.78388] covariance = [[0.725934 0.0059195 -0.193474][0.0059195 2.99614 0.947661][-0.193474 0.947661 4.11827]]
+weight = 0.190393 mean = [-0.936169 4.081 -0.963345] covariance = [[2.54035 -0.330359 -0.231854][-0.330359 1.6964 -0.360536][-0.231854 -0.360536 2.52063]]
+weight = 0.100669 mean = [-2.57332 1.69547 5.31449] covariance = [[3.80494 0.05992 -0.277818][0.05992 2.38272 -0.00394815][-0.277818 -0.00394815 2.188]]
+weight = 0.0396216 mean = [-3.07154 5.82546 6.55484] covariance = [[3.03812 0.193179 0.97241][0.193179 1.32518 -0.00641063][0.97241 -0.00641063 3.62657]]
+weight = 0.0372313 mean = [-5.02963 2.79212 -0.695175] covariance = [[0.725934 0.0059195 -0.193474][0.0059195 2.99614 0.947661][-0.193474 0.947661 4.11827]]
+weight = 0.190393 mean = [-1.49675 2.60811 -1.56568] covariance = [[2.54035 -0.330359 -0.231854][-0.330359 1.6964 -0.360536][-0.231854 -0.360536 2.52063]]
+]
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 446
+]
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 259
+]
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] Finished training phase. Starting real rendering.
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] final guiding field written to ../scenes/dining-room/final_gmm.serialized
+2025-03-16 00:37:23 INFO  ren0 [PMMFocalGuidingIntegrator] Starting render job (1280x720, 4 samples, 8 cores, SSE2 enabled) ..
+2025-03-16 00:38:01 INFO  wrk3 [PMMFocalGuidingIntegrator] hit luminaire, value = [1e+06, 1e+06, 1e+06]
+2025-03-16 00:39:11 INFO  wrk5 [PMMFocalGuidingIntegrator] hit luminaire, value = [0, 0, 0]
+2025-03-16 00:40:03 INFO  ren0 [PMMFocalGuidingIntegrator] rendered 4 samples per pixel in 2.6794m.
+2025-03-16 00:40:03 INFO  ren0 [RenderJob] Render time: 27.2260m
+2025-03-16 00:40:03 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 2.6794m
+2025-03-16 00:40:03 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.132084 mean = [2.35162 2.56803 5.16175] covariance = [[2.771 0.00726047 0.141092][0.00726047 5.52233 0.0299892][0.141092 0.0299892 5.16853]]
+weight = 0.100669 mean = [-2.23071 1.64377 7.3548] covariance = [[3.80494 0.05992 -0.277818][0.05992 2.38272 -0.00394815][-0.277818 -0.00394815 2.188]]
+weight = 0.132084 mean = [2.16463 2.84749 1.9625] covariance = [[2.771 0.00726047 0.141092][0.00726047 5.52233 0.0299892][0.141092 0.0299892 5.16853]]
+weight = 0.0396216 mean = [-1.36554 6.15799 5.26596] covariance = [[3.03812 0.193179 0.97241][0.193179 1.32518 -0.00641063][0.97241 -0.00641063 3.62657]]
+weight = 0.0372313 mean = [-4.9017 4.72132 -1.78388] covariance = [[0.725934 0.0059195 -0.193474][0.0059195 2.99614 0.947661][-0.193474 0.947661 4.11827]]
+weight = 0.190393 mean = [-0.936169 4.081 -0.963345] covariance = [[2.54035 -0.330359 -0.231854][-0.330359 1.6964 -0.360536][-0.231854 -0.360536 2.52063]]
+weight = 0.100669 mean = [-2.57332 1.69547 5.31449] covariance = [[3.80494 0.05992 -0.277818][0.05992 2.38272 -0.00394815][-0.277818 -0.00394815 2.188]]
+weight = 0.0396216 mean = [-3.07154 5.82546 6.55484] covariance = [[3.03812 0.193179 0.97241][0.193179 1.32518 -0.00641063][0.97241 -0.00641063 3.62657]]
+weight = 0.0372313 mean = [-5.02963 2.79212 -0.695175] covariance = [[0.725934 0.0059195 -0.193474][0.0059195 2.99614 0.947661][-0.193474 0.947661 4.11827]]
+weight = 0.190393 mean = [-1.49675 2.60811 -1.56568] covariance = [[2.54035 -0.330359 -0.231854][-0.330359 1.6964 -0.360536][-0.231854 -0.360536 2.52063]]
+]
+2025-03-16 00:40:03 INFO  ren0 [HDRFilm] Writing image to "/home/julia/PBRT/PMM_focal_guiding/mitsuba/dist/../../scenes/dining-room/dining-room.exr" ..
+2025-03-16 00:40:03 INFO  main [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/conductor.so [Smooth conductor]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/disk.so [Disk intersection primitive]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/ply.so [PLY mesh loader]
+    -  plugins/pmm_focal_guiding.so [PMM focal guiding path tracer]
+    -  plugins/rectangle.so [Rectangle intersection primitive]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 22.927 M
+    -  Shadow rays traced : 8.151 M
+
+  * Path tracer :
+    -  Average path length : 6.09 (22.46 M / 3.69 M)
+    -  Sampled from Converging : 9.212 M
+    -  Sampled from Diverging : 1.375 M
+    -  Sampled from GMM : 10.588 M
+
+  * Texture system :
+    -  Filtered texture lookups : 14.71 % (473.45 K of 3.22 M)
+------------------------------------------------------------

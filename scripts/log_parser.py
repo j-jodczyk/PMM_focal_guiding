@@ -94,7 +94,7 @@ def parse_intersection(message, next_message):
     return None
 
 OCTREE_PATTERN = re.compile(r'Octree\[')
-AABB_PATTERN = re.compile(r'AABB3\[min=\[([^]]+)\], max=\[([^]]+)\]\]')
+AABB_PATTERN = re.compile(r'AABB3\[min=\[([^\]]+)\], max=\[([^\]]+)\]\]')
 INDEX_ZERO_PATTERN = re.compile(r'Index:\s*0')
 
 def parse_octree(message):

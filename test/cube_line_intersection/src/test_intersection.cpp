@@ -62,7 +62,7 @@ struct Child {
 
     Point getPlaneLineIntersection(const Vector &planeNormal, const Point &pointOnPlane, const Point &lineOrigin, const Vector &lineDirection) {
         float denominator = planeNormal.dot(lineDirection);
-        if (denominator < 1e-6)
+        if (std::abs(denominator) < 1e-6)
             return lineOrigin;
         float t = planeNormal.dot(pointOnPlane - lineOrigin) / denominator;
         Vector scaled = t * lineDirection;
@@ -72,6 +72,7 @@ struct Child {
     bool isPointInsideAABB(const Point &point) {
         Point min = m_aabb.min;
         Point max = m_aabb.max;
+        std::cout << (point.x >= min.x && point.x <= max.x)  << " " << (point.y >= min.y && point.y <= max.y) << " " << (point.z >= min.z && point.z <= max.z) << std::endl;
         return (
             point.x >= min.x && point.x <= max.x &&
             point.y >= min.y && point.y <= max.y &&
@@ -96,14 +97,9 @@ struct Child {
             {{min.x, max.y, min.z}, {max.x, max.y, min.z}, max}  // XZ max
         };
 
-        for (auto &plane : planes) {
-            auto A = std::get<0>(plane);
-            auto B = std::get<1>(plane);
-            auto C = std::get<2>(plane);
-        }
-
         auto processIntersection = [&](const Point &A, const Point &B, const Point &C) {
             Point intersect = getPlaneLineIntersection(getNormal(A, B, C), A, origin, direction);
+            std::cout << "intesection point: " << intersect.toString() << std::endl;
             if (isPointInsideAABB(intersect)) {
                 if (!intersect1Taken) {
                     intersect1 = Vector(intersect.x, intersect.y, intersect.z);
@@ -128,19 +124,73 @@ struct Child {
 
         return Eigen::VectorXd();
     }
+
+    Eigen::VectorXd getRayIntersection2(const Point &origin, const Vector &direction) {
+        Point min = m_aabb.min;
+        Point max = m_aabb.max;
+
+        double tmin = (min.x - origin.x) / direction[0];
+        double tmax = (max.x - origin.x) / direction[0];
+        if (tmin > tmax) std::swap(tmin, tmax);
+
+        double tymin = (min.y - origin.y) / direction[1];
+        double tymax = (max.y - origin.y) / direction[1];
+        if (tymin > tymax) std::swap(tymin, tymax);
+
+        if ((tmin > tymax) || (tymin > tmax))
+            return Eigen::VectorXd();  // No intersection
+
+        if (tymin > tmin) tmin = tymin;
+        if (tymax < tmax) tmax = tymax;
+
+        double tzmin = (min.z - origin.z) / direction[2];
+        double tzmax = (max.z - origin.z) / direction[2];
+        if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+        if ((tmin > tzmax) || (tzmin > tmax))
+            return Eigen::VectorXd();  // No intersection
+
+        if (tzmin > tmin) tmin = tzmin;
+        if (tzmax < tmax) tmax = tzmax;
+
+        if (tmin < 0 && tmax < 0)
+            return Eigen::VectorXd();  // Intersection is behind the ray
+
+        Eigen::Vector3d originVec(origin.x, origin.y, origin.z);  // Convert Point to Vector
+        Eigen::Vector3d intersect1 = originVec + tmin * direction;
+        Eigen::Vector3d intersect2 = originVec + tmax * direction;
+
+        Eigen::VectorXd result(6);
+        result << intersect1.x(), intersect1.y(), intersect1.z(),
+                  intersect2.x(), intersect2.y(), intersect2.z();
+        return result;
+    }
 };
+
+
 
 int main() {
     // simple case
-    Point startingPoint(0.0, 0.0, 0.0);
-    Vector direction(1.0, 0.0, 0.0);
-    Point minPoint(1, -1, -1);
-    Point maxPoint(3, 1, 1);
+    // Point startingPoint(0.0, 0.0, 0.0);
+    // Vector direction(1.0, 0.0, 0.0);
+    // Point minPoint(1, -1, -1);
+    // Point maxPoint(3, 1, 1);
+    // AABB aabb(minPoint, maxPoint);
+
+    // Point startingPoint(-1.57549, 3.16861, 5.71639);
+    // Vector direction(0.399158, -0.721012, 0.566405);
+    // Point minPoint(-0.435039, -0.170842, 7.21287);
+    // Point maxPoint(0.283361, 0.254199, 8.19165);
+
+    Point startingPoint(0.111875, 0.028752, 3.92247);
+    Vector direction(-0.0975472, 0.693474, 0.713847);
+    Point minPoint(-0.435039, 2.80445, 6.23409);
+    Point maxPoint(0.283361, 3.22949, 7.21287);
     AABB aabb(minPoint, maxPoint);
 
     Child ch(aabb);
 
-    auto itersection = ch.getRayIntersection(startingPoint, direction);
+    auto itersection = ch.getRayIntersection2(startingPoint, direction);
     // std::cout << itersection.size();
     std::cout << itersection[0] << ", " << itersection[1] << ", " << itersection[2];
 
