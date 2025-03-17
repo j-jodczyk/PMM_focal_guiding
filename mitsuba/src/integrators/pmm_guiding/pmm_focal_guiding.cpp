@@ -28,6 +28,8 @@ MTS_NAMESPACE_BEGIN
 
 static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage);
 static StatsCounter samplesFromGMMCount("Path tracer", "Sampled from GMM", ENumberValue);
+static StatsCounter samplesFromDiverging("Path tracer", "Sampled from Diverging", ENumberValue);
+static StatsCounter samplesFromConverging("Path tracer", "Sampled from Converging", ENumberValue);
 
 #include <vector>
 #include <Eigen/Dense>
@@ -71,6 +73,9 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
 
     mutable Tree m_octree;
     mutable Tree m_octreeDiverging;
+
+    std::string importGmmFile;
+    std::string saveGMMDirectory;
     // todo
     // probably not double
     using Scalar = double;
@@ -99,6 +104,10 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
 public:
     PMMFocalGuidingIntegrator(const Properties &props)
         : MonteCarloIntegrator(props) {
+            importGmmFile = props.getString("importGmmFile", "");
+            saveGMMDirectory = props.getString("saveGMMDirectory", "");
+            Log(EInfo, ("Saving to: " + saveGMMDirectory).c_str());
+
             m_octree.configuration.threshold = props.getFloat("tree.threshold", 1e-3);
             m_octree.configuration.minDepth = props.getInteger("tree.minDepth", 0);
             m_octree.configuration.maxDepth = props.getInteger("tree.maxDepth", 40);
@@ -111,6 +120,8 @@ public:
             m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold", 0.25));
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
+
+            Log(EInfo, "GMM params: alpha = %f, split_th = %f, merge_th = %f, min_num_comp = %d, max_num_comp = %d", m_gmm.getAlpha(), m_gmm.getSplittingThreshold(), m_gmm.getMergingThreshold(), m_gmm.getMinNumComp(), m_gmm.getMaxNumComp());
 
             minSamplesToStartFitting = static_cast<uint32_t>(props.getInteger("minSamplesToStartFitting", 12));
             samplesPerIteration = static_cast<uint32_t>(props.getSize("samplesPerIteration", 4));
@@ -137,9 +148,21 @@ public:
         Log(EInfo, m_octree.toString().c_str());
         Log(EInfo, m_octreeDiverging.toString().c_str());
 
-        // we initialize with an avarage of max and min
-        size_t initialComponentCount = (m_gmm.getMaxNumComp() + m_gmm.getMinNumComp()) / 2;
-        m_gmm.init(initialComponentCount, 3, scene->getAABB());
+        if (!importGmmFile.empty()) {
+            // initialize from file
+            Log(EInfo, "Importing GMM from a file");
+            ref<FileStream> gmmImportStream = new FileStream(importGmmFile, FileStream::EReadOnly);
+            m_gmm.deserialize(gmmImportStream);
+            m_gmm.setAABB(scene->getAABB());
+            gmmImportStream->close();
+            shouldUseGuiding = true; // when we load, we can use guiding right away!
+            divergeProbability = m_gmm.getDivergeProbability();
+        } else {
+            // we initialize with an avarage of max and min
+            size_t initialComponentCount = (m_gmm.getMaxNumComp() + m_gmm.getMinNumComp()) / 2;
+            m_gmm.init(initialComponentCount, 3, scene->getAABB());
+        }
+
         Log(EInfo, m_gmm.toString().c_str());
 
         // per thread storage for sample data
@@ -150,13 +173,23 @@ public:
         perThreadZeroValuedSamples.resize(nCores);
         maxThreadId.store(0);
 
-        train(static_cast<Scene*>(sched->getResource(sceneResID)), queue, job, sensorResID);
+        if (importGmmFile.empty()) {
+            // only train if GMM was not imported
+            train(static_cast<Scene*>(sched->getResource(sceneResID)), queue, job, sensorResID);
+        }
 
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
         iterationPreprocess(sensor->getFilm());
 
-        training = false;
+        if (!saveGMMDirectory.empty()) {
+            const std::string gmmFile = saveGMMDirectory + "final_gmm.serialized";
+            ref<FileStream> gmmSerializationStream = new FileStream(gmmFile, FileStream::ETruncWrite);
+            m_gmm.serialize(gmmSerializationStream);
+            gmmSerializationStream->close();
+            Log(EInfo, "final guiding field written to %s", gmmFile.c_str());
+        }
 
+        training = false;
         return true;
     }
 
@@ -171,7 +204,7 @@ public:
         ref<Scene> trainingScene = new Scene(scene);
         const int trainingSceneResID = sched->registerResource(trainingScene);
 
-        Log(EInfo, "Starting training...");
+        Log(EInfo, "Starting training... (%d) iterations", trainingIterations);
 
         for (size_t i = 0; i < this->trainingIterations; ++i) {
             Log(EInfo, "Rendering %i iteration", i);
@@ -271,6 +304,7 @@ public:
         m_octreeDiverging.build(threshold);
 
         divergeProbability = divThreshold / (divThreshold + convThreshold);
+        m_gmm.setDivergeProbability(divergeProbability);
         Log(EInfo, "diverge probability: %.3f\n", divergeProbability);
 
         const Float postprocessingTime = m_timer->stop();
@@ -377,7 +411,7 @@ public:
 
         } else {
             // sample guiding distribution
-            avgPathLength++; // add to statistics
+            ++samplesFromGMMCount; // add to statistics
 
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
             std::random_device rd;
@@ -391,7 +425,10 @@ public:
 
             bool isDiverging = sample.x < divergeProbability;
             if (isDiverging) {
+                ++samplesFromDiverging;
                 bRec.wo *= -1;
+            } else {
+                ++samplesFromConverging;
             }
 
             // // idk - they say it's hack
@@ -723,6 +760,8 @@ public:
         perThreadZeroValuedSamples.clear();
 
         Log(EInfo, m_gmm.toString().c_str());
+        Log(EInfo, m_octree.toStringVerbose().c_str());
+        Log(EInfo, m_octreeDiverging.toStringVerbose().c_str());
     }
 
     inline Float miWeight(Float pdfA, Float pdfB) const {

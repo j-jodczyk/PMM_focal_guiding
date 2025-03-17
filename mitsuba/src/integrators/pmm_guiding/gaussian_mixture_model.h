@@ -50,7 +50,6 @@ class GaussianMixtureModel : public Distribution<Scalar_t> {
 private:
     using Scalar = Scalar_t;
     using AABB = typename Env::AABB;
-    mutable boost::shared_mutex mtx;
 
     std::vector<GaussianComponent> components;
     double alpha;
@@ -61,6 +60,7 @@ private:
     AABB m_aabb;
     size_t m_dimension;
     size_t sampleCount = 0;
+    double divergeProbability = 0.5;
 
     double pdf(const Eigen::VectorXd& x, GaussianComponent& component) {
         int d = x.size();
@@ -83,7 +83,7 @@ private:
     void updateSufficientStatistics(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
         size_t NNew = batch.size();
 
-        // std::vector<size_t> componentIdxToDelete;
+        double weights = 0;
         for (size_t j = 0; j < components.size(); ++j) {
             if (components[j].getWeight() == 0)
                 continue;
@@ -121,21 +121,12 @@ private:
             assert(newCov.allFinite());
 
             comp.updateComponent(sampleCount, NNew, newMean, newCov, newWeight, alpha);
+            weights += newWeight;
         }
 
+        SLog(mitsuba::EInfo, "Components accumulated weight is: %f", weights);
+
         sampleCount += NNew; // update sample count
-
-        // for (int idx : componentIdxToDelete) {
-        //     this->deactivateComponent(idx);
-        // }
-
-        // remove if weight too small
-        // for (size_t j = 0; j < components.size(); ++j) {
-        //     if (components[j].getWeight() == 0)
-        //         continue;
-        //     if (components[j].getWeight() < 1e-3)
-        //         this->deactivateComponent(j);
-        // }
 
         mergeAllComponents();
         splitAllComponents();
@@ -263,19 +254,19 @@ private:
 
         //  Adjust the covariance matrix
         Eigen::MatrixXd principalCov = maxEigenvalue * (principalAxis * principalAxis.transpose());
-        auto newCov1 = cov - (0.5 * principalCov);
-        auto newCov2 = newCov1; // keeping symmetric structure
+        auto newCov = cov - (0.5 * principalCov); // keeping symmetrical
 
-        auto comp = components[index];
-        comp.setWeight(comp.getWeight() / 2.0);
-        comp.setMean(newMean1);
-        comp.setCovariance(newCov1);
+        auto newWeight = components[index].getWeight() / 2.0;
+
+        components[index].setWeight(newWeight);
+        components[index].setMean(newMean1);
+        components[index].setCovariance(newCov);
         splitCandidates.push(index);
 
         GaussianComponent newComp;
-        newComp.setWeight(comp.getWeight());
+        newComp.setWeight(newWeight);
         newComp.setMean(newMean2);
-        newComp.setCovariance(newCov2);
+        newComp.setCovariance(newCov);
 
         for (size_t i=0; i < components.size(); ++i) {
             if (components[i].getWeight() == 0) {
@@ -297,7 +288,7 @@ private:
 
         // new values based on:
         // Z. Zhang, C. Chen, J. Sun, and K. L. Chan, “EM algorithms for Gaussian mixtures with split-and-merge operation,” Pattern Recognition, vol. 36, no. 9, pp. 1973 – 1983, 2003.
-        double totalWeight = component1.getWeight() + component2.getWeight();
+        double totalWeight = component1.getWeight() + component2.getWeight(); // we're just adding weights together
 
         Eigen::VectorXd mergedMean = (
             component1.getWeight() * component1.getMean() +
@@ -341,6 +332,9 @@ private:
     }
 public:
     GaussianMixtureModel() {}
+    GaussianMixtureModel(std::istream& in) {
+        deserialize(in);
+    }
 
     double getAlpha() { return alpha; }
     void setAlpha(double newAlpha) { alpha = newAlpha; };
@@ -348,6 +342,8 @@ public:
     void setSplittingThreshold(double newThreshold) { splittingThreshold = newThreshold; };
     double getMergingThreshold() { return mergingThreshold; };
     void setMergingThreshold(double newThreshold) { mergingThreshold = newThreshold; };
+
+    void setAABB(AABB newAabb) { m_aabb = newAabb; };
 
     size_t getMinNumComp() { return minNumComp; };
     size_t getMaxNumComp() { return maxNumComp; };
@@ -358,6 +354,9 @@ public:
      };
     void setMinNumComp(size_t newMinNumComp) { minNumComp = newMinNumComp; };
     void setMaxNumComp(size_t newMaxNumComp) { maxNumComp = newMaxNumComp; };
+
+    double getDivergeProbability() { return divergeProbability; }
+    void setDivergeProbability(double newDivergeProbability) { divergeProbability = newDivergeProbability; }
 
     std::vector<GaussianComponent> getComponents() { return components; };
 
@@ -470,11 +469,43 @@ public:
         return oss.str();
     }
 
-private:
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const size_t version) {
-        ar  & components;
+    void serialize(mitsuba::FileStream* out)const
+    {
+        out->write(reinterpret_cast<const char*>(&alpha), sizeof(alpha));
+        out->write(reinterpret_cast<const char*>(&splittingThreshold), sizeof(splittingThreshold));
+        out->write(reinterpret_cast<const char*>(&mergingThreshold), sizeof(mergingThreshold));
+        out->write(reinterpret_cast<const char*>(&minNumComp), sizeof(minNumComp));
+        out->write(reinterpret_cast<const char*>(&maxNumComp), sizeof(maxNumComp));
+        out->write(reinterpret_cast<const char*>(&m_dimension), sizeof(m_dimension));
+        out->write(reinterpret_cast<const char*>(&sampleCount), sizeof(sampleCount));
+        out->write(reinterpret_cast<const char*>(&divergeProbability), sizeof(divergeProbability));
+
+        // Save components
+        size_t numComponents = components.size();
+        out->write(reinterpret_cast<const char*>(&numComponents), sizeof(numComponents));
+        for (const auto& comp : components) {
+            comp.serialize(out);  // Call GaussianComponent's save method
+        }
+    }
+
+    void deserialize(mitsuba::FileStream* in)
+    {
+        in->read(reinterpret_cast<char*>(&alpha), sizeof(alpha));
+        in->read(reinterpret_cast<char*>(&splittingThreshold), sizeof(splittingThreshold));
+        in->read(reinterpret_cast<char*>(&mergingThreshold), sizeof(mergingThreshold));
+        in->read(reinterpret_cast<char*>(&minNumComp), sizeof(minNumComp));
+        in->read(reinterpret_cast<char*>(&maxNumComp), sizeof(maxNumComp));
+        in->read(reinterpret_cast<char*>(&m_dimension), sizeof(m_dimension));
+        in->read(reinterpret_cast<char*>(&sampleCount), sizeof(sampleCount));
+        in->read(reinterpret_cast<char*>(&divergeProbability), sizeof(divergeProbability));
+
+        // Read components
+        size_t numComponents;
+        in->read(reinterpret_cast<char*>(&numComponents), sizeof(numComponents));
+        components.resize(numComponents);
+        for (auto& comp : components) {
+            comp.deserialize(in);
+        }
     }
 
 public:

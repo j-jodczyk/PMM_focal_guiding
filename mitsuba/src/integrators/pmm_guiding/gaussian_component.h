@@ -16,6 +16,9 @@ namespace pmm_focal
 
     public:
         GaussianComponent() {}
+        GaussianComponent(mitsuba::FileStream* in) {
+            deserialize(in);
+        }
 
         Eigen::MatrixXd getCovariance() const { return covariance; }
         Eigen::VectorXd getMean() const { return mean; }
@@ -49,7 +52,7 @@ namespace pmm_focal
         }
 
         void deactivate(size_t dims) {
-            weight = 0;
+            weight = 0.0;
             mean = Eigen::VectorXd::Zero(dims);
             covariance = Eigen::MatrixXd::Zero(dims, dims);
         }
@@ -92,6 +95,32 @@ namespace pmm_focal
             }
             oss << "]";
             return oss.str();
+        }
+
+        void serialize(mitsuba::FileStream* out) const {
+            size_t meanSize = mean.size();
+            size_t covSize = covariance.rows();
+
+            out->write(reinterpret_cast<const char*>(&weight), sizeof(weight));
+            out->write(reinterpret_cast<const char*>(&meanSize), sizeof(meanSize));
+            out->write(reinterpret_cast<const char*>(mean.data()), meanSize * sizeof(double));
+
+            out->write(reinterpret_cast<const char*>(&covSize), sizeof(covSize));
+            out->write(reinterpret_cast<const char*>(covariance.data()), covSize * covSize * sizeof(double));
+        }
+
+        void deserialize(mitsuba::FileStream* in) {
+            size_t meanSize, covSize;
+
+            in->read(reinterpret_cast<char*>(&weight), sizeof(weight));
+
+            in->read(reinterpret_cast<char*>(&meanSize), sizeof(meanSize));
+            mean.resize(meanSize);
+            in->read(reinterpret_cast<char*>(mean.data()), meanSize * sizeof(double));
+
+            in->read(reinterpret_cast<char*>(&covSize), sizeof(covSize));
+            covariance.resize(covSize, covSize);
+            in->read(reinterpret_cast<char*>(covariance.data()), covSize * covSize * sizeof(double));
         }
     };
 }
