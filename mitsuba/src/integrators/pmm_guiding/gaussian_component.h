@@ -41,13 +41,25 @@ namespace pmm_focal
             covariance += 1e-6 * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
         }
 
-        Eigen::VectorXd sample(std::mt19937& gen) const {
-            std::normal_distribution<> dist(0.0, 1.0);
+        // Box-Muller Transform
+        Eigen::VectorXd sample(mitsuba::RadianceQueryRecord &rRec) const {
             size_t meanSize = mean.size();
             Eigen::VectorXd z(meanSize);
-            for (size_t i = 0; i < meanSize; ++i) {
-                z[i] = dist(gen);
+
+            for (size_t i = 0; i < meanSize; i += 2) {
+                double u1 = rRec.nextSample1D();
+                double u2 = rRec.nextSample1D();
+
+                double r = std::sqrt(-2.0 * std::log(u1));
+                double theta = 2.0 * M_PI * u2;
+
+                z[i] = r * std::cos(theta);
+                if (i + 1 < meanSize) {
+                    z[i + 1] = r * std::sin(theta);
+                }
             }
+
+            // Cholesky decomposition
             return mean + covariance.llt().matrixL() * z;
         }
 

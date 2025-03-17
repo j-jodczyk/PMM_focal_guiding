@@ -360,6 +360,7 @@ public:
             iterationRenderTime = renderTimer->lap();
             totalRenderTime = renderTimer->getSeconds();
             ++iterations;
+            Log(EInfo, "Remaining rendering time: %d", (m_renderMaxSeconds - totalRenderTime));
         } while(status == ParallelProcess::ESuccess && totalRenderTime + iterationRenderTime < m_renderMaxSeconds);
 
         Log(EInfo, "rendered %zu samples per pixel in %s.", iterations*sampler->getSampleCount(), timeString(renderTimer->getMilliseconds()/1000.0f, true).c_str());
@@ -414,10 +415,8 @@ public:
             ++samplesFromGMMCount; // add to statistics
 
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
-            std::random_device rd;
-            std::mt19937 gen(rd());
 
-            Eigen::VectorXd gmmSample = m_gmm.sample(gen);
+            Eigen::VectorXd gmmSample = m_gmm.sample(rRec);
             mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
             // wo is outgoing direction
             bRec.wo = normalize(endPoint - bRec.its.p);

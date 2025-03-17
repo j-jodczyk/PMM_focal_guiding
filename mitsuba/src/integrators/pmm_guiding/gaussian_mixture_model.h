@@ -439,21 +439,28 @@ public:
         }
     }
 
-    Eigen::VectorXd sample(std::mt19937& gen) const {
-        // creating temp vector of active components
-        std::vector<std::reference_wrapper<const GaussianComponent>> filtered;
-        std::vector<double> weights;
+    // using Inverse Transform Sampling
+    Eigen::VectorXd sample(mitsuba::RadianceQueryRecord &rRec) const {
+        // Compute total weight
+        double totalWeight = 0;
         for (const auto& component : components) {
-            if (component.getWeight() == 0)
-                continue;
-            weights.push_back(component.getWeight());
-            filtered.push_back(component);
+            totalWeight += component.getWeight();
         }
 
-        std::discrete_distribution<> componentDist(weights.begin(), weights.end());
-        const GaussianComponent& selectedComponent = filtered[componentDist(gen)];
+        // Sample a component directly using a cumulative sum
+        double randWeight = rRec.nextSample1D() * totalWeight;
+        double cumulativeWeight = 0;
 
-        return selectedComponent.sample(gen);
+        for (const auto& component : components) {
+            cumulativeWeight += component.getWeight();
+            if (randWeight <= cumulativeWeight) {
+                return component.sample(rRec);
+            }
+        }
+
+        // fallback
+        SLog(mitsuba::EInfo, "Sampling from the first component (should never happen)");
+        return components[0].sample(rRec);
     }
 
     std::string toString() const
@@ -478,7 +485,7 @@ public:
         out->write(reinterpret_cast<const char*>(&maxNumComp), sizeof(maxNumComp));
         out->write(reinterpret_cast<const char*>(&m_dimension), sizeof(m_dimension));
         out->write(reinterpret_cast<const char*>(&sampleCount), sizeof(sampleCount));
-        out->write(reinterpret_cast<const char*>(&divergeProbability), sizeof(divergeProbability));
+        // out->write(reinterpret_cast<const char*>(&divergeProbability), sizeof(divergeProbability));
 
         // Save components
         size_t numComponents = components.size();
@@ -497,7 +504,7 @@ public:
         in->read(reinterpret_cast<char*>(&maxNumComp), sizeof(maxNumComp));
         in->read(reinterpret_cast<char*>(&m_dimension), sizeof(m_dimension));
         in->read(reinterpret_cast<char*>(&sampleCount), sizeof(sampleCount));
-        in->read(reinterpret_cast<char*>(&divergeProbability), sizeof(divergeProbability));
+        // in->read(reinterpret_cast<char*>(&divergeProbability), sizeof(divergeProbability));
 
         // Read components
         size_t numComponents;
