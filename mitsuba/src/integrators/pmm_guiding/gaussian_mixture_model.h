@@ -42,12 +42,29 @@
 
 namespace pmm_focal {
 
+class PRNG {
+    public:
+        PRNG() {
+            std::random_device rd;
+            generator.seed(rd());
+        }
+
+        int getRandomNumber(int min, int max) {
+            std::uniform_int_distribution<int> distribution(min, max);
+            return distribution(generator);
+        }
+
+    private:
+        std::default_random_engine generator;
+    };
+
 template<
     typename Scalar_t,
     typename Env
 >
 class GaussianMixtureModel : public Distribution<Scalar_t> {
 private:
+    PRNG prng;
     using Scalar = Scalar_t;
     using AABB = typename Env::AABB;
 
@@ -61,6 +78,7 @@ private:
     size_t m_dimension;
     size_t sampleCount = 0;
     double divergeProbability = 0.5;
+    bool initialized = false;
 
     double pdf(const Eigen::VectorXd& x, GaussianComponent& component) {
         int d = x.size();
@@ -80,8 +98,17 @@ private:
         return std::exp(logPdf);
     }
 
+    double totalSampleWeight(const std::vector<WeightedSample>& batch) {
+        double sum = 0;
+        for (const auto& sample : batch) {
+            sum += sample.weight;
+        }
+        return sum;
+    }
+
     void updateSufficientStatistics(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
         size_t NNew = batch.size();
+        double totalWeight = totalSampleWeight(batch);
 
         double weights = 0;
         for (size_t j = 0; j < components.size(); ++j) {
@@ -89,7 +116,12 @@ private:
                 continue;
             auto& comp = components[j];
 
-            double responsibilitySum = responsibilities.col(j).sum();
+            // double responsibilitySum = responsibilities.col(j).sum();
+            // Compute weighted responsibility sum - Hanebeck, Frisch
+            double responsibilitySum = 0;
+            for (size_t i = 0; i < NNew; ++i) {
+                responsibilitySum += responsibilities(i, j) * batch[i].weight;
+            }
             if (responsibilitySum < 1e-6) {
                 SLog(mitsuba::EInfo, "Responsibility sum is below threshold");
                 // componentIdxToDelete.push_back(j);
@@ -98,13 +130,13 @@ private:
             if (responsibilitySum != responsibilitySum) {
                 throw std::runtime_error("Responsibility cannot be nan");
             }
-            double newWeight = responsibilitySum / NNew;
+            double newWeight = responsibilitySum / totalWeight;
             assert(!std::isinf(newWeight));
 
             Eigen::VectorXd newMean(comp.getMean().size());
             newMean.setZero();
             for (size_t i = 0; i < NNew; i++) {
-                newMean += responsibilities(i, j) * batch[i].point;
+                newMean += responsibilities(i, j) * batch[i].point * batch[i].weight;
             }
 
             newMean /= responsibilitySum;
@@ -115,7 +147,7 @@ private:
             Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(comp.getMean().size(), comp.getMean().size());
             for (size_t i = 0; i < NNew; ++i) {
                 Eigen::VectorXd diff = batch[i].point - comp.getMean();
-                newCov += responsibilities(i, j) * (diff * diff.transpose());
+                newCov += responsibilities(i, j) * batch[i].weight * (diff * diff.transpose());
             }
             newCov /= responsibilitySum;
             assert(newCov.allFinite());
@@ -310,28 +342,8 @@ private:
         deactivateComponent(index2);
     }
 
-    void fillMissingComponents() {
-        size_t numComponentsToActivate = minNumComp - getNumActiveComponents();
-        if (numComponentsToActivate <= 0)
-            return;
-        std::vector<size_t> zeroWeightIndexes;
-        for (size_t i = 0; i < components.size(); i++) {
-            if (components[i].getWeight() == 0)
-                zeroWeightIndexes.push_back(i);
-        }
-
-        size_t j = 0;
-        for (size_t i=0; i < numComponentsToActivate; ++i) {
-            GaussianComponent component = GaussianComponent();
-            initComponentMean(component);
-            initComponentCovariance(component);
-            component.setWeight(1.0 / minNumComp);
-            components[zeroWeightIndexes[j]] = component;
-            j++;
-        }
-    }
 public:
-    GaussianMixtureModel() {}
+    GaussianMixtureModel(): prng() {}
     GaussianMixtureModel(std::istream& in) {
         deserialize(in);
     }
@@ -360,44 +372,119 @@ public:
 
     std::vector<GaussianComponent> getComponents() { return components; };
 
-    void initComponentMean(GaussianComponent& comp) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-
-        Eigen::VectorXd compMean(m_dimension);
-        for (size_t d = 0; d < m_dimension; ++d) {
-            std::uniform_real_distribution<> dist(m_aabb.min[d], m_aabb.max[d]);
-            compMean[d] = dist(gen);
-        }
-        comp.setMean(compMean);
-    }
-
     void initComponentCovariance(GaussianComponent& comp) {
         comp.setCovariance(Eigen::MatrixXd::Identity(m_dimension, m_dimension));
     }
 
-    void init(size_t numComponents, size_t dimension, const AABB& aabb) {
-        if (numComponents > maxNumComp)
-            throw std::runtime_error("Too many components on initialization");
-        m_aabb = aabb;
-        m_dimension = dimension;
+    void init(
+        const std::vector<WeightedSample>& batch
+    ) {
+        // Method number 1.: Initialize with random values from the first batch - initializeing maximum number of components
+        SLog(mitsuba::EInfo, "Starting initialization using random value from the first batch");
+        m_dimension = batch[0].point.size();
+
         if (components.size() != maxNumComp)
             components.resize(maxNumComp);
 
-        for (size_t i = 0; i < numComponents; ++i) {
+        for (size_t i = 0; i < maxNumComp; ++i) {
             auto& component = components[i];
-            component.setWeight(1.0 / numComponents);
-            initComponentMean(component);
+            component.setWeight(1.0 / maxNumComp);
+            int randomIndex = prng.getRandomNumber(0, batch.size() - 1);
+            component.setMean(batch[randomIndex].point); // initialize mean as random value from batch
             initComponentCovariance(component);
         }
+        SLog(mitsuba::EInfo, "Initialized using random value from the first batch");
 
-        // the rest of the components are initated with zero values
-        for (size_t i = numComponents; i < maxNumComp; ++i) {
-            components[i].deactivate(m_dimension);
+        initialized = true;
+    }
+
+    void initKMeans(const std::vector<WeightedSample>& batch) {
+        // Method number 2: Using KMeans
+        SLog(mitsuba::EInfo, "Starting initialization using KMeans");
+        m_dimension = batch[0].point.size();
+
+        if (components.size() != maxNumComp)
+            components.resize(maxNumComp);
+
+        std::vector<Eigen::VectorXd> centroids(maxNumComp, Eigen::VectorXd::Zero(m_dimension));
+        std::vector<int> clusterAssignments(batch.size(), 0);
+
+        for (size_t i = 0; i < maxNumComp; ++i) {
+            int randomIndex = prng.getRandomNumber(0, batch.size() - 1);
+            centroids[i] = batch[randomIndex].point;
         }
+
+        bool converged = false;
+        int maxIterations = 100;
+
+        std::vector<int> clusterSizes(maxNumComp, 0);
+
+        for (int iter = 0; iter < maxIterations && !converged; ++iter) {
+            converged = true;
+
+            // assign each sample to the nearest centroid
+            for (size_t i = 0; i < batch.size(); ++i) {
+                double minDist = std::numeric_limits<double>::max();
+                int bestCluster = 0;
+
+                for (size_t j = 0; j < maxNumComp; ++j) {
+                    double dist = (batch[i].point - centroids[j]).squaredNorm();
+                    if (dist < minDist) {
+                        minDist = dist;
+                        bestCluster = j;
+                    }
+                }
+
+                if (clusterAssignments[i] != bestCluster) {
+                    clusterAssignments[i] = bestCluster;
+                    converged = false;
+                }
+            }
+
+            // update centroids
+            std::vector<Eigen::VectorXd> newCentroids(maxNumComp, Eigen::VectorXd::Zero(m_dimension));
+
+            for (size_t i = 0; i < batch.size(); ++i) {
+                newCentroids[clusterAssignments[i]] += batch[i].point;
+                clusterSizes[clusterAssignments[i]]++;
+            }
+
+            for (size_t j = 0; j < maxNumComp; ++j) {
+                if (clusterSizes[j] > 0) {
+                    centroids[j] = newCentroids[j] / clusterSizes[j];
+                }
+            }
+        }
+
+        // assign K-means results to GMM components
+        for (size_t j = 0; j < maxNumComp; ++j) {
+            auto& component = components[j];
+            component.setWeight(static_cast<double>(clusterSizes[j]) / batch.size());
+            component.setMean(centroids[j]);
+
+            // Compute covariance for each cluster
+            Eigen::MatrixXd covariance = Eigen::MatrixXd::Zero(m_dimension, m_dimension);
+            if (clusterSizes[j] > 1) {
+                for (size_t i = 0; i < batch.size(); ++i) {
+                    if (clusterAssignments[i] == j) {
+                        Eigen::VectorXd diff = batch[i].point - centroids[j];
+                        covariance += diff * diff.transpose();
+                    }
+                }
+                covariance /= (clusterSizes[j] - 1);
+            } else {
+                covariance = Eigen::MatrixXd::Identity(m_dimension, m_dimension);
+            }
+
+            component.setCovariance(covariance);
+        }
+        SLog(mitsuba::EInfo, "Initialized using KMeans");
+
+        initialized = true;
     }
 
     void resetComponent(GaussianComponent& component) {
+        SLog(mitsuba::EInfo, "Resetting component");
         std::random_device rd;
         std::mt19937 gen(rd());
 
@@ -413,6 +500,10 @@ public:
     }
 
      void processBatch(const std::vector<WeightedSample>& batch) {
+        if (!initialized)
+            initKMeans(batch);
+
+
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
 
         // E-step
@@ -423,7 +514,7 @@ public:
                     continue;
                 for (size_t i = 0; i < batch.size(); ++i) {
                     double resp = component.getWeight() * pdf(batch[i].point, component);
-                    responsibilities(i, j) = resp * batch[i].weight;
+                    responsibilities(i, j) = resp; // without * batch[i].weight; - Hanebeck, Frisch - consider weights only in M step - this is an absolute game changer!
                 }
             }
         }
