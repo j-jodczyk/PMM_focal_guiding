@@ -86,6 +86,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     AABB sceneSpace;
     mutable std::vector<std::vector<pmm_focal::WeightedSample>> perThreadSamples;
     mutable std::vector<std::vector<mitsuba::RayDifferential>> perThreadZeroValuedSamples;
+    mutable std::vector<std::vector<mitsuba::Point>> perThreadSampledPoints;
     mutable std::atomic<size_t> maxThreadId;
 
     mutable PrimitiveThreadLocal<bool> threadLocalInitialized;
@@ -153,15 +154,13 @@ public:
             Log(EInfo, "Importing GMM from a file");
             ref<FileStream> gmmImportStream = new FileStream(importGmmFile, FileStream::EReadOnly);
             m_gmm.deserialize(gmmImportStream);
-            m_gmm.setAABB(scene->getAABB());
             gmmImportStream->close();
             shouldUseGuiding = true; // when we load, we can use guiding right away!
             divergeProbability = m_gmm.getDivergeProbability();
         } else {
-            // we initialize with an avarage of max and min
-            size_t initialComponentCount = (m_gmm.getMaxNumComp() + m_gmm.getMinNumComp()) / 2;
-            m_gmm.init(initialComponentCount, 3, scene->getAABB());
+            // do nothing - the gmm is initialize with the first training batch
         }
+        m_gmm.setAABB(scene->getAABB());
 
         Log(EInfo, m_gmm.toString().c_str());
 
@@ -171,6 +170,7 @@ public:
         // m_perThreadIntersectionData.resize(nCores);
         perThreadSamples.resize(nCores);
         perThreadZeroValuedSamples.resize(nCores);
+        perThreadSampledPoints.resize(nCores);
         maxThreadId.store(0);
 
         if (importGmmFile.empty()) {
@@ -256,6 +256,17 @@ public:
         // Log(EInfo, "Post processing of the rendering iteration");
         Log(EInfo, "iteration render time: %s", timeString(renderTime, true).c_str());
 
+        // std::vector<mitsuba::Point> iterationSampledPoints = std::accumulate(perThreadSampledPoints.begin(), perThreadSampledPoints.end(), std::vector<mitsuba::Point>{},
+        // [](std::vector<mitsuba::Point>& acc, const std::vector<mitsuba::Point>& vec) {
+        //     acc.insert(acc.end(), vec.begin(), vec.end());
+        //     return acc;
+        // });
+        // for(size_t i = 0; i < iterationSampledPoints.size(); ++i) {
+        //     if (i%1000 == 0){
+        //         Log(EInfo, iterationSampledPoints[i].toString().c_str());
+        //     }
+        // }
+
         if (!training)
             return;
 
@@ -264,10 +275,8 @@ public:
 
         allCollectedSamplesCount += numValidSamples;
         if (allCollectedSamplesCount == 0) {
-            Log(EInfo, "No samples found during training, resetting gmm.");
-            m_gmm.init(m_gmm.getMinNumComp(), 3, sceneSpace);
+            Log(EInfo, "No samples found during training.");
         }
-
 
         if (numValidSamples < minSamplesToStartFitting) {
             Log(EInfo, "skipping fit due to insufficient sample data (got %zu/%d valid samples).", numValidSamples, minSamplesToStartFitting);
@@ -376,7 +385,8 @@ public:
         Float& woPdf,
         Float& bsdfPdf,
         Float bsdfSamplingFraction,
-        RadianceQueryRecord rRec
+        RadianceQueryRecord rRec,
+        std::vector<mitsuba::Point> *sampledPoints
     ) const {
         mitsuba::Point2 sample = rRec.nextSample2D(); // this is direction (azimutal and polar coords)
 
@@ -418,6 +428,7 @@ public:
 
             Eigen::VectorXd gmmSample = m_gmm.sample(rRec);
             mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
+            // sampledPoints->push_back(endPoint);
             // wo is outgoing direction
             bRec.wo = normalize(endPoint - bRec.its.p);
             bRec.wo = bRec.its.toLocal(bRec.wo);
@@ -462,12 +473,16 @@ public:
 
         static thread_local std::vector<pmm_focal::WeightedSample>* samples {nullptr};
         static thread_local std::vector<RayDifferential>* zeroValuedSamples {nullptr}; // todo: might not be WeigthedSample
+        static thread_local std::vector<mitsuba::Point>* sampledPoints {nullptr}; // todo: might not be WeigthedSample
 
         // init thread variables
-        if (training && !threadLocalInitialized.get()) {
+        if (!threadLocalInitialized.get()) {
             const size_t threadId = maxThreadId.fetch_add(1, std::memory_order_relaxed);
-            samples = &perThreadSamples.at(threadId);
-            zeroValuedSamples = &perThreadZeroValuedSamples.at(threadId);
+            sampledPoints = &perThreadSampledPoints.at(threadId);
+            if (training){
+                samples = &perThreadSamples.at(threadId);
+                zeroValuedSamples = &perThreadZeroValuedSamples.at(threadId);
+            }
             threadLocalInitialized.get() = true;
         }
 
@@ -576,7 +591,7 @@ public:
             BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
 
             // here is where sampling takes place -- should sample guided
-            Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, bsdfSamplingFraction, rRec);
+            Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, bsdfSamplingFraction, rRec, sampledPoints);
             if (bsdfWeight.isZero()) // this is why woPdf and bsdfPdf doesn't matter here
                 break;
 
@@ -687,7 +702,8 @@ public:
                 clampedLight += intersectionData.emission.getClamped(maxThroughput);
                 clampedLight += intersectionData.bsdfDirectLight.contribution*intersectionData.bsdfMiWeight;
 
-                float weight = log(clampedLight.average());
+                // float weight = log(clampedLight.average());
+                float weight = clampedLight.average();
 
                 if (weight < 1e-6) {
                     // do nothing
@@ -757,6 +773,7 @@ public:
         iterationPostprocess(film, static_cast<uint32_t>(scene->getSampler()->getSampleCount()), job);
         perThreadSamples.clear();
         perThreadZeroValuedSamples.clear();
+        perThreadSampledPoints.clear();
 
         Log(EInfo, m_gmm.toString().c_str());
         Log(EInfo, m_octree.toStringVerbose().c_str());
