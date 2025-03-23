@@ -77,22 +77,24 @@ private:
     AABB m_aabb;
     size_t m_dimension;
     size_t sampleCount = 0;
+    bool useKMeans = false;
+
     double divergeProbability = 0.5;
     bool initialized = false;
 
     double pdf(const Eigen::VectorXd& x, GaussianComponent& component) {
         int d = x.size();
-        double det = component.getCovariance().determinant();
+        // double det = component.getCovariance().determinant();
 
-        if (det <= 1e-6) {
-            resetComponent(component);
-            det = component.getCovariance().determinant();
-        }
+        // if (det <= 1e-6) {
+        //     resetComponent(component);
+        //     det = component.getCovariance().determinant();
+        // }
 
-        double logNormConst = -0.5 * (d * std::log(2 * M_PI) +std::log(det));
+        double logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
 
         Eigen::VectorXd diff = x - component.getMean();
-        double exponent = -0.5 * diff.transpose() * component.getCovariance().inverse() * diff;
+        double exponent = -0.5 * diff.transpose() * component.getInverseCovariance() * diff;
         double logPdf = logNormConst + exponent;
 
         return std::exp(logPdf);
@@ -156,8 +158,6 @@ private:
             weights += newWeight;
         }
 
-        SLog(mitsuba::EInfo, "Components accumulated weight is: %f", weights);
-
         sampleCount += NNew; // update sample count
 
         mergeAllComponents();
@@ -203,7 +203,6 @@ private:
                 auto dist = exp(-bhattacharyyaDistance(i, j)); // BC = 1/exp(BD)
                 bhattacharyyaCoefficients(i, j) = dist;
                 bhattacharyyaCoefficients(j, i) = dist;
-                SLog(mitsuba::EInfo, "exp(-dist) between %d and %d is %f", i, j, dist);
             }
         }
 
@@ -213,7 +212,6 @@ private:
         SLog(mitsuba::EInfo, "components before the merge: %d", getNumActiveComponents());
         int mergeCount = 0;
         do {
-            SLog(mitsuba::EInfo, "Merging %d and %d, because their BC is %f", i, j, maxBC);
             mergeComponents(i, j);
             mergeCount++;
             bhattacharyyaCoefficients.col(j).setZero();
@@ -267,7 +265,6 @@ private:
         double maxEigenvalue = eigenvalues.maxCoeff();
 
         double ratio = maxEigenvalue / minEigenvalue;
-        SLog(mitsuba::EInfo, "Ratio is %f", ratio);
         if (ratio < splittingThreshold)
             return; // below threshold - do nothing
 
@@ -354,6 +351,8 @@ public:
     void setSplittingThreshold(double newThreshold) { splittingThreshold = newThreshold; };
     double getMergingThreshold() { return mergingThreshold; };
     void setMergingThreshold(double newThreshold) { mergingThreshold = newThreshold; };
+    bool getUseKMeans() { return useKMeans; }
+    void setUseKMeans(bool newUseKMeans) { useKMeans = newUseKMeans; };
 
     void setAABB(AABB newAabb) { m_aabb = newAabb; };
 
@@ -376,9 +375,13 @@ public:
         comp.setCovariance(Eigen::MatrixXd::Identity(m_dimension, m_dimension));
     }
 
-    void init(
-        const std::vector<WeightedSample>& batch
-    ) {
+    void init(const std::vector<WeightedSample>& batch) {
+        if (useKMeans)
+            initKMeans(batch);
+        initRandom(batch);
+    }
+
+    void initRandom(const std::vector<WeightedSample>& batch) {
         // Method number 1.: Initialize with random values from the first batch - initializeing maximum number of components
         SLog(mitsuba::EInfo, "Starting initialization using random value from the first batch");
         m_dimension = batch[0].point.size();
@@ -399,8 +402,7 @@ public:
     }
 
     void initKMeans(const std::vector<WeightedSample>& batch) {
-        // Method number 2: Using KMeans
-        SLog(mitsuba::EInfo, "Starting initialization using KMeans");
+        SLog(mitsuba::EInfo, "Starting initialization using KMeans++");
         m_dimension = batch[0].point.size();
 
         if (components.size() != maxNumComp)
@@ -408,8 +410,21 @@ public:
 
         std::vector<Eigen::VectorXd> centroids(maxNumComp, Eigen::VectorXd::Zero(m_dimension));
         std::vector<int> clusterAssignments(batch.size(), 0);
+        std::vector<int> clusterSizes(maxNumComp, 0);
 
-        for (size_t i = 0; i < maxNumComp; ++i) {
+        // K-Means++ Initialization
+        centroids[0] = batch[prng.getRandomNumber(0, batch.size() - 1)].point;
+        for (size_t i = 1; i < maxNumComp; ++i) {
+            std::vector<double> distances(batch.size(), std::numeric_limits<double>::max());
+
+            for (size_t j = 0; j < batch.size(); ++j) {
+                for (size_t c = 0; c < i; ++c) {
+                    double dist = (batch[j].point - centroids[c]).squaredNorm();
+                    distances[j] = std::min(distances[j], dist);
+                }
+            }
+
+            std::discrete_distribution<int> distribution(distances.begin(), distances.end());
             int randomIndex = prng.getRandomNumber(0, batch.size() - 1);
             centroids[i] = batch[randomIndex].point;
         }
@@ -417,12 +432,12 @@ public:
         bool converged = false;
         int maxIterations = 100;
 
-        std::vector<int> clusterSizes(maxNumComp, 0);
-
         for (int iter = 0; iter < maxIterations && !converged; ++iter) {
             converged = true;
+            std::fill(clusterSizes.begin(), clusterSizes.end(), 0);
+            std::vector<Eigen::VectorXd> newCentroids(maxNumComp, Eigen::VectorXd::Zero(m_dimension));
 
-            // assign each sample to the nearest centroid
+            // Assign samples to the nearest centroid
             for (size_t i = 0; i < batch.size(); ++i) {
                 double minDist = std::numeric_limits<double>::max();
                 int bestCluster = 0;
@@ -439,24 +454,23 @@ public:
                     clusterAssignments[i] = bestCluster;
                     converged = false;
                 }
+
+                newCentroids[bestCluster] += batch[i].point;
+                clusterSizes[bestCluster]++;
             }
 
-            // update centroids
-            std::vector<Eigen::VectorXd> newCentroids(maxNumComp, Eigen::VectorXd::Zero(m_dimension));
-
-            for (size_t i = 0; i < batch.size(); ++i) {
-                newCentroids[clusterAssignments[i]] += batch[i].point;
-                clusterSizes[clusterAssignments[i]]++;
-            }
-
+            // Update centroids
             for (size_t j = 0; j < maxNumComp; ++j) {
                 if (clusterSizes[j] > 0) {
                     centroids[j] = newCentroids[j] / clusterSizes[j];
+                } else {
+                    // Reinitialize empty cluster centroid using a random sample
+                    centroids[j] = batch[prng.getRandomNumber(0, batch.size() - 1)].point;
                 }
             }
         }
 
-        // assign K-means results to GMM components
+        // Assign K-means results to GMM components
         for (size_t j = 0; j < maxNumComp; ++j) {
             auto& component = components[j];
             component.setWeight(static_cast<double>(clusterSizes[j]) / batch.size());
@@ -473,15 +487,16 @@ public:
                 }
                 covariance /= (clusterSizes[j] - 1);
             } else {
-                covariance = Eigen::MatrixXd::Identity(m_dimension, m_dimension);
+                covariance = Eigen::MatrixXd::Identity(m_dimension, m_dimension) * 1e-6; // Small regularization
             }
 
             component.setCovariance(covariance);
         }
-        SLog(mitsuba::EInfo, "Initialized using KMeans");
 
+        SLog(mitsuba::EInfo, "Initialized using KMeans++");
         initialized = true;
     }
+
 
     void resetComponent(GaussianComponent& component) {
         SLog(mitsuba::EInfo, "Resetting component");
@@ -500,6 +515,7 @@ public:
     }
 
      void processBatch(const std::vector<WeightedSample>& batch) {
+        SLog(mitsuba::EInfo, "Start processing batch");
         if (!initialized)
             initKMeans(batch);
 
@@ -509,15 +525,24 @@ public:
         // E-step
         {
             for (size_t j = 0; j < components.size(); ++j) {
-                auto component = components[j];
+                auto& component = components[j];
                 if (component.getWeight() == 0)
                     continue;
+
+                // instead of calling pdf, we use eigen vector operations to make this quicker
+                Eigen::MatrixXd invCov = component.getInverseCovariance();
+                Eigen::VectorXd mean = component.getMean();
+                double logNormConst = -0.5 * (batch[0].point.size() * std::log(2 * M_PI) + component.getLogDetCov());
+                double weight = component.getWeight();
                 for (size_t i = 0; i < batch.size(); ++i) {
-                    double resp = component.getWeight() * pdf(batch[i].point, component);
-                    responsibilities(i, j) = resp; // without * batch[i].weight; - Hanebeck, Frisch - consider weights only in M step - this is an absolute game changer!
+                    Eigen::VectorXd diff = batch[i].point - mean;
+                    double exponent = -0.5 * diff.transpose() * invCov * diff;
+                    responsibilities(i, j) = weight * std::exp(logNormConst + exponent); // without * batch[i].weight; - Hanebeck, Frisch - consider weights only in M step - this is an absolute game changer!
                 }
             }
         }
+
+        SLog(mitsuba::EInfo, "Finish E step");
 
         // Normalize responsibilities
         for (int i = 0; i < responsibilities.rows(); ++i) { // rows is batch.size()
@@ -528,6 +553,8 @@ public:
         {
             updateSufficientStatistics(batch, responsibilities);
         }
+
+        SLog(mitsuba::EInfo, "Finish M step");
     }
 
     // using Inverse Transform Sampling

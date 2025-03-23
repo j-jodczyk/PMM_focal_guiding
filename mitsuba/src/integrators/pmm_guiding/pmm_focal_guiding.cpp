@@ -121,8 +121,9 @@ public:
             m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold", 0.25));
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
+            m_gmm.setUseKMeans(props.getBoolean("gmmInitKMeans", false));
 
-            Log(EInfo, "GMM params: alpha = %f, split_th = %f, merge_th = %f, min_num_comp = %d, max_num_comp = %d", m_gmm.getAlpha(), m_gmm.getSplittingThreshold(), m_gmm.getMergingThreshold(), m_gmm.getMinNumComp(), m_gmm.getMaxNumComp());
+            Log(EInfo, "GMM params: alpha = %f, split_th = %f, merge_th = %f, min_num_comp = %d, max_num_comp = %d, use_k_means = %d", m_gmm.getAlpha(), m_gmm.getSplittingThreshold(), m_gmm.getMergingThreshold(), m_gmm.getMinNumComp(), m_gmm.getMaxNumComp(), m_gmm.getUseKMeans());
 
             minSamplesToStartFitting = static_cast<uint32_t>(props.getInteger("minSamplesToStartFitting", 12));
             samplesPerIteration = static_cast<uint32_t>(props.getSize("samplesPerIteration", 4));
@@ -613,7 +614,7 @@ public:
                 /* Intersected something - check if it was a luminaire */
                 if (its.isEmitter()) {
                     value = its.Le(-ray.d);
-                    Log(EInfo, ("hit luminaire, value = " + value.toString()).c_str());
+                    // Log(EInfo, ("hit luminaire, value = " + value.toString()).c_str());
                     dRec.setQuery(ray, its);
                     hitEmitter = true;
                 }

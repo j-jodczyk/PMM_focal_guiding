@@ -12,6 +12,8 @@ namespace pmm_focal
     private:
         Eigen::VectorXd mean;
         Eigen::MatrixXd covariance;
+        Eigen::MatrixXd inverseCovariance;
+        double logDetCov;
         double weight;
 
     public:
@@ -21,10 +23,16 @@ namespace pmm_focal
         }
 
         Eigen::MatrixXd getCovariance() const { return covariance; }
+        Eigen::MatrixXd getInverseCovariance() const { return inverseCovariance; }
         Eigen::VectorXd getMean() const { return mean; }
+        double getLogDetCov() const { return logDetCov; }
         double getWeight() const { return weight; }
 
-        void setCovariance(Eigen::MatrixXd newCovariance) { covariance = newCovariance; }
+        void setCovariance(Eigen::MatrixXd newCovariance) {
+            covariance = newCovariance;
+            inverseCovariance = covariance.inverse();
+            logDetCov = std::log(covariance.determinant());
+        }
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
         void setWeight(double newWeight) { weight = newWeight; }
 
@@ -39,6 +47,8 @@ namespace pmm_focal
             covariance = (N * covariance + N_new * new_cov) / (N + N_new) + correction;
 
             covariance += 1e-6 * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
+            inverseCovariance = covariance.inverse();
+            logDetCov = std::log(covariance.determinant());
         }
 
         // Box-Muller Transform
@@ -67,6 +77,7 @@ namespace pmm_focal
             weight = 0.0;
             mean = Eigen::VectorXd::Zero(dims);
             covariance = Eigen::MatrixXd::Zero(dims, dims);
+            inverseCovariance = Eigen::MatrixXd::Zero(dims, dims);
         }
 
         std::string toString() const {
