@@ -100,6 +100,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     bool training; // only collecting samples while training
     bool shouldUseGuiding = false; // no use in using guiding for the first iteration
     float divergeProbability = 0.5f;
+    float bsdfMISFraction = 0.5f;
 
 
 public:
@@ -108,6 +109,8 @@ public:
             importGmmFile = props.getString("importGmmFile", "");
             saveGMMDirectory = props.getString("saveGMMDirectory", "");
             Log(EInfo, ("Saving to: " + saveGMMDirectory).c_str());
+
+            bsdfMISFraction = props.getFloat("bsdfMISFraction", 0.5);
 
             m_octree.configuration.threshold = props.getFloat("tree.threshold", 1e-3);
             m_octree.configuration.minDepth = props.getInteger("tree.minDepth", 0);
@@ -121,9 +124,9 @@ public:
             m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold", 0.25));
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
             m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
-            m_gmm.setUseKMeans(props.getBoolean("gmmInitKMeans", false));
+            m_gmm.setInitMethod(props.getString("gmm.initMethod", "Random"));
 
-            Log(EInfo, "GMM params: alpha = %f, split_th = %f, merge_th = %f, min_num_comp = %d, max_num_comp = %d, use_k_means = %d", m_gmm.getAlpha(), m_gmm.getSplittingThreshold(), m_gmm.getMergingThreshold(), m_gmm.getMinNumComp(), m_gmm.getMaxNumComp(), m_gmm.getUseKMeans());
+            Log(EInfo, ("GMM params: alpha = %f, split_th = %f, merge_th = %f, min_num_comp = %d, max_num_comp = %d, init = " + m_gmm.getInitMethod()).c_str(), m_gmm.getAlpha(), m_gmm.getSplittingThreshold(), m_gmm.getMergingThreshold(), m_gmm.getMinNumComp(), m_gmm.getMaxNumComp());
 
             minSamplesToStartFitting = static_cast<uint32_t>(props.getInteger("minSamplesToStartFitting", 12));
             samplesPerIteration = static_cast<uint32_t>(props.getSize("samplesPerIteration", 4));
@@ -180,7 +183,7 @@ public:
         }
 
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
-        iterationPreprocess(sensor->getFilm());
+        iterationPreprocess(sensor->getFilm()); // clears the film
 
         if (!saveGMMDirectory.empty()) {
             const std::string gmmFile = saveGMMDirectory + "final_gmm.serialized";
@@ -385,6 +388,7 @@ public:
         BSDFSamplingRecord& bRec,
         Float& woPdf,
         Float& bsdfPdf,
+        Float& gmmPdf,
         Float bsdfSamplingFraction,
         RadianceQueryRecord rRec,
         std::vector<mitsuba::Point> *sampledPoints
@@ -399,22 +403,27 @@ public:
         if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding) { // first iteration we should not use guiding
             auto result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
             woPdf = bsdfPdf;
+            gmmPdf = 0;
             return result;
         }
 
         Spectrum result;
+        Eigen::VectorXd gmmSample(3);
+        gmmSample.setZero();
+
         if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
             // sample BSDF
             sample.x /= bsdfSamplingFraction;
             result = bsdf->sample(bRec, bsdfPdf, sample);
             if (result.isZero()) {
-                woPdf = bsdfPdf = 0;
+                woPdf = bsdfPdf = gmmPdf = 0;
                 return Spectrum{0.0f};
             }
 
             // If we sampled a delta component, then we have a 0 probability
             // of sampling that direction via guiding, thus we can return early.
             if (bRec.sampledType & BSDF::EDelta) {
+                gmmPdf = 0;
                 woPdf = bsdfPdf * bsdfSamplingFraction;
                 return result / bsdfSamplingFraction; // woPdf and bsdfPdf set - it's fine
             }
@@ -427,11 +436,10 @@ public:
 
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
 
-            Eigen::VectorXd gmmSample = m_gmm.sample(rRec);
+            gmmSample = m_gmm.sample(rRec);
             mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
-            // sampledPoints->push_back(endPoint);
-            // wo is outgoing direction
-            bRec.wo = normalize(endPoint - bRec.its.p);
+            mitsuba::Vector dir = endPoint - bRec.its.p;
+            bRec.wo = normalize(dir);
             bRec.wo = bRec.its.toLocal(bRec.wo);
 
             bool isDiverging = sample.x < divergeProbability;
@@ -454,7 +462,7 @@ public:
             }
         }
 
-        pdfMat(woPdf, bsdfPdf, bsdf, bRec);
+        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, gmmSample);
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
@@ -462,10 +470,32 @@ public:
     }
 
     void pdfMat(
-        Float& woPdf, Float& bsdfPdf, // Float bsdfSamplingFraction,
-        const BSDF* bsdf, const BSDFSamplingRecord& bRec
+        Float& woPdf, Float& bsdfPdf, Float& gmmPdf, Float bsdfSamplingFraction,
+        const BSDF* bsdf, const BSDFSamplingRecord& bRec, Eigen::VectorXd x
     ) const {
-        woPdf = bsdfPdf = bsdf->pdf(bRec); // leaving this for now
+        gmmPdf = 0;
+
+        auto type = bsdf->getType();
+        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding || x.isZero() // EDelta = scattering into a discrete set of directions; Eall = any kind of scattering
+        ) {
+            woPdf = bsdfPdf = bsdf->pdf(bRec);
+            return;
+        }
+
+        bsdfPdf = bsdf->pdf(bRec);
+        assert(std::isfinite(bsdfPdf));
+
+        gmmPdf = m_gmm.pdf(x);
+        assert(std::isfinite(gmmPdf));
+        // Apply the change of variables from area sampling to solid-angle sampling
+        Float distSquared = (mitsuba::Point(x[0], x[1], x[2]) - bRec.its.p).lengthSquared();
+        Float cosTheta = std::abs(dot(bRec.wo, bRec.its.shFrame.n));
+        gmmPdf /= distSquared;  // Convert area density to directional density
+        gmmPdf *= cosTheta;
+        assert(std::isfinite(gmmPdf));
+
+        // MIS
+        woPdf = bsdfSamplingFraction * bsdfPdf + (1 - bsdfSamplingFraction) * gmmPdf;
     }
 
     Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
@@ -586,13 +616,13 @@ public:
             /* ==================================================================== */
 
             /* Sample BSDF * cos(theta) */
-            Float bsdfPdf, woPdf;
-            Float bsdfSamplingFraction = 0.5;
+            Float bsdfPdf, woPdf, gmmPdf;
+            Float bsdfSamplingFraction = bsdfMISFraction;
 
             BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
 
             // here is where sampling takes place -- should sample guided
-            Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, bsdfSamplingFraction, rRec, sampledPoints);
+            Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, rRec, sampledPoints);
             if (bsdfWeight.isZero()) // this is why woPdf and bsdfPdf doesn't matter here
                 break;
 
