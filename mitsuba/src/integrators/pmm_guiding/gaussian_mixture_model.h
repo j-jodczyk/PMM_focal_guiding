@@ -76,29 +76,11 @@ private:
     size_t maxNumComp;
     AABB m_aabb;
     size_t m_dimension;
-    size_t sampleCount = 0;
-    bool useKMeans = false;
+    size_t N_prev = 0;
+    std::string initMethod = "Random";
 
     double divergeProbability = 0.5;
     bool initialized = false;
-
-    double pdf(const Eigen::VectorXd& x, GaussianComponent& component) {
-        int d = x.size();
-        // double det = component.getCovariance().determinant();
-
-        // if (det <= 1e-6) {
-        //     resetComponent(component);
-        //     det = component.getCovariance().determinant();
-        // }
-
-        double logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
-
-        Eigen::VectorXd diff = x - component.getMean();
-        double exponent = -0.5 * diff.transpose() * component.getInverseCovariance() * diff;
-        double logPdf = logNormConst + exponent;
-
-        return std::exp(logPdf);
-    }
 
     double totalSampleWeight(const std::vector<WeightedSample>& batch) {
         double sum = 0;
@@ -112,7 +94,7 @@ private:
         size_t NNew = batch.size();
         double totalWeight = totalSampleWeight(batch);
 
-        double weights = 0;
+        double totalSoftCount = 0;
         for (size_t j = 0; j < components.size(); ++j) {
             if (components[j].getWeight() == 0)
                 continue;
@@ -130,6 +112,8 @@ private:
                 continue;
             }
             if (responsibilitySum != responsibilitySum) {
+                SLog(mitsuba::EInfo, this->dumpResponsibilities(responsibilities).c_str());
+                // SLog(mitsuba::EInfo, this->dumpBatch(batch).c_str());
                 throw std::runtime_error("Responsibility cannot be nan");
             }
             double newWeight = responsibilitySum / totalWeight;
@@ -154,14 +138,31 @@ private:
             newCov /= responsibilitySum;
             assert(newCov.allFinite());
 
-            comp.updateComponent(sampleCount, NNew, newMean, newCov, newWeight, alpha);
-            weights += newWeight;
+            comp.updateComponent(N_prev, NNew, newMean, newCov, newWeight, alpha);
+            totalSoftCount += comp.getSoftCount();
         }
 
-        sampleCount += NNew; // update sample count
+        for (auto& c : components) {
+            if (c.getWeight() != 0)
+                c.setWeight(c.getSoftCount() / totalSoftCount);
+        }
+
+        N_prev = NNew; // update sample count
+        SLog(mitsuba::EInfo, "sample count: %d", N_prev);
 
         mergeAllComponents();
         splitAllComponents();
+
+        // prune too small weights
+        double componentsWeight = 0;
+        for (size_t i = 0; i < components.size(); ++i) {
+            if (components[i].getWeight() < 1e-6)
+                deactivateComponent(i);
+            else
+                componentsWeight += components[i].getWeight();
+        }
+        for (auto& component : components)
+            component.setWeight(component.getWeight() / componentsWeight);
     }
 
     void deactivateComponent(int idx) {
@@ -351,8 +352,8 @@ public:
     void setSplittingThreshold(double newThreshold) { splittingThreshold = newThreshold; };
     double getMergingThreshold() { return mergingThreshold; };
     void setMergingThreshold(double newThreshold) { mergingThreshold = newThreshold; };
-    bool getUseKMeans() { return useKMeans; }
-    void setUseKMeans(bool newUseKMeans) { useKMeans = newUseKMeans; };
+    std::string getInitMethod() { return initMethod; }
+    void setInitMethod(std::string newMethod) { initMethod = newMethod; };
 
     void setAABB(AABB newAabb) { m_aabb = newAabb; };
 
@@ -375,10 +376,88 @@ public:
         comp.setCovariance(Eigen::MatrixXd::Identity(m_dimension, m_dimension));
     }
 
+    double pdf(const Eigen::VectorXd& x) {
+        int d = x.size();
+        double totalPdf = 0;
+
+        for (const auto& component: components) {
+            if (component.getWeight() < 1e-6)
+                continue;
+            double logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
+
+            Eigen::VectorXd diff = x - component.getMean();
+            double exponent = -0.5 * diff.transpose() * component.getInverseCovariance() * diff;
+            double logPdf = logNormConst + exponent;
+
+            totalPdf += component.getWeight() * std::exp(logPdf);
+        }
+
+        return totalPdf;
+    }
+
     void init(const std::vector<WeightedSample>& batch) {
-        if (useKMeans)
+        SLog(mitsuba::EInfo, initMethod.c_str());
+        if (initMethod == "KMeans") {
             initKMeans(batch);
+            return;
+        }
+
+        if (initMethod == "Uniform") {
+            initUniform(batch);
+            return;
+        }
+
         initRandom(batch);
+    }
+
+    void initUniform(const std::vector<WeightedSample>& batch) {
+        SLog(mitsuba::EInfo, "Starting uniform initialization");
+
+        m_dimension = batch[0].point.size();
+
+        if (components.size() != maxNumComp)
+            components.resize(maxNumComp);
+
+        auto N = maxNumComp;
+        auto length = std::abs(m_aabb.max.x - m_aabb.min.x);
+        auto width = std::abs(m_aabb.max.y - m_aabb.min.y);
+        auto height = std::abs(m_aabb.max.z - m_aabb.min.z);
+
+         // Determine approximate grid size
+        size_t nx = std::round(std::cbrt(N)); // Number of points along X
+        size_t ny = std::round(std::sqrt(N / nx)); // Number of points along Y
+        size_t nz = std::ceil((double)N / (nx * ny)); // Number of points along Z
+
+        size_t newMaxNumComp = nx * ny * nz;
+        if (newMaxNumComp> maxNumComp) {
+            SLog(mitsuba::EInfo, "Increasing the number of max components to %d to allow uniform distribution", newMaxNumComp);
+            maxNumComp = newMaxNumComp;
+            components.resize(maxNumComp);
+        }
+
+        double dx = length / nx;
+        double dy = width / ny;
+        double dz = height / nz;
+
+        size_t componentCounter = 0;
+
+        for (size_t i = 0; i < nx; ++i) {
+            for (size_t j = 0; j < ny; ++j) {
+                for (size_t k = 0; k < nz; ++k) {
+                    auto& component = components[componentCounter];
+                    component.setWeight(1.0 / maxNumComp);
+                    Eigen::VectorXd mean(3);
+                    mean << m_aabb.min.x + (i + 0.5) * dx, m_aabb.min.y + (j + 0.5) * dy, m_aabb.min.z + (k + 0.5) * dz;
+                    component.setMean(mean);
+                    initComponentCovariance(component);
+                    componentCounter++;
+                }
+            }
+        }
+
+        SLog(mitsuba::EInfo, this->toString().c_str());
+
+        initialized = true;
     }
 
     void initRandom(const std::vector<WeightedSample>& batch) {
@@ -517,7 +596,7 @@ public:
      void processBatch(const std::vector<WeightedSample>& batch) {
         SLog(mitsuba::EInfo, "Start processing batch");
         if (!initialized)
-            initKMeans(batch);
+            init(batch);
 
 
         Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
@@ -537,7 +616,11 @@ public:
                 for (size_t i = 0; i < batch.size(); ++i) {
                     Eigen::VectorXd diff = batch[i].point - mean;
                     double exponent = -0.5 * diff.transpose() * invCov * diff;
-                    responsibilities(i, j) = weight * std::exp(logNormConst + exponent); // without * batch[i].weight; - Hanebeck, Frisch - consider weights only in M step - this is an absolute game changer!
+                    auto resp = weight * std::exp(logNormConst + exponent);
+                    if (resp != resp) {
+                        SLog(mitsuba::EInfo, "point (%f, %f, %f), weight %f", batch[i].point[0], batch[i].point[1], batch[i].point[2], batch[i].weight);
+                    }
+                    responsibilities(i, j) = resp; // without * batch[i].weight; - Hanebeck, Frisch - consider weights only in M step - this is an absolute game changer!
                 }
             }
         }
@@ -548,6 +631,7 @@ public:
         for (int i = 0; i < responsibilities.rows(); ++i) { // rows is batch.size()
             responsibilities.row(i) /= responsibilities.row(i).sum();
         }
+        SLog(mitsuba::EInfo, "Normalized responsibilities");
 
         // M-step
         {
@@ -594,6 +678,13 @@ public:
         return oss.str();
     }
 
+    std::string dumpResponsibilities(const Eigen::MatrixXd& responsibilities) {
+        std::ostringstream oss;
+        oss << responsibilities;
+        oss << '\n';
+        return oss.str();
+    }
+
     void serialize(mitsuba::FileStream* out)const
     {
         out->write(reinterpret_cast<const char*>(&alpha), sizeof(alpha));
@@ -602,7 +693,7 @@ public:
         out->write(reinterpret_cast<const char*>(&minNumComp), sizeof(minNumComp));
         out->write(reinterpret_cast<const char*>(&maxNumComp), sizeof(maxNumComp));
         out->write(reinterpret_cast<const char*>(&m_dimension), sizeof(m_dimension));
-        out->write(reinterpret_cast<const char*>(&sampleCount), sizeof(sampleCount));
+        // out->write(reinterpret_cast<const char*>(&N_prev), sizeof(N_prev));
         // out->write(reinterpret_cast<const char*>(&divergeProbability), sizeof(divergeProbability));
 
         // Save components
@@ -621,7 +712,7 @@ public:
         in->read(reinterpret_cast<char*>(&minNumComp), sizeof(minNumComp));
         in->read(reinterpret_cast<char*>(&maxNumComp), sizeof(maxNumComp));
         in->read(reinterpret_cast<char*>(&m_dimension), sizeof(m_dimension));
-        in->read(reinterpret_cast<char*>(&sampleCount), sizeof(sampleCount));
+        // in->read(reinterpret_cast<char*>(&N_prev), sizeof(N_prev));
         // in->read(reinterpret_cast<char*>(&divergeProbability), sizeof(divergeProbability));
 
         // Read components

@@ -13,8 +13,10 @@ namespace pmm_focal
         Eigen::VectorXd mean;
         Eigen::MatrixXd covariance;
         Eigen::MatrixXd inverseCovariance;
+        Eigen::MatrixXd L;
         double logDetCov;
         double weight;
+        double softCount;
 
     public:
         GaussianComponent() {}
@@ -27,19 +29,23 @@ namespace pmm_focal
         Eigen::VectorXd getMean() const { return mean; }
         double getLogDetCov() const { return logDetCov; }
         double getWeight() const { return weight; }
+        double getSoftCount() const { return softCount; }
 
         void setCovariance(Eigen::MatrixXd newCovariance) {
             covariance = newCovariance;
             inverseCovariance = covariance.inverse();
             logDetCov = std::log(covariance.determinant());
+            L = covariance.llt().matrixL();
         }
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
         void setWeight(double newWeight) { weight = newWeight; }
 
         void updateComponent(double N, double N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, double new_weight, double alpha) {
-            N *= alpha; // Ruppert 2020
+            // N *= alpha; // Ruppert 2020 --- not, misunderstood
+            // weight = (N * weight + N_new * new_weight) / (N + N_new);
 
-            weight = (N * weight + N_new * new_weight) / (N + N_new);
+            SLog(mitsuba::EInfo, ("prior mean: " + getMeanStr() + " prior covaraince: " + getCovarianceStr() + " N: %d").c_str(), N);
+
             Eigen::VectorXd priorMean = mean;
             mean = (N * priorMean + N_new * new_mean) / (N + N_new);
 
@@ -49,6 +55,13 @@ namespace pmm_focal
             covariance += 1e-6 * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
             inverseCovariance = covariance.inverse();
             logDetCov = std::log(covariance.determinant());
+            Eigen::MatrixXd L = covariance.llt().matrixL();
+
+            updateSoftCount(N, N_new, new_weight, alpha);
+        }
+
+        void updateSoftCount(double N, double N_new, double new_weight, double alpha) {
+            softCount = N * weight + N_new * new_weight + alpha; // using expectation, not MAP - we'll experiment what is better
         }
 
         // Box-Muller Transform
@@ -58,6 +71,7 @@ namespace pmm_focal
 
             for (size_t i = 0; i < meanSize; i += 2) {
                 double u1 = rRec.nextSample1D();
+                u1 =  std::max(1e-6, u1);
                 double u2 = rRec.nextSample1D();
 
                 double r = std::sqrt(-2.0 * std::log(u1));
@@ -70,7 +84,7 @@ namespace pmm_focal
             }
 
             // Cholesky decomposition
-            return mean + covariance.llt().matrixL() * z;
+            return mean + L * z;
         }
 
         void deactivate(size_t dims) {
@@ -78,6 +92,7 @@ namespace pmm_focal
             mean = Eigen::VectorXd::Zero(dims);
             covariance = Eigen::MatrixXd::Zero(dims, dims);
             inverseCovariance = Eigen::MatrixXd::Zero(dims, dims);
+            L = Eigen::MatrixXd::Zero(dims, dims);
         }
 
         std::string toString() const {
