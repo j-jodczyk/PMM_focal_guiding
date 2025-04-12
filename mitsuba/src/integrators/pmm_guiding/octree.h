@@ -37,7 +37,13 @@ class Octree {
     AABB m_aabb;
 
 public:
+    enum SplattingStrategy {
+        SPLAT_RAY = 0,
+        SPLAT_RAY_WEIGHTED,
+    };
     struct Configuration {
+        SplattingStrategy splattingStrategy = SPLAT_RAY;
+
         /// For compatibility with older file formats.
         bool unused{false};
 
@@ -137,18 +143,29 @@ public:
         build();
     }
 
-    void splat(const Point &origin, const Vector &direction, Float distance,  Float contribution, std::vector<Eigen::VectorXd>& points) {
-        Float alpha = 1;
-
+    void splat(const Point &origin, const Vector &direction, Float distance,  Float contribution, std::vector<pmm_focal::WeightedSample>* points, Float pdf) {
         Traversal traversal{*this, origin, direction};
         distance = std::min(distance, traversal.maxT());
 
+        Float alpha = configuration.splattingStrategy == SPLAT_RAY ? 1 : 0;
+        const Float w0 = (1 - alpha) / pdf;
+        const Float w1 = (alpha / distance);
         traversal.traverse(distance, [&](
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
-                points.push_back(child.getRayIntersection(origin, direction));
+                const Float density = child.density;
+                const Float elementary = Env::segment(tNear, tFar);
+                const Float segment = density * elementary;
+                Float weight = w0 * segment + w1 * (tFar - tNear);
+
+                auto point = child.getRayIntersection(origin, direction);
+                if (point.size() == 0) {
+                    SLog(mitsuba::EInfo, "Intersection was not found");
+                    return;
+                }
+                points->push_back({point, weight * contribution});
                 child.accumulator += contribution; // count the ammount of points comming through the node
             }
         });
