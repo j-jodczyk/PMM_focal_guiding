@@ -40,7 +40,7 @@ namespace pmm_focal
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
         void setWeight(double newWeight) { weight = newWeight; }
 
-        void updateComponent(double N, double N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, double new_weight, double alpha) {
+        void updateComponent(size_t N, size_t N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, double new_weight, double alpha) {
             // N *= alpha; // Ruppert 2020 --- not, misunderstood
             // weight = (N * weight + N_new * new_weight) / (N + N_new);
 
