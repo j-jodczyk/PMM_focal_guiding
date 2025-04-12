@@ -24,6 +24,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <thread>
 
 #include "gaussian_component.h"
 #include "weighted_sample.h"
@@ -41,6 +42,13 @@
 #define USE_MAX_KEEP 0
 
 namespace pmm_focal {
+
+struct ComponentCache {
+    Eigen::MatrixXd invCov;
+    Eigen::VectorXd mean;
+    double logNormConst;
+    double weight;
+};
 
 class PRNG {
     public:
@@ -93,53 +101,71 @@ private:
     void updateSufficientStatistics(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
         size_t NNew = batch.size();
         double totalWeight = totalSampleWeight(batch);
+        size_t numComponents = components.size();
 
-        double totalSoftCount = 0;
-        for (size_t j = 0; j < components.size(); ++j) {
+        std::vector<Eigen::VectorXd> newMeans(numComponents);
+        std::vector<Eigen::MatrixXd> newCovariances(numComponents);
+        std::vector<double> newWeights(numComponents);
+        double totalSoftCount = 0.0;
+
+        std::vector<std::thread> threads;
+
+        for (size_t j = 0; j < numComponents; ++j) {
+            threads.emplace_back([&, j]() {
+                // SLog(mitsuba::EInfo, "Starting batch processing M-step");
+                auto& comp = components[j];
+                if (comp.getWeight() == 0)
+                    return;
+
+                size_t dim = comp.getMean().size();
+                Eigen::VectorXd mean = Eigen::VectorXd::Zero(dim);
+                Eigen::MatrixXd cov = Eigen::MatrixXd::Zero(dim, dim);
+                double responsibilitySum = 0.0;
+
+                // Compute weighted responsibility sum - Hanebeck, Frisch
+                for (size_t i = 0; i < NNew; ++i) {
+                    double r = responsibilities(i, j);
+                    responsibilitySum += r * batch[i].weight;
+                    mean += r * batch[i].point * batch[i].weight;
+                }
+
+                if (responsibilitySum < 1e-6) {
+                    SLog(mitsuba::EInfo, "Responsibility sum is below threshold");
+                    return;
+                }
+                if (responsibilitySum != responsibilitySum) {
+                    SLog(mitsuba::EInfo, this->dumpResponsibilities(responsibilities).c_str());
+                    throw std::runtime_error("Responsibility cannot be nan");
+                }
+
+                mean /= responsibilitySum;
+
+                for (size_t i = 0; i < NNew; ++i) {
+                    Eigen::VectorXd diff = batch[i].point - comp.getMean();
+                    cov += responsibilities(i, j) * batch[i].weight * (diff * diff.transpose());
+                }
+
+                cov /= responsibilitySum;
+
+                double newWeight = responsibilitySum / totalWeight;
+                assert(!std::isinf(newWeight));
+
+                if (!mean.allFinite() || !cov.allFinite())
+                    throw std::runtime_error("Mean or covariance is not finite during M-step");
+
+                newMeans[j] = mean;
+                newCovariances[j] = cov;
+                newWeights[j] = newWeight;
+            });
+        }
+
+        for (auto& t : threads) t.join();
+
+        for (size_t j = 0;  j < numComponents; ++j) {
             if (components[j].getWeight() == 0)
                 continue;
-            auto& comp = components[j];
-
-            // double responsibilitySum = responsibilities.col(j).sum();
-            // Compute weighted responsibility sum - Hanebeck, Frisch
-            double responsibilitySum = 0;
-            for (size_t i = 0; i < NNew; ++i) {
-                responsibilitySum += responsibilities(i, j) * batch[i].weight;
-            }
-            if (responsibilitySum < 1e-6) {
-                SLog(mitsuba::EInfo, "Responsibility sum is below threshold");
-                // componentIdxToDelete.push_back(j);
-                continue;
-            }
-            if (responsibilitySum != responsibilitySum) {
-                SLog(mitsuba::EInfo, this->dumpResponsibilities(responsibilities).c_str());
-                // SLog(mitsuba::EInfo, this->dumpBatch(batch).c_str());
-                throw std::runtime_error("Responsibility cannot be nan");
-            }
-            double newWeight = responsibilitySum / totalWeight;
-            assert(!std::isinf(newWeight));
-
-            Eigen::VectorXd newMean(comp.getMean().size());
-            newMean.setZero();
-            for (size_t i = 0; i < NNew; i++) {
-                newMean += responsibilities(i, j) * batch[i].point * batch[i].weight;
-            }
-
-            newMean /= responsibilitySum;
-            if(!newMean.allFinite()) {
-                throw std::runtime_error("new mean must be finite number");
-            }
-
-            Eigen::MatrixXd newCov = Eigen::MatrixXd::Zero(comp.getMean().size(), comp.getMean().size());
-            for (size_t i = 0; i < NNew; ++i) {
-                Eigen::VectorXd diff = batch[i].point - comp.getMean();
-                newCov += responsibilities(i, j) * batch[i].weight * (diff * diff.transpose());
-            }
-            newCov /= responsibilitySum;
-            assert(newCov.allFinite());
-
-            comp.updateComponent(N_prev, NNew, newMean, newCov, newWeight, alpha);
-            totalSoftCount += comp.getSoftCount();
+            components[j].updateComponent(N_prev, NNew, newMeans[j], newCovariances[j], newWeights[j], alpha);
+            totalSoftCount += components[j].getSoftCount();
         }
 
         for (auto& c : components) {
@@ -593,7 +619,94 @@ public:
         component.setCovariance(Eigen::MatrixXd::Identity(component.getCovariance().rows(), component.getCovariance().cols()));
     }
 
-     void processBatch(const std::vector<WeightedSample>& batch) {
+    void processBatchParallel(const std::vector<WeightedSample>& batch) {
+        SLog(mitsuba::EInfo, "Starting batch processing in parallel");
+
+        if (!initialized)
+            init(batch);
+
+        // create component cache so we don't recompute this a bunch of times
+        std::vector<ComponentCache> componentCache(components.size());
+
+        std::vector<std::thread> cacheThreads;
+        for (size_t j = 0; j < components.size(); ++j) {
+            cacheThreads.emplace_back([&, j]() {
+                const auto& c = components[j];
+                if (c.getWeight() == 0) return;
+                componentCache[j] = {
+                    c.getInverseCovariance(),
+                    c.getMean(),
+                    -0.5 * (batch[0].point.size() * std::log(2 * M_PI) + c.getLogDetCov()),
+                    c.getWeight()
+                };
+            });
+        }
+
+        for (auto& t : cacheThreads) t.join();
+        SLog(mitsuba::EInfo, "Finished component cache");
+
+        // E-step
+        Eigen::MatrixXd responsibilities = Eigen::MatrixXd::Zero(batch.size(), components.size());
+
+        size_t numThreads = std::thread::hardware_concurrency();
+        size_t batchSize = batch.size();
+        size_t chunkSize = (batchSize + numThreads - 1) / numThreads;
+
+        std::vector<std::thread> threads;
+
+        for (size_t threadIdx = 0; threadIdx < numThreads; ++threadIdx) {
+            size_t startIdx = threadIdx * chunkSize;
+            size_t endIdx = std::min(startIdx + chunkSize, batchSize);
+
+            threads.emplace_back([&, startIdx, endIdx]() {
+                // SLog(mitsuba::EInfo, "Starting batch processing E-step");
+                for (size_t i = startIdx; i < endIdx; ++i) {
+                    for (size_t j = 0; j < components.size(); ++j) {
+                        const auto& c = componentCache[j];
+                        if (c.weight == 0) continue;
+
+                        Eigen::VectorXd diff = batch[i].point - c.mean;
+                        double exponent = -0.5 * diff.transpose() * c.invCov * diff;
+                        double resp = c.weight * std::exp(c.logNormConst + exponent);
+
+                        if (std::isnan(resp)) {
+                            SLog(mitsuba::EInfo, "point (%f, %f, %f), weight %f",
+                                batch[i].point[0], batch[i].point[1], batch[i].point[2], batch[i].weight);
+                        }
+
+                        responsibilities(i, j) = resp;
+                    }
+                }
+            });
+        }
+
+        for (auto& t : threads) t.join();
+        SLog(mitsuba::EInfo, "Finish E step");
+
+        // normalize responsibilities
+        std::vector<std::thread> normThreads;
+        for (size_t threadIdx = 0; threadIdx < numThreads; ++threadIdx) {
+            size_t startIdx = threadIdx * chunkSize;
+            size_t endIdx = std::min(startIdx + chunkSize, batchSize);
+
+            normThreads.emplace_back([&, startIdx, endIdx]() {
+                for (size_t i = startIdx; i < endIdx; ++i) {
+                    double rowSum = responsibilities.row(i).sum();
+                    if (rowSum > 0)
+                        responsibilities.row(i) /= rowSum;
+                }
+            });
+        }
+
+        for (auto& t : normThreads) t.join();
+
+        // M-step
+        updateSufficientStatistics(batch, responsibilities);
+
+        SLog(mitsuba::EInfo, "Finish M step");
+    }
+
+    void processBatch(const std::vector<WeightedSample>& batch) {
         SLog(mitsuba::EInfo, "Start processing batch");
         if (!initialized)
             init(batch);
