@@ -9,6 +9,9 @@ namespace pmm_focal {
         Eigen::VectorXd point;
         float weight;
 
+        WeightedSample() = default;
+        WeightedSample(Eigen::VectorXd& p, float w): point(p), weight(w) {}
+
         std::string toString() const {
             std::ostringstream oss;
             oss << "point: [";

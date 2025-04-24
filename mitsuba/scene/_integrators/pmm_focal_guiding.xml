@@ -1,0 +1,50 @@
+<scene version="0.6.0">
+	<default name="maxDepth" value="40" />
+
+	<default name="budget" value="30" />
+	<default name="treeThreshold" value="0.001" />
+
+	<default name="trainingIterations" value="15" />
+
+	<default name="normalBinning" value="disabled" />
+	<default name="dumpScene" value="false" />
+	<default name="dumpPrimaryRays" value="false" />
+	<default name="unboundedSplatting" value="true" />
+	<default name="samplingMode" value="2" />
+	<default name="trainingSamples" value="4" />
+
+	<default name="gmmAlpha" value="1" />
+	<default name="gmmSplittingThreshold" value="4.5" />
+	<default name="gmmMergingThreshold" value="0.5" />
+	<default name="gmmMinNumComp" value="3" />
+	<default name="gmmMaxNumComp" value="20" />
+	<default name="bsdfMISFraction" value="0.5" />
+
+	<integrator type="pmm_focal_guiding">
+
+		<boolean name="strictNormals" value="true" />
+		<integer name="maxDepth" value="$maxDepth" />
+		<integer name="rrDepth" value="14" />
+		<integer name="minSamplesToStartFitting" value="128" />
+		<default name="samplesPerIteration" value="4" />
+		<integer name="trainingSamples" value="$trainingSamples" />
+		<float name="budget" value="$budget" />
+		<integer name="iterationCount" value="$trainingIterations" />
+
+		<string name="normalBinning" value="$normalBinning" />
+		<boolean name="dumpScene" value="$dumpScene" />
+		<boolean name="unboundedSplatting" value="$unboundedSplatting" />
+		<integer name="samplingMode" value="$samplingMode" />
+		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
+		<integer name="renderMaxSeconds" value="60" />
+
+		<float name="gmm.alpha" value="$gmmAlpha" />
+		<float name="gmm.splittingThreshold" value="$gmmSplittingThreshold" />
+		<float name="gmm.mergingThreshold" value="$gmmMergingThreshold" />
+		<integer name="gmm.minNumComp" value="$gmmMinNumComp" />
+		<integer name="gmm.maxNumComp" value="$gmmMaxNumComp" />
+		<string name="gmm.initMethod" value="Random" />
+
+		<float name="tree.threshold" value="$treeThreshold" />
+	</integrator>
+</scene>

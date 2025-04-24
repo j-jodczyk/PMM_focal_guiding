@@ -49,4 +49,15 @@ struct EnvMitsuba3D {
 
     /// Return the volume of an axis-aligned bounding box.
     static Float volume(const AABB &aabb) { return aabb.getVolume(); }
+
+    /**
+     * Computes the integral \int_{t_0}^{t_1} t^2 dt, which is needed to compute the directional PDF resulting
+     * from a piece-wise constant spatial density. For more details, please refer to our paper.
+     * This needs to be specified as our guiding library can also run in other dimensions (most notably 2-D).
+     * EQUATION (7)
+     */
+    static Float segment(Float tNear, Float tFar) {
+        assert(tNear <= tFar);
+        return (tFar * tFar * tFar - tNear * tNear * tNear) * (Float(1) / Float(3));
+    }
 };

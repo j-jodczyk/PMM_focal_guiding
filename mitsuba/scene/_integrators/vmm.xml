@@ -1,0 +1,20 @@
+<scene version="0.6.0">
+	<default name="maxDepth" value="40" />
+	<default name="trainingSamples" value="100"/>
+	<default name="trainingMaxSeconds" value="0"/>
+	<default name="renderMaxSeconds" value="0"/>
+	<default name="dumpPrimaryRays" value="false"/>
+
+    <integrator type="pathguiding">
+		<boolean name="strictNormals" value="true" />
+		<integer name="maxDepth" value="$maxDepth" />
+		<integer name="rrDepth" value="40" />
+		<boolean name="useNee" value="true" />
+
+		<integer name="trainingSamples" value="$trainingSamples" />
+		<integer name="trainingMaxSeconds" value="$trainingMaxSeconds" />
+		<integer name="renderMaxSeconds" value="$renderMaxSeconds" />
+
+		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
+	</integrator>
+</scene>

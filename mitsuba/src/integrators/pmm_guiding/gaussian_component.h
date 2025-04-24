@@ -14,9 +14,9 @@ namespace pmm_focal
         Eigen::MatrixXd covariance;
         Eigen::MatrixXd inverseCovariance;
         Eigen::MatrixXd L;
-        double logDetCov;
-        double weight;
-        double softCount;
+        float logDetCov;
+        float weight;
+        float softCount;
 
     public:
         GaussianComponent() {}
@@ -27,9 +27,9 @@ namespace pmm_focal
         Eigen::MatrixXd getCovariance() const { return covariance; }
         Eigen::MatrixXd getInverseCovariance() const { return inverseCovariance; }
         Eigen::VectorXd getMean() const { return mean; }
-        double getLogDetCov() const { return logDetCov; }
-        double getWeight() const { return weight; }
-        double getSoftCount() const { return softCount; }
+        float getLogDetCov() const { return logDetCov; }
+        float getWeight() const { return weight; }
+        float getSoftCount() const { return softCount; }
 
         void setCovariance(Eigen::MatrixXd newCovariance) {
             covariance = newCovariance;
@@ -38,13 +38,13 @@ namespace pmm_focal
             L = covariance.llt().matrixL();
         }
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
-        void setWeight(double newWeight) { weight = newWeight; }
+        void setWeight(float newWeight) { weight = newWeight; }
 
-        void updateComponent(size_t N, size_t N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, double new_weight, double alpha) {
+        void updateComponent(size_t N, size_t N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, float new_weight, float alpha) {
             // N *= alpha; // Ruppert 2020 --- not, misunderstood
             // weight = (N * weight + N_new * new_weight) / (N + N_new);
 
-            SLog(mitsuba::EInfo, ("prior mean: " + getMeanStr() + " prior covaraince: " + getCovarianceStr() + " N: %d").c_str(), N);
+            // SLog(mitsuba::EInfo, ("prior mean: " + getMeanStr() + " prior covaraince: " + getCovarianceStr() + " N: %d").c_str(), N);
 
             Eigen::VectorXd priorMean = mean;
             mean = (N * priorMean + N_new * new_mean) / (N + N_new);
@@ -52,7 +52,7 @@ namespace pmm_focal
             Eigen::MatrixXd correction = (N * N_new) / pow(N + N_new, 2) * (new_mean - priorMean) * (new_mean - priorMean).transpose();
             covariance = (N * covariance + N_new * new_cov) / (N + N_new) + correction;
 
-            covariance += 1e-6 * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
+            covariance += 1e-6f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
             inverseCovariance = covariance.inverse();
             logDetCov = std::log(covariance.determinant());
             Eigen::MatrixXd L = covariance.llt().matrixL();
@@ -60,7 +60,7 @@ namespace pmm_focal
             updateSoftCount(N, N_new, new_weight, alpha);
         }
 
-        void updateSoftCount(double N, double N_new, double new_weight, double alpha) {
+        void updateSoftCount(float N, float N_new, float new_weight, float alpha) {
             softCount = N * weight + N_new * new_weight + alpha; // using expectation, not MAP - we'll experiment what is better
         }
 
@@ -70,12 +70,12 @@ namespace pmm_focal
             Eigen::VectorXd z(meanSize);
 
             for (size_t i = 0; i < meanSize; i += 2) {
-                double u1 = rRec.nextSample1D();
-                u1 =  std::max(1e-6, u1);
-                double u2 = rRec.nextSample1D();
+                float u1 = rRec.nextSample1D();
+                u1 =  std::max(1e-6f, u1);
+                float u2 = rRec.nextSample1D();
 
-                double r = std::sqrt(-2.0 * std::log(u1));
-                double theta = 2.0 * M_PI * u2;
+                float r = std::sqrt(-2.0 * std::log(u1));
+                float theta = 2.0 * M_PI * u2;
 
                 z[i] = r * std::cos(theta);
                 if (i + 1 < meanSize) {
@@ -141,10 +141,10 @@ namespace pmm_focal
 
             out->write(reinterpret_cast<const char*>(&weight), sizeof(weight));
             out->write(reinterpret_cast<const char*>(&meanSize), sizeof(meanSize));
-            out->write(reinterpret_cast<const char*>(mean.data()), meanSize * sizeof(double));
+            out->write(reinterpret_cast<const char*>(mean.data()), meanSize * sizeof(float));
 
             out->write(reinterpret_cast<const char*>(&covSize), sizeof(covSize));
-            out->write(reinterpret_cast<const char*>(covariance.data()), covSize * covSize * sizeof(double));
+            out->write(reinterpret_cast<const char*>(covariance.data()), covSize * covSize * sizeof(float));
         }
 
         void deserialize(mitsuba::FileStream* in) {
@@ -154,11 +154,11 @@ namespace pmm_focal
 
             in->read(reinterpret_cast<char*>(&meanSize), sizeof(meanSize));
             mean.resize(meanSize);
-            in->read(reinterpret_cast<char*>(mean.data()), meanSize * sizeof(double));
+            in->read(reinterpret_cast<char*>(mean.data()), meanSize * sizeof(float));
 
             in->read(reinterpret_cast<char*>(&covSize), sizeof(covSize));
             covariance.resize(covSize, covSize);
-            in->read(reinterpret_cast<char*>(covariance.data()), covSize * covSize * sizeof(double));
+            in->read(reinterpret_cast<char*>(covariance.data()), covSize * covSize * sizeof(float));
         }
     };
 }

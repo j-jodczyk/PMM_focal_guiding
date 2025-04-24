@@ -7,6 +7,9 @@
 #include <stack>
 #include <cmath>
 #include <cassert>
+#include "gaussian_mixture_model.h"
+#include "iterable_blocked_vector.h"
+#include "./envs/mitsuba_env.h"
 
 namespace pmm_focal {
 
@@ -143,7 +146,7 @@ public:
         build();
     }
 
-    void splat(const Point &origin, const Vector &direction, Float distance,  Float contribution, std::vector<pmm_focal::WeightedSample>* points, Float pdf) {
+    void splat(const Point &origin, const Vector &direction, Float distance,  Float contribution, IterableBlockedVector<pmm_focal::WeightedSample>* points, Float pdf) {
         Traversal traversal{*this, origin, direction};
         distance = std::min(distance, traversal.maxT());
 
@@ -162,13 +165,34 @@ public:
 
                 auto point = child.getRayIntersection(origin, direction);
                 if (point.size() == 0) {
-                    SLog(mitsuba::EInfo, "Intersection was not found");
+                    SLog(mitsuba::EInfo, "point: %f, %f, %f; direction: %f, %f, %f", origin.x, origin.y, origin.z, direction[0], direction[1], direction[2]);
                     return;
                 }
-                points->push_back({point, weight * contribution});
-                child.accumulator += contribution; // count the ammount of points comming through the node
+
+                points->emplace_back(point, weight * contribution);
+                child.accumulator += weight * contribution; // count the ammount of points comming through the node
             }
         });
+    }
+
+    float splatPdf(const Point &origin, const Vector &direction, pmm_focal::GaussianMixtureModel<float, EnvMitsuba3D>& gmm) {
+        Traversal traversal{*this, origin, direction};
+        float pdf = 0.0f;
+
+        traversal.traverse(pdf, [&](
+            NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
+        ) {
+            auto &child = m_nodes[nodeIndex].children[stratum];
+            if (child.isLeaf()) {
+                float tMid = 0.5f * (tNear + tFar);
+                mitsuba::Point3f samplePoint = origin + tMid * direction;
+                float ps = gmm.pdf(samplePoint);
+
+                pdf += ps * tMid * tMid * (tFar - tNear);
+            }
+        });
+
+        return pdf;
     }
 
     [[nodiscard]] std::vector<Patch> visualize() const {

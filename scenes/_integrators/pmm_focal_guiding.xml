@@ -4,7 +4,7 @@
 	<default name="budget" value="30" />
 	<default name="treeThreshold" value="0.001" />
 
-	<default name="trainingIterations" value="8" />
+	<default name="trainingIterations" value="15" />
 
 	<default name="normalBinning" value="disabled" />
 	<default name="dumpScene" value="false" />
@@ -13,12 +13,12 @@
 	<default name="samplingMode" value="2" />
 	<default name="trainingSamples" value="4" />
 
-	<default name="gmmAlpha" value="0.25" />
-	<default name="gmmSplittingThreshold" value="4.0" />
+	<default name="gmmAlpha" value="1" />
+	<default name="gmmSplittingThreshold" value="4.5" />
 	<default name="gmmMergingThreshold" value="0.5" />
 	<default name="gmmMinNumComp" value="3" />
-	<default name="gmmMaxNumComp" value="10" />
-	<default name="gmmInitKMeans" value="false" />
+	<default name="gmmMaxNumComp" value="20" />
+	<default name="bsdfMISFraction" value="0.5" />
 
 	<integrator type="pmm_focal_guiding">
 
@@ -43,6 +43,7 @@
 		<float name="gmm.mergingThreshold" value="$gmmMergingThreshold" />
 		<integer name="gmm.minNumComp" value="$gmmMinNumComp" />
 		<integer name="gmm.maxNumComp" value="$gmmMaxNumComp" />
+		<string name="gmm.initMethod" value="Random" />
 
 		<float name="tree.threshold" value="$treeThreshold" />
 	</integrator>

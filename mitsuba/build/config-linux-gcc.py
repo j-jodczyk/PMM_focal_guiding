@@ -5,7 +5,7 @@ DISTDIR        = '#dist'
 CXX            = 'g++'
 CC             = 'gcc'
 # change to optimised -O3 later
-CXXFLAGS       = ['-O1', '-Wall', '-g', '-pipe', '-march=nocona', '-msse2', '-ftree-vectorize', '-mfpmath=sse', '-funsafe-math-optimizations', '-fno-rounding-math', '-fno-signaling-nans', '-fno-math-errno', '-fomit-frame-pointer', '-DMTS_DEBUG', '-DSINGLE_PRECISION', '-DSPECTRUM_SAMPLES=3', '-DMTS_SSE', '-DMTS_HAS_COHERENT_RT', '-fopenmp', '-fvisibility=hidden', '-mtls-dialect=gnu2', '-fsanitize=address']
+CXXFLAGS       = ['-O0', '-Wall', '-g', '-pipe', '-march=nocona', '-msse2', '-ftree-vectorize', '-mfpmath=sse', '-funsafe-math-optimizations', '-fno-rounding-math', '-fno-signaling-nans', '-fno-math-errno', '-fno-omit-frame-pointer', '-DMTS_DEBUG', '-DSINGLE_PRECISION', '-DSPECTRUM_SAMPLES=3', '-DMTS_SSE', '-DMTS_HAS_COHERENT_RT', '-fopenmp', '-fvisibility=hidden', '-mtls-dialect=gnu2', '-fPIC']
 LINKFLAGS      = []
 SHLINKFLAGS    = ['-rdynamic', '-shared', '-fPIC', '-lstdc++']
 BASEINCLUDE    = ['#include']
@@ -17,8 +17,8 @@ PNGLIB         = ['png']
 JPEGLIB        = ['jpeg']
 XERCESINCLUDE  = []
 XERCESLIB      = ['xerces-c']
-GLLIB          = ['GL', 'GLU', 'GLEWmx', 'Xxf86vm', 'X11']
-GLFLAGS        = ['-DGLEW_MX']
+GLLIB          = ['GL', 'GLU', 'GLEW', 'Xxf86vm', 'X11']
+GLFLAGS        = ['-DGLEW']
 BOOSTLIB       = ['boost_system', 'boost_filesystem', 'boost_thread']
 COLLADAINCLUDE = ['/usr/include/collada-dom2.4', '/usr/include/collada-dom2.4/1.4']
 COLLADALIB     = ['collada-dom2.4-dp']

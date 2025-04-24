@@ -5,12 +5,12 @@ import subprocess
 import itertools
 
 saved_gmms = [
-    ("modern-hall", "../argument_tuning/modern-hall/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.5_treeThreshold_0.01", 0),
-    ("modern-hall", "../argument_tuning/modern-hall/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.5_treeThreshold_0.001", 1),
+    # ("modern-hall", "../argument_tuning/modern-hall/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.5_treeThreshold_0.01", 0),
+    # ("modern-hall", "../argument_tuning/modern-hall/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.5_treeThreshold_0.001", 1),
     ("living-room", "../argument_tuning/living-room/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.5", 0),
-    ("living-room", "../argument_tuning/living-room/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.7", 1),
-    ("dining-room", "../argument_tuning/dining-room/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.5", 0),
-    ("dining-room", "../argument_tuning/dining-room/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.7", 1),
+    # ("living-room", "../argument_tuning/living-room/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.7", 1),
+    # ("dining-room", "../argument_tuning/dining-room/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.5", 0),
+    # ("dining-room", "../argument_tuning/dining-room/gmmSplittingThreshold_4.0_gmmMergingThreshold_0.7", 1),
 ]
 
 # Read the XML file

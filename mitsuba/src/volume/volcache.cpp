@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
 
 #include <mitsuba/render/volume.h>
 #include <mitsuba/core/properties.h>
@@ -22,7 +23,7 @@
 #include <mitsuba/core/sched.h>
 #include <mitsuba/core/lrucache.h>
 #include <fstream>
-
+#include <functional>
 MTS_NAMESPACE_BEGIN
 
 static StatsCounter statsHitRate("Volume cache", "Cache hit rate", EPercentage);
@@ -177,8 +178,8 @@ public:
         BlockCache *cache = m_cache.get();
         if (EXPECT_NOT_TAKEN(cache == NULL)) {
             cache = new BlockCache(m_blocksPerCore,
-                boost::bind(&CachingDataSource::renderBlock, this, _1),
-                boost::bind(&CachingDataSource::destroyBlock, this, _1));
+                boost::bind(&CachingDataSource::renderBlock, this, boost::placeholders::_1),
+                boost::bind(&CachingDataSource::destroyBlock, this, boost::placeholders::_1));
             m_cache.set(cache);
         }
 

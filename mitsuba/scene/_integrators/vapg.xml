@@ -1,0 +1,26 @@
+<scene version="0.6.0">
+	<default name="budget" value="180"/>
+
+    <integrator type="guided_path">
+		<boolean name="strictNormals" value="true" />
+		<integer name="maxDepth" value="40" />
+		<integer name="rrDepth" value="40" />
+
+		<!-- Parameters for our guided path tracer -->
+		<string name="budgetType" value="seconds"/>
+		<float name="budget" value="$budget"/>
+		<string name="nee" value="always" />
+
+		<!--
+			The following parameters enable all improvements that were added
+			to this codebase after the publication of Mueller et al. [2017].
+			See README.md for additional information.
+		-->
+		<string name="sampleCombination" value="discard"/>
+		<string name="bsdfSamplingFractionLoss" value="kl"/>
+		<string name="spatialFilter" value="stochastic"/>
+		<string name="directionalFilter" value="box"/>
+		<integer name="sTreeThreshold" value="4000"/>
+		<integer name="sppPerPass" value="1"/>
+	</integrator>
+</scene>

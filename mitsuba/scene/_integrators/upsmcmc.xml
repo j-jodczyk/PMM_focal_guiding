@@ -1,0 +1,10 @@
+<scene version="0.6.0">
+	<default name="maxDepth" value="40" />
+	<integrator type="upsmcmc">
+		<boolean name="strictNormals" value="true" />
+		<integer name="maxDepth" value="$maxDepth" />
+		<integer name="rrDepth" value="40" />
+        <integer name="pathsPerIter" value="200000" />
+        <integer name="timeout" value="$budget" />
+	</integrator>
+</scene>
