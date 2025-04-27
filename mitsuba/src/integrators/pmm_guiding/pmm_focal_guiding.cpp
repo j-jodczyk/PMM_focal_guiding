@@ -123,7 +123,7 @@ public:
 
             m_octreeDiverging.configuration = m_octree.configuration;
 
-            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.5));
+            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.25));
             m_gmm.setSplittingThreshold(props.getFloat("gmm.splittingThreshold", 7.0));
             m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold", 0.25));
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
