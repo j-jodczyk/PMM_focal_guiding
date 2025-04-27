@@ -433,6 +433,21 @@ public:
             totalWeight += component.getWeight();
         }
 
+        if (!std::isfinite(totalPdf)) {
+            for (const auto& component: components) {
+                if (component.getWeight() < 1e-6f)
+                    continue;
+                float logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
+
+                Eigen::VectorXd diff = x - component.getMean();
+                float exponent = -0.5 * diff.transpose() * component.getInverseCovariance() * diff;
+                float logPdf = logNormConst + exponent;
+
+                SLog(mitsuba::EInfo, component.toString().c_str());
+                SLog(mitsuba::EInfo, "logNormConst: %f, exponent: %f, logPdf: %f", logNormConst, exponent, logPdf);
+            }
+        }
+
         return totalPdf / totalWeight;
     }
 
@@ -688,6 +703,10 @@ public:
             for (size_t i = 0; i < currentSize; ++i) {
                 size_t globalIdx = offset + i;
                 const auto& sample = batch[globalIdx];
+                if (!sample.point.allFinite()) {
+                    SLog(mitsuba::EInfo, "sample has infinite coorinates - skipping");
+                    continue;
+                }
 
                 for (size_t j = 0; j < k; ++j) {
                     const auto& c = componentCache[j];
@@ -695,6 +714,9 @@ public:
                     Eigen::VectorXd diff = sample.point - c.mean;
                     float exponent = -0.5 * diff.transpose() * c.invCov * diff;
                     float resp = c.weight * std::exp(c.logNormConst + exponent);
+                    if (resp != resp)
+                        SLog(mitsuba::EInfo, ("responsibility nan: " + sample.toString()).c_str());
+
                     R_chunk(i, j) = resp;
                 }
 
@@ -752,7 +774,8 @@ public:
         }
 
         N_prev = totalSamples;
-        SLog(mitsuba::EInfo, "sample count: %d", N_prev);
+        SLog(mitsuba::EInfo, "Before splitting and merging:");
+        SLog(mitsuba::EInfo, this->toString().c_str());
 
         splitAllComponents();
         mergeAllComponents();

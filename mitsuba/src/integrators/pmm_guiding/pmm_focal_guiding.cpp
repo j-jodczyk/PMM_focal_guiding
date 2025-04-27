@@ -517,7 +517,8 @@ public:
         mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
         auto distanceSqrt = (origin - endPoint).lengthSquared();
         gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt;
-
+        if (!std::isfinite(gmmPdf))
+            Log(EInfo, ("distance: %f, origin: " + origin.toString() + " endPoint: " + endPoint.toString()).c_str(), distanceSqrt);
         assert(std::isfinite(gmmPdf));
 
         // MIS
