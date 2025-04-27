@@ -123,7 +123,7 @@ public:
 
             m_octreeDiverging.configuration = m_octree.configuration;
 
-            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.5));
+            m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.25));
             m_gmm.setSplittingThreshold(props.getFloat("gmm.splittingThreshold", 7.0));
             m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold", 0.25));
             m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
@@ -516,9 +516,13 @@ public:
 
         mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
         auto distanceSqrt = (origin - endPoint).lengthSquared();
-        gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt;
-        if (!std::isfinite(gmmPdf))
+        auto cosTheta = std::max(1e-4f, std::abs(Frame::cosTheta(bRec.wo)));
+        gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt / cosTheta;
+        if (!std::isfinite(gmmPdf)) {
             Log(EInfo, ("distance: %f, origin: " + origin.toString() + " endPoint: " + endPoint.toString()).c_str(), distanceSqrt);
+            woPdf = bsdfPdf = bsdf->pdf(bRec);
+            return;
+        }
         assert(std::isfinite(gmmPdf));
 
         // MIS

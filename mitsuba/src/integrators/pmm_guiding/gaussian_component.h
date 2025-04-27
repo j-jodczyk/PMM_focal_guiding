@@ -41,7 +41,7 @@ namespace pmm_focal
         void setWeight(float newWeight) { weight = newWeight; }
 
         void updateComponent(size_t N, size_t N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, float new_weight, float alpha) {
-            // N *= alpha; // Ruppert 2020 --- not, misunderstood
+            N *= alpha; // Ruppert 2020
             // weight = (N * weight + N_new * new_weight) / (N + N_new);
 
             // SLog(mitsuba::EInfo, ("prior mean: " + getMeanStr() + " prior covaraince: " + getCovarianceStr() + " N: %d").c_str(), N);
@@ -57,11 +57,11 @@ namespace pmm_focal
             logDetCov = std::log(covariance.determinant());
             Eigen::MatrixXd L = covariance.llt().matrixL();
 
-            updateSoftCount(N, N_new, new_weight, alpha);
+            updateSoftCount(N, N_new, new_weight);
         }
 
-        void updateSoftCount(float N, float N_new, float new_weight, float alpha) {
-            softCount = N * weight + N_new * new_weight + alpha; // using expectation, not MAP - we'll experiment what is better
+        void updateSoftCount(float N, float N_new, float new_weight) {
+            softCount = N * weight + N_new * new_weight;
         }
 
         // Box-Muller Transform
