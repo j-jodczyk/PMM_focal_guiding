@@ -4,7 +4,7 @@
 	<default name="budget" value="30" />
 	<default name="treeThreshold" value="0.001" />
 
-	<default name="trainingIterations" value="15" />
+	<default name="trainingIterations" value="10" />
 
 	<default name="normalBinning" value="disabled" />
 	<default name="dumpScene" value="false" />
@@ -18,9 +18,10 @@
 	<default name="gmmMergingThreshold" value="0.5" />
 	<default name="gmmMinNumComp" value="3" />
 	<default name="gmmMaxNumComp" value="20" />
-	<default name="bsdfMISFraction" value="0.5" />
+	<default name="bsdfMISFraction" value="0.1" />
 
 	<integrator type="pmm_focal_guiding">
+		<float name="bsdfMISFraction" value="$bsdfMISFraction" />
 
 		<boolean name="strictNormals" value="true" />
 		<integer name="maxDepth" value="$maxDepth" />

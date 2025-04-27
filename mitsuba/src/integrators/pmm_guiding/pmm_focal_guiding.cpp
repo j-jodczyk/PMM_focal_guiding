@@ -114,6 +114,7 @@ public:
             Log(EInfo, ("Saving to: " + saveGMMDirectory).c_str());
 
             bsdfMISFraction = props.getFloat("bsdfMISFraction", 0.5);
+            Log(EInfo, "mis fraction: %f", bsdfMISFraction);
 
             m_octree.configuration.threshold = props.getFloat("tree.threshold", 1e-3);
             m_octree.configuration.minDepth = props.getInteger("tree.minDepth", 0);
@@ -423,8 +424,7 @@ public:
         mitsuba::Vector dir;
         bool isDiverging = false;
 
-        Float distanceSquared = 0;
-        Float cosTheta = 0;
+        Eigen::VectorXd gmmSample = Eigen::VectorXd::Zero(3);
 
         if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
             // sample BSDF
@@ -452,14 +452,13 @@ public:
 
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
 
-            Eigen::VectorXd gmmSample = m_gmm.sample(rRec);
+            gmmSample = m_gmm.sample(rRec);
             mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
             dir = endPoint - bRec.its.p;
             bRec.wo = normalize(dir);
             bRec.wo = bRec.its.toLocal(bRec.wo);
 
-            distanceSquared = dir.lengthSquared();
-            cosTheta = Frame::cosTheta(bRec.wo);
+            // cosTheta = Frame::cosTheta(bRec.wo);
 
             isDiverging = sample.x < divergeProbability;
             if (isDiverging) {
@@ -485,7 +484,7 @@ public:
             // }
         }
 
-        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, dir, rRec.its.p, isDiverging, distanceSquared, cosTheta);
+        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, rRec.its.p, gmmSample);
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
@@ -500,16 +499,13 @@ public:
         Float bsdfSamplingFraction,
         const BSDF* bsdf,
         const BSDFSamplingRecord& bRec,
-        const mitsuba::Vector& dir,
         const Point &origin,
-        bool isDiverging,
-        Float distanceSquared,
-        Float cosTheta
+        Eigen::VectorXd gmmSample
     ) const {
         gmmPdf = 0.0f;
 
         auto type = bsdf->getType();
-        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding || cosTheta == 0 // EDelta = scattering into a discrete set of directions; Eall = any kind of scattering
+        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding || gmmSample.isZero() // EDelta = scattering into a discrete set of directions; Eall = any kind of scattering
         ) {
             woPdf = bsdfPdf = bsdf->pdf(bRec);
             return;
@@ -518,8 +514,10 @@ public:
         bsdfPdf = bsdf->pdf(bRec);
         assert(std::isfinite(bsdfPdf));
 
-        gmmPdf = isDiverging ? m_octreeDiverging.splatPdf(origin, dir, m_gmm) : m_octree.splatPdf(origin, dir, m_gmm);
-        gmmPdf *= distanceSquared / std::abs(cosTheta);
+        mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
+        auto distanceSqrt = (origin - endPoint).lengthSquared();
+        gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt;
+
         assert(std::isfinite(gmmPdf));
 
         // MIS
@@ -780,6 +778,7 @@ public:
                     clampedLight += (*intersectionData)[j].neeDirectLight.getClamped(maxThroughput);
                     clampedLight += (*intersectionData)[j].emission.getClamped(maxThroughput);
                 }
+                clampedLight += currentIntersectionData.bsdfDirectLight.contribution * currentIntersectionData.bsdfMiWeight;
 
                 float clampedPdf = std::max(minPdf, currentIntersectionData.woPdf);
                 float weight = clampedLight.average() / clampedPdf;
