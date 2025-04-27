@@ -213,9 +213,13 @@ public:
         Log(EInfo, "Starting training... (%d) iterations", trainingIterations);
 
         for (size_t i = 0; i < this->trainingIterations; ++i) {
+            if (!training) {
+                Log(EInfo, "GMM converged, finishing training early");
+            }
             Log(EInfo, "Rendering %i iteration", i);
             if (i > this->trainingIterations * 0.66) {
                 // iterative narrowing applied after we're done with 66% of the training
+                Log(EInfo, "starting now, iterative narrowing is applied");
                 m_octree.configuration.splattingStrategy = Tree::SPLAT_RAY_WEIGHTED;
                 m_octreeDiverging.configuration.splattingStrategy = Tree::SPLAT_RAY_WEIGHTED;
             }
@@ -321,7 +325,8 @@ public:
         // }
 
         // second approach - chunks inside
-        m_gmm.processInChunks(iterationSamples);
+        bool shouldTerminateEarly = m_gmm.processInChunks(iterationSamples);
+        training = false;
 
         const Float convThreshold = m_octree.sumDensities();
         const Float divThreshold = m_octreeDiverging.sumDensities();
@@ -516,9 +521,13 @@ public:
 
         mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
         auto distanceSqrt = (origin - endPoint).lengthSquared();
-        gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt;
-        if (!std::isfinite(gmmPdf))
+        auto cosTheta = std::max(1e-4f, std::abs(Frame::cosTheta(bRec.wo)));
+        gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt / cosTheta;
+        if (!std::isfinite(gmmPdf)) {
             Log(EInfo, ("distance: %f, origin: " + origin.toString() + " endPoint: " + endPoint.toString()).c_str(), distanceSqrt);
+            woPdf = bsdfPdf = bsdf->pdf(bRec);
+            return;
+        }
         assert(std::isfinite(gmmPdf));
 
         // MIS

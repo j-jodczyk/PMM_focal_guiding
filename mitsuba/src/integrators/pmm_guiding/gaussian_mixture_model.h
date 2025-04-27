@@ -85,7 +85,8 @@ private:
     AABB m_aabb;
     size_t m_dimension;
     size_t N_prev = 0;
-    std::string initMethod = "Random";
+    std::string initMethod = "Unifrom";
+    float logLikelihood = 0.0f;
 
     float divergeProbability = 0.5;
     bool initialized = false;
@@ -373,6 +374,25 @@ private:
         deactivateComponent(index2);
     }
 
+    double computeLogLikelihood(const std::vector<pmm_focal::WeightedSample>& batch) {
+        size_t N = batch.size(); 
+
+        float logLikelihoodNew = 0.0;
+
+        for (size_t i = 0; i < N; ++i) {
+            double sum = 0.0;
+            for (size_t k = 0; k < components.size(); ++k) {
+                if (components[k].getWeight() == 0)
+                    continue;
+                sum += components[k].getWeight() * components[k].pdf(batch[i]);
+            }
+            if (sum > 0)
+                logLikelihoodNew += std::log(sum);
+        }
+
+        return logLikelihoodNew;
+    }
+
 public:
     GaussianMixtureModel(): prng() {}
     GaussianMixtureModel(std::istream& in) {
@@ -431,21 +451,6 @@ public:
 
             totalPdf += component.getWeight() * std::exp(logPdf);
             totalWeight += component.getWeight();
-        }
-
-        if (!std::isfinite(totalPdf)) {
-            for (const auto& component: components) {
-                if (component.getWeight() < 1e-6f)
-                    continue;
-                float logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
-
-                Eigen::VectorXd diff = x - component.getMean();
-                float exponent = -0.5 * diff.transpose() * component.getInverseCovariance() * diff;
-                float logPdf = logNormConst + exponent;
-
-                SLog(mitsuba::EInfo, component.toString().c_str());
-                SLog(mitsuba::EInfo, "logNormConst: %f, exponent: %f, logPdf: %f", logNormConst, exponent, logPdf);
-            }
         }
 
         return totalPdf / totalWeight;
@@ -649,7 +654,7 @@ public:
         component.setCovariance(Eigen::MatrixXd::Identity(component.getCovariance().rows(), component.getCovariance().cols()));
     }
 
-    void processInChunks(const std::vector<WeightedSample>& batch) {
+    bool processInChunks(const std::vector<WeightedSample>& batch) {
         // we do not need to calculate full responsibilities matrix at once - such approach might cause bad_alloc for big batches
         // instead, we can loop over the batch in chunks while accumulating the sufficient statistics
         // for each component we need:
@@ -703,10 +708,6 @@ public:
             for (size_t i = 0; i < currentSize; ++i) {
                 size_t globalIdx = offset + i;
                 const auto& sample = batch[globalIdx];
-                if (!sample.point.allFinite()) {
-                    SLog(mitsuba::EInfo, "sample has infinite coorinates - skipping");
-                    continue;
-                }
 
                 for (size_t j = 0; j < k; ++j) {
                     const auto& c = componentCache[j];
@@ -774,8 +775,6 @@ public:
         }
 
         N_prev = totalSamples;
-        SLog(mitsuba::EInfo, "Before splitting and merging:");
-        SLog(mitsuba::EInfo, this->toString().c_str());
 
         splitAllComponents();
         mergeAllComponents();
@@ -790,6 +789,12 @@ public:
         }
         for (auto& component : components)
             component.setWeight(component.getWeight() / componentsWeight);
+
+        auto logLikelihoodNew = computeLogLikelihood(batch);
+        auto diff = std::abs(logLikelihood - logLikelihoodNew);
+        SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLIkelihoodNew, diff);
+
+        return diff < 1e-6f;
     }
 
     void processBatchParallel(const std::vector<WeightedSample>& batch) {
