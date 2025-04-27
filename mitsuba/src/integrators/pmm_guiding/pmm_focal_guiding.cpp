@@ -326,7 +326,7 @@ public:
 
         // second approach - chunks inside
         bool shouldTerminateEarly = m_gmm.processInChunks(iterationSamples);
-        training = false;
+        training = !shouldTerminateEarly;
 
         const Float convThreshold = m_octree.sumDensities();
         const Float divThreshold = m_octreeDiverging.sumDensities();
@@ -524,7 +524,7 @@ public:
         auto cosTheta = std::max(1e-4f, std::abs(Frame::cosTheta(bRec.wo)));
         gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt / cosTheta;
         if (!std::isfinite(gmmPdf)) {
-            Log(EInfo, ("distance: %f, origin: " + origin.toString() + " endPoint: " + endPoint.toString()).c_str(), distanceSqrt);
+            // Log(EInfo, ("distance: %f, origin: " + origin.toString() + " endPoint: " + endPoint.toString()).c_str(), distanceSqrt);
             woPdf = bsdfPdf = bsdf->pdf(bRec);
             return;
         }

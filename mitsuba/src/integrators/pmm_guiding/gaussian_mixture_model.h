@@ -375,7 +375,7 @@ private:
     }
 
     double computeLogLikelihood(const std::vector<pmm_focal::WeightedSample>& batch) {
-        size_t N = batch.size(); 
+        size_t N = batch.size();
 
         float logLikelihoodNew = 0.0;
 
@@ -384,7 +384,7 @@ private:
             for (size_t k = 0; k < components.size(); ++k) {
                 if (components[k].getWeight() == 0)
                     continue;
-                sum += components[k].getWeight() * components[k].pdf(batch[i]);
+                sum += components[k].getWeight() * componentPdf(components[k], batch[i].point);
             }
             if (sum > 0)
                 logLikelihoodNew += std::log(sum);
@@ -435,21 +435,25 @@ public:
         return pdf(xEigen);
     }
 
-    float pdf(const Eigen::VectorXd& x) {
+    float componentPdf(const GaussianComponent& component, const Eigen::VectorXd& x) {
         int d = x.size();
+        float logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
+
+        Eigen::VectorXd diff = x - component.getMean();
+        float exponent = -0.5 * diff.transpose() * component.getInverseCovariance() * diff;
+        float logPdf = logNormConst + exponent;
+
+        return component.getWeight() * std::exp(logPdf);
+    }
+
+    float pdf(const Eigen::VectorXd& x) {
         float totalPdf = 0;
         float totalWeight = 0;
 
         for (const auto& component: components) {
             if (component.getWeight() < 1e-6f)
                 continue;
-            float logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
-
-            Eigen::VectorXd diff = x - component.getMean();
-            float exponent = -0.5 * diff.transpose() * component.getInverseCovariance() * diff;
-            float logPdf = logNormConst + exponent;
-
-            totalPdf += component.getWeight() * std::exp(logPdf);
+            totalPdf += componentPdf(component, x);
             totalWeight += component.getWeight();
         }
 
@@ -792,7 +796,7 @@ public:
 
         auto logLikelihoodNew = computeLogLikelihood(batch);
         auto diff = std::abs(logLikelihood - logLikelihoodNew);
-        SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLIkelihoodNew, diff);
+        SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLikelihoodNew, diff);
 
         return diff < 1e-6f;
     }
