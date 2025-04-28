@@ -463,8 +463,6 @@ public:
             bRec.wo = normalize(dir);
             bRec.wo = bRec.its.toLocal(bRec.wo);
 
-            // cosTheta = Frame::cosTheta(bRec.wo);
-
             isDiverging = sample.x < divergeProbability;
             if (isDiverging) {
                 ++samplesFromDiverging;
@@ -489,7 +487,7 @@ public:
             // }
         }
 
-        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, rRec.its.p, gmmSample);
+        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, rRec.its.p, gmmSample, isDiverging);
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
@@ -505,7 +503,8 @@ public:
         const BSDF* bsdf,
         const BSDFSamplingRecord& bRec,
         const Point &origin,
-        Eigen::VectorXd gmmSample
+        Eigen::VectorXd gmmSample,
+        bool isDiverging
     ) const {
         gmmPdf = 0.0f;
 
@@ -520,14 +519,10 @@ public:
         assert(std::isfinite(bsdfPdf));
 
         mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
-        auto distanceSqrt = (origin - endPoint).lengthSquared();
-        auto cosTheta = std::max(1e-4f, std::abs(Frame::cosTheta(bRec.wo)));
-        gmmPdf = m_gmm.pdf(gmmSample) * distanceSqrt / cosTheta;
-        if (!std::isfinite(gmmPdf)) {
-            // Log(EInfo, ("distance: %f, origin: " + origin.toString() + " endPoint: " + endPoint.toString()).c_str(), distanceSqrt);
-            woPdf = bsdfPdf = bsdf->pdf(bRec);
-            return;
-        }
+        auto dir = (origin - endPoint);
+        // auto cosTheta = std::max(1e-4f, std::abs(Frame::cosTheta(bRec.wo)));
+
+        gmmPdf = isDiverging ? m_octreeDiverging.splatPdf(origin, dir, m_gmm) : m_octree.splatPdf(origin, dir, m_gmm);
         assert(std::isfinite(gmmPdf));
 
         // MIS

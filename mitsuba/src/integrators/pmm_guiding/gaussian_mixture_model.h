@@ -374,13 +374,13 @@ private:
         deactivateComponent(index2);
     }
 
-    double computeLogLikelihood(const std::vector<pmm_focal::WeightedSample>& batch) {
+    float computeLogLikelihood(const std::vector<pmm_focal::WeightedSample>& batch) {
         size_t N = batch.size();
 
         float logLikelihoodNew = 0.0;
 
         for (size_t i = 0; i < N; ++i) {
-            double sum = 0.0;
+            float sum = 0.0;
             for (size_t k = 0; k < components.size(); ++k) {
                 if (components[k].getWeight() == 0)
                     continue;
@@ -797,6 +797,7 @@ public:
         auto logLikelihoodNew = computeLogLikelihood(batch);
         auto diff = std::abs(logLikelihood - logLikelihoodNew);
         SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLikelihoodNew, diff);
+        logLikelihood = logLikelihoodNew;
 
         return diff < 1e-6f;
     }
