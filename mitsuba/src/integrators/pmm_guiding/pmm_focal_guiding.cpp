@@ -64,12 +64,22 @@ struct IntersectionData {
     float woPdf {0.0f};
     float distance;
     float endpointRoughness;
+    mitsuba::Spectrum throughputFactors;
+    unsigned int sampledType;
     const Intersection& its;
 
     IntersectionData(const Intersection& its)
         : bsdfDirectLight(Spectrum(0.0f), Spectrum(1.0f)),
           neeDirectLight(Spectrum(0.0f), Spectrum(1.0f)),
           emission(Spectrum(0.0f), Spectrum(1.0f)), distance(its.t), its(its) {}
+
+    IntersectionData& operator*=(Spectrum factor) {
+        bsdfDirectLight.throughput *= factor;
+        neeDirectLight.throughput  *= factor;
+        emission.throughput        *= factor;
+
+        return *this;
+    }
 };
 
 /* Based on MIPathTracer */
@@ -670,6 +680,7 @@ public:
 
             /* Prevent light leaks due to the use of shading normals */
             const Vector wo = rRec.its.toWorld(bRec.wo);
+            currentIntersectionData.sampledType = bRec.sampledType;
 
             ++rRec.depth;
 
@@ -710,6 +721,7 @@ public:
 
             // Log(EInfo, "bsdfWeight: %f, throughput: %f", bsdfWeight, throughput);
             throughput *= bsdfWeight;
+            currentIntersectionData.throughputFactors = bsdfWeight;
             eta *= bRec.eta;
 
             // currentIntersectionData.endpointRoughness =  rRec.its.getBSDF(ray)->getRoughness(rRec.its, bRec.sampledComponent);
@@ -724,10 +736,7 @@ public:
                     rRec.scene->pdfEmitterDirect(dRec) : 0;
                 Float weight = miWeight(woPdf, lumPdf);
                 Li += throughput * value * weight;
-                // if (shouldUseGuiding)
-                //     Log(EInfo, "Li after bsdf sampling %f", Li.average());
 
-                // Log(EInfo, ("Throughput = " + throughput.toString() + " value = " + value.toString() + " weight = %f").c_str(), weight);
                 currentIntersectionData.bsdfDirectLight = ContributionAndThroughput{value, bsdfWeight*weight};
                 currentIntersectionData.bsdfMiWeight = weight;
             }
@@ -758,6 +767,7 @@ public:
                     break;
                 }
                 throughput /= q;
+                currentIntersectionData.throughputFactors /= q;
                 // Log(EInfo, "invQ: %f, throughput: %f", 1/q, throughput);
             }
         }
@@ -772,8 +782,14 @@ public:
             for (int i=intersectionData->size() - 1; i >= 0; --i) {
                 const IntersectionData& currentIntersectionData = (*intersectionData)[i];
 
-                // todo: vmm had some more restrains for samples (sampel type and roughness)
                 Spectrum clampedLight {0.0f};
+
+                // for debugging purposes:
+                // Spectrum bsdfLight {0.0f};
+                // Spectrum neeLight {0.0f};
+                // Spectrum emissionLight {0.0f};
+
+
                 const float maxThroughput = 10.0f;
                 const float minPdf = 0.1f;
 
@@ -782,17 +798,23 @@ public:
                     clampedLight += (*intersectionData)[j].bsdfDirectLight.getClamped(maxThroughput);
                     clampedLight += (*intersectionData)[j].neeDirectLight.getClamped(maxThroughput);
                     clampedLight += (*intersectionData)[j].emission.getClamped(maxThroughput);
+                    // for debugging purposes:
+                    // bsdfLight += (*intersectionData)[j].bsdfDirectLight.getClamped(maxThroughput);
+                    // neeLight += (*intersectionData)[j].neeDirectLight.getClamped(maxThroughput);
+                    // emissionLight += (*intersectionData)[j].emission.getClamped(maxThroughput);
                 }
                 clampedLight += currentIntersectionData.bsdfDirectLight.contribution * currentIntersectionData.bsdfMiWeight;
 
-                float clampedPdf = std::max(minPdf, currentIntersectionData.woPdf);
-                float weight = clampedLight.average() / clampedPdf;
 
-                if (weight < 1e-6f) {
+
+                if (clampedLight.isZero()) {
                     // could collect to statistics...
                     // do nothing
                 } else {
-                    // Log(EInfo, "bsdfDirect: %f, neeDirect: %f, emitted: %f, rest: %f", currentIntersectionData.bsdfDirectLight.getClamped(maxThroughput).average(), currentIntersectionData.neeDirectLight.getClamped(maxThroughput).average(), currentIntersectionData.emission.getClamped(maxThroughput).average(), (currentIntersectionData.bsdfDirectLight.contribution*currentIntersectionData.bsdfMiWeight).average());
+                    float clampedPdf = std::max(minPdf, currentIntersectionData.woPdf);
+                    float weight = clampedLight.average() / clampedPdf;
+                    // Log(EInfo, "clampedLight: %f, clampedPdf: %f, weight: %f", clampedLight.average(), clampedPdf, weight);
+                    // Log(EInfo, "bsdfDirect: %f, neeDirect: %f, emitted: %f, rest: %f", bsdfLight.average(), neeLight.average(), emissionLight.average(), (currentIntersectionData.bsdfDirectLight.contribution*currentIntersectionData.bsdfMiWeight).average());
                     const BSDF *endpointBSDF = currentIntersectionData.its.getBSDF();
                     Float endpointRoughness = std::numeric_limits<Float>::infinity();
                     if (endpointBSDF) {
@@ -814,6 +836,12 @@ public:
                         m_octreeDiverging.splat(ray.o, ray.d, splatDistance, weight, samples,  currentIntersectionData.woPdf / divergeProbability);
                     }
                 }
+
+                if (i == 0)
+                    break;
+
+                for (size_t j=i+1; j<intersectionData->size(); ++j)
+                    (*intersectionData)[j] *= currentIntersectionData.throughputFactors;
             }
             intersectionData->clear();
         }

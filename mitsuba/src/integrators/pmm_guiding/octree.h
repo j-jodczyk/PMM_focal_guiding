@@ -158,16 +158,20 @@ public:
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
-                const Float density = child.density;
-                const Float elementary = Env::segment(tNear, tFar);
-                const Float segment = density * elementary;
-                Float weight = w0 * segment + w1 * (tFar - tNear);
+                Eigen::Vector3d intersect1;
+                Eigen::Vector3d intersect2;
 
-                auto point = child.getRayIntersection(origin, direction);
+                auto point = child.getRayIntersection(origin, direction, intersect1, intersect2);
                 if (point.size() == 0) {
                     SLog(mitsuba::EInfo, "point: %f, %f, %f; direction: %f, %f, %f", origin.x, origin.y, origin.z, direction[0], direction[1], direction[2]);
                     return;
                 }
+                auto intersectionLength = (intersect1 - intersect2).norm();
+
+                const Float density = child.density;
+                const Float elementary = Env::segment(tNear, tFar);
+                const Float segment = density * elementary;
+                Float weight = w0 * segment + w1 * intersectionLength;
 
                 points->emplace_back(point, weight * contribution);
                 child.accumulator += weight * contribution; // count the ammount of points comming through the node
@@ -273,7 +277,12 @@ private:
             }
 
             // Slab Method (or Ray-AABB Intersection via Parameterized Planes).
-            Eigen::VectorXd getRayIntersection(const Point &origin, const Vector &direction) {
+            Eigen::VectorXd getRayIntersection(
+                const Point &origin,
+                const Vector &direction,
+                Eigen::Vector3d &intersect1,
+                Eigen::Vector3d &intersect2
+            ) {
                 Point min = m_aabb.min;
                 Point max = m_aabb.max;
 
@@ -312,8 +321,8 @@ private:
 
                 Eigen::Vector3d originVec(origin.x, origin.y, origin.z);  // Convert Point to Vector
                 Eigen::Vector3d directionVec(direction.x, direction.y, direction.z);
-                Eigen::Vector3d intersect1 = originVec + tmin * directionVec;
-                Eigen::Vector3d intersect2 = originVec + tmax * directionVec;
+                intersect1 = originVec + tmin * directionVec;
+                intersect2 = originVec + tmax * directionVec;
 
                 return (intersect1 + intersect2) / 2;
             }

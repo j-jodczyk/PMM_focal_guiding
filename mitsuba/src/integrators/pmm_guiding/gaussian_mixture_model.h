@@ -99,6 +99,44 @@ private:
         return sum;
     }
 
+    void computeResponsibilities(const std::vector<WeightedSample>& batch, Eigen::MatrixXd& responsibilities) {
+        const size_t N = batch.size();
+        const size_t K = components.size();
+        const size_t d = batch[0].point.size();
+
+        responsibilities.setZero(N, K);
+
+        std::vector<ComponentCache> cache(K);
+        #pragma omp parallel for
+        for (int j = 0; j < (int)K; ++j) {
+            const auto& c = components[j];
+            if (c.getWeight() == 0) continue;
+                cache[j] = {
+                c.getInverseCovariance(),
+                c.getMean(),
+                -0.5f * (d * std::log(2 * M_PI) + c.getLogDetCov()),
+                c.getWeight()
+            };
+        }
+
+        #pragma omp parallel for
+        for (int i = 0; i < (int)N; ++i) {
+            const auto& x = batch[i].point;
+            float sum = 0.0f;
+            for (size_t j = 0; j < K; ++j) {
+                if (cache[j].weight == 0) continue;
+                Eigen::VectorXd diff = x - cache[j].mean;
+                float logp = cache[j].logNormConst - 0.5f * (diff.transpose() * cache[j].invCov * diff)(0);
+                float resp = cache[j].weight * std::exp(logp);
+                responsibilities(i, j) = resp;
+                sum += resp;
+            }
+            if (sum > 0)
+                responsibilities.row(i) /= sum;
+        }
+    }
+
+
     void updateSufficientStatistics(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
         size_t NNew = batch.size();
         float totalWeight = totalSampleWeight(batch);
@@ -184,8 +222,8 @@ private:
         N_prev = NNew; // update sample count
         SLog(mitsuba::EInfo, "sample count: %d", N_prev);
 
+        splitAllComponents(batch);
         mergeAllComponents();
-        splitAllComponents();
 
         // prune too small weights
         float componentsWeight = 0;
@@ -266,25 +304,86 @@ private:
         SLog(mitsuba::EInfo, "components after the merge: %d, merged %d component", getNumActiveComponents(), mergeCount);
     }
 
-    void splitAllComponents() {
-        int maxSplitCount = maxNumComp; // todo: think through / parametrize
-        std::queue<size_t> splitCandidates;
-        for (size_t i = 0; i < components.size(); ++i) {
-            if (components[i].getWeight() > 0)
-                splitCandidates.push(i);
+    float computeChiSquareDivergence(
+        size_t k,
+        const std::vector<WeightedSample>& batch,
+        const Eigen::MatrixXd& responsibilities,
+        size_t topN = 100
+    ) {
+        const auto& comp = components[k];
+        if (comp.getWeight() == 0) return 0.0f;
+
+        const Eigen::VectorXd& mu = comp.getMean();
+        const Eigen::MatrixXd& cov = comp.getCovariance();
+        const Eigen::MatrixXd& invCov = comp.getInverseCovariance();
+        float logDet = comp.getLogDetCov();
+        const size_t d = mu.size();
+
+        std::vector<std::pair<size_t, float>> weightedIndices;
+        for (size_t i = 0; i < batch.size(); ++i) {
+            float resp = responsibilities(i, k);
+            if (resp > 1e-10f)
+                weightedIndices.emplace_back(i, resp);
         }
+
+        if (topN > 0 && weightedIndices.size() > topN) {
+            std::partial_sort(weightedIndices.begin(), weightedIndices.begin() + topN, weightedIndices.end(),
+                              [](const std::pair<size_t, float>& a, const std::pair<size_t, float>& b) { return a.second > b.second; });
+            weightedIndices.resize(topN);
+        }
+
+        float divergence = 0.0f;
+        float weightSum = 0.0f;
+
+        for (const auto& weightedIdx : weightedIndices) {
+            size_t idx = weightedIdx.first;
+            float resp = weightedIdx.second;
+            const auto& x = batch[idx].point;
+            Eigen::VectorXd diff = x - mu;
+
+            // Gaussian density (un-normalized; cancels in divergence sum)
+            float logG = -0.5f * (diff.transpose() * invCov * diff)(0)
+                         - 0.5f * (d * std::log(2 * M_PI) + logDet);
+            float g = std::exp(logG);
+
+            // Approximate p_k(x) from posteriors
+            float p = resp / std::max(weightSum, 1e-6f);  // will renormalize later
+
+            divergence += (p - g) * (p - g) / std::max(g, 1e-10f);
+            weightSum += resp;
+        }
+
+        return divergence;
+    }
+
+
+    void splitAllComponents(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
+        if (getNumActiveComponents() >= maxNumComp) return;
+        int maxSplitCount = maxNumComp; // todo: think through / parametrize
+        std::vector<std::pair<size_t, float>> splitScores;
+
+        for (size_t i = 0; i < components.size(); ++i) {
+            float jsplit = computeChiSquareDivergence(i, batch, responsibilities, batch.size());
+            splitScores.emplace_back(i, jsplit);
+        }
+
+        SLog(mitsuba::EInfo, "computed divergence, begin splitting");
+
+        std::sort(splitScores.begin(), splitScores.end(),
+            [](const std::pair<size_t, float>& a, const std::pair<size_t, float>& b) { return a.second > b.second; }); // Descending
+
         int splitCount = 0;
+        for (const auto& splitScore : splitScores) {
+            if (splitCount >= maxSplitCount) break;
+            if (getNumActiveComponents() >= maxNumComp) break;
 
-        while(!splitCandidates.empty() && splitCount < maxSplitCount) {
-            int i = splitCandidates.front();
-            splitCandidates.pop();
-
-            splitComponent(i, splitCandidates, splitCount);
+            splitComponent(splitScore.first);
+            splitCount++;
         }
         SLog(mitsuba::EInfo, "components after the split: %d, split %d components", getNumActiveComponents(), splitCount);
     }
 
-    void splitComponent(size_t index, std::queue<size_t> &splitCandidates, int &splitCount) {
+    void splitComponent(size_t index) {
         if (getNumActiveComponents() >= maxNumComp) return;
 
         // using PCA
@@ -295,15 +394,7 @@ private:
         Eigen::VectorXd eigenvalues = solver.eigenvalues();
         Eigen::MatrixXd eigenvectors = solver.eigenvectors();
 
-        // check if to split
-        float minEigenvalue = eigenvalues.minCoeff();
         float maxEigenvalue = eigenvalues.maxCoeff();
-
-        float ratio = maxEigenvalue / minEigenvalue;
-        if (ratio < splittingThreshold)
-            return; // below threshold - do nothing
-
-        splitCount++;
 
         // Identify the principal eigenvector (largest eigenvalue)
         int maxIndex;
@@ -325,7 +416,6 @@ private:
         components[index].setWeight(newWeight);
         components[index].setMean(newMean1);
         components[index].setCovariance(newCov);
-        splitCandidates.push(index);
 
         GaussianComponent newComp;
         newComp.setWeight(newWeight);
@@ -336,7 +426,6 @@ private:
             if (components[i].getWeight() == 0) {
                 // found first deactivated component - replace with the new one
                 components[i] = newComp;
-                splitCandidates.push(i);
                 break;
             }
         }
@@ -358,14 +447,10 @@ private:
             component1.getWeight() * component1.getMean() +
             component2.getWeight() * component2.getMean()) / totalWeight;
 
-        Eigen::MatrixXd correction = mergedMean * mergedMean.transpose();
-        Eigen::MatrixXd weightedCovaraince1 = component1.getWeight() * component1.getCovariance();
-        Eigen::MatrixXd weightedCovaraince2 = component2.getWeight() * component2.getCovariance();
+        Eigen::MatrixXd correction1 = (component1.getMean() - mergedMean) * (component1.getMean() - mergedMean).transpose();
+        Eigen::MatrixXd correction2 = (component2.getMean() - mergedMean) * (component2.getMean() - mergedMean).transpose();
 
-        Eigen::MatrixXd weightedMean1TimesTransposed = component1.getWeight() * component1.getMean() * component1.getMean().transpose();
-        Eigen::MatrixXd weightedMean2TimesTransposed = component2.getWeight() * component2.getMean() * component2.getMean().transpose();
-
-        Eigen::MatrixXd mergedConvs = (weightedCovaraince1 + weightedCovaraince2 + weightedMean1TimesTransposed + weightedMean2TimesTransposed) / totalWeight - correction;
+        Eigen::MatrixXd mergedConvs = component1.getWeight() * (component1.getCovariance() + correction1) / totalWeight + component2.getWeight() * (component2.getCovariance() + correction2) / totalWeight;
 
         component1.setWeight(totalWeight);
         component1.setMean(mergedMean);
@@ -553,65 +638,32 @@ public:
             components.resize(maxNumComp);
 
         std::vector<Eigen::VectorXd> centroids(maxNumComp, Eigen::VectorXd::Zero(m_dimension));
-        std::vector<int> clusterAssignments(batch.size(), 0);
+        std::vector<int> clusterAssignments(batch.size(), -1);
         std::vector<int> clusterSizes(maxNumComp, 0);
 
-        // K-Means++ Initialization
+        // KMeans++ Initialization
+        // First centroid picked randomly
         centroids[0] = batch[prng.getRandomNumber(0, batch.size() - 1)].point;
-        for (size_t i = 1; i < maxNumComp; ++i) {
-            std::vector<float> distances(batch.size(), std::numeric_limits<float>::max());
 
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+
+        for (size_t i = 1; i < maxNumComp; ++i) {
+            std::vector<double> distances(batch.size(), std::numeric_limits<double>::max());
+
+            // Compute distance to nearest existing centroid
             for (size_t j = 0; j < batch.size(); ++j) {
                 for (size_t c = 0; c < i; ++c) {
-                    float dist = (batch[j].point - centroids[c]).squaredNorm();
+                    double dist = (batch[j].point - centroids[c]).squaredNorm();
                     distances[j] = std::min(distances[j], dist);
                 }
             }
 
-            std::discrete_distribution<int> distribution(distances.begin(), distances.end());
-            int randomIndex = prng.getRandomNumber(0, batch.size() - 1);
-            centroids[i] = batch[randomIndex].point;
-        }
-
-        bool converged = false;
-        int maxIterations = 100;
-
-        for (int iter = 0; iter < maxIterations && !converged; ++iter) {
-            converged = true;
-            std::fill(clusterSizes.begin(), clusterSizes.end(), 0);
-            std::vector<Eigen::VectorXd> newCentroids(maxNumComp, Eigen::VectorXd::Zero(m_dimension));
-
-            // Assign samples to the nearest centroid
-            for (size_t i = 0; i < batch.size(); ++i) {
-                float minDist = std::numeric_limits<float>::max();
-                int bestCluster = 0;
-
-                for (size_t j = 0; j < maxNumComp; ++j) {
-                    float dist = (batch[i].point - centroids[j]).squaredNorm();
-                    if (dist < minDist) {
-                        minDist = dist;
-                        bestCluster = j;
-                    }
-                }
-
-                if (clusterAssignments[i] != bestCluster) {
-                    clusterAssignments[i] = bestCluster;
-                    converged = false;
-                }
-
-                newCentroids[bestCluster] += batch[i].point;
-                clusterSizes[bestCluster]++;
-            }
-
-            // Update centroids
-            for (size_t j = 0; j < maxNumComp; ++j) {
-                if (clusterSizes[j] > 0) {
-                    centroids[j] = newCentroids[j] / clusterSizes[j];
-                } else {
-                    // Reinitialize empty cluster centroid using a random sample
-                    centroids[j] = batch[prng.getRandomNumber(0, batch.size() - 1)].point;
-                }
-            }
+            // Use distances as weights for probabilistic selection
+            std::discrete_distribution<int> weightedDist(distances.begin(), distances.end());
+            int selectedIndex = weightedDist(gen);
+            centroids[i] = batch[selectedIndex].point;
         }
 
         // Assign K-means results to GMM components
@@ -620,18 +672,18 @@ public:
             component.setWeight(static_cast<float>(clusterSizes[j]) / batch.size());
             component.setMean(centroids[j]);
 
-            // Compute covariance for each cluster
+            // Compute covariance matrix
             Eigen::MatrixXd covariance = Eigen::MatrixXd::Zero(m_dimension, m_dimension);
             if (clusterSizes[j] > 1) {
                 for (size_t i = 0; i < batch.size(); ++i) {
-                    if (clusterAssignments[i] == j) {
+                    if (clusterAssignments[i] == static_cast<int>(j)) {
                         Eigen::VectorXd diff = batch[i].point - centroids[j];
                         covariance += diff * diff.transpose();
                     }
                 }
                 covariance /= (clusterSizes[j] - 1);
             } else {
-                covariance = Eigen::MatrixXd::Identity(m_dimension, m_dimension) * 1e-6f; // Small regularization
+                covariance = Eigen::MatrixXd::Identity(m_dimension, m_dimension) * 1e-6f;
             }
 
             component.setCovariance(covariance);
@@ -640,6 +692,7 @@ public:
         SLog(mitsuba::EInfo, "Initialized using KMeans++");
         initialized = true;
     }
+
 
 
     void resetComponent(GaussianComponent& component) {
@@ -780,7 +833,13 @@ public:
 
         N_prev = totalSamples;
 
-        splitAllComponents();
+        SLog(mitsuba::EInfo, "updating responsibiliites");
+        Eigen::MatrixXd updatedResponsibilities(batch.size(), components.size());
+        computeResponsibilities(batch, updatedResponsibilities);
+
+        SLog(mitsuba::EInfo, "Splitting and merging");
+
+        splitAllComponents(batch, updatedResponsibilities);
         mergeAllComponents();
 
         // Prune
