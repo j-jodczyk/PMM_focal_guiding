@@ -481,7 +481,6 @@ public:
                 ++samplesFromConverging;
             }
 
-            // // idk - they say it's hack
             bRec.eta = 1; // eta is Relative index of refraction in the sampled direction. Refractive index determines how much the path of light is bent, or refracted, when entering a material.
             bRec.sampledType = BSDF::EDiffuse;
 
@@ -492,9 +491,6 @@ public:
                 woPdf = bsdfPdf = gmmPdf = 0;
                 return result;
             }
-            // if (result.average() > 1.0f) {
-            //     Log(EInfo, ("wo: " + bRec.wo.toString() + ", result: " + result.toString()).c_str());
-            // }
         }
 
         pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, rRec.its.p, gmmSample, isDiverging);
@@ -555,6 +551,11 @@ public:
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
 
+        auto miWeight = [](Float pdfA, Float pdfB) -> Float
+        {
+            return pdfA / (pdfA + pdfB);
+        };
+
         static thread_local std::vector<IntersectionData>* intersectionData {nullptr};
         static thread_local IterableBlockedVector<pmm_focal::WeightedSample>* samples {nullptr};
 
@@ -585,7 +586,7 @@ public:
                 break;
             }
 
-            const BSDF *bsdf = rRec.its.getBSDF();
+            const BSDF *bsdf = rRec.its.getBSDF(ray);
 
             /* Possibly include emitted radiance if requested */
             if (rRec.its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)

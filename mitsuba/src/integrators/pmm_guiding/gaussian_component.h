@@ -19,6 +19,7 @@ namespace pmm_focal
         float softCount;
 
     public:
+        bool isNew = false;
         GaussianComponent() {}
         GaussianComponent(mitsuba::FileStream* in) {
             deserialize(in);

@@ -233,8 +233,10 @@ private:
             else
                 componentsWeight += components[i].getWeight();
         }
-        for (auto& component : components)
+        for (auto& component : components) {
             component.setWeight(component.getWeight() / componentsWeight);
+            component.isNew = false;
+        }
     }
 
     void deactivateComponent(int idx) {
@@ -268,7 +270,7 @@ private:
         Eigen::MatrixXd bhattacharyyaCoefficients(components.size(), components.size());
         for (size_t i = 0; i < components.size(); ++i) {
             for (size_t j = i + 1; j < components.size(); ++j) {
-                if (components[j].getWeight() == 0 || components[i].getWeight() == 0 || j == i) {
+                if (components[j].getWeight() == 0 || components[i].getWeight() == 0 || j == i || components[i].isNew) {
                     bhattacharyyaCoefficients(i, j) = 0;
                     bhattacharyyaCoefficients(j, i) = 0;
                     continue;
@@ -358,29 +360,18 @@ private:
 
 
     void splitAllComponents(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
+        SLog(mitsuba::EInfo, "components before the split: %d", getNumActiveComponents());
         if (getNumActiveComponents() >= maxNumComp) return;
-        int maxSplitCount = maxNumComp; // todo: think through / parametrize
-        std::vector<std::pair<size_t, float>> splitScores;
 
         for (size_t i = 0; i < components.size(); ++i) {
-            float jsplit = computeChiSquareDivergence(i, batch, responsibilities, batch.size());
-            splitScores.emplace_back(i, jsplit);
-        }
-
-        SLog(mitsuba::EInfo, "computed divergence, begin splitting");
-
-        std::sort(splitScores.begin(), splitScores.end(),
-            [](const std::pair<size_t, float>& a, const std::pair<size_t, float>& b) { return a.second > b.second; }); // Descending
-
-        int splitCount = 0;
-        for (const auto& splitScore : splitScores) {
-            if (splitCount >= maxSplitCount) break;
             if (getNumActiveComponents() >= maxNumComp) break;
-
-            splitComponent(splitScore.first);
-            splitCount++;
+            float jsplit = computeChiSquareDivergence(i, batch, responsibilities, batch.size());
+            SLog(mitsuba::EInfo, "split score: %f", jsplit);
+            if (jsplit < splittingThreshold) continue;
+            splitComponent(i);
         }
-        SLog(mitsuba::EInfo, "components after the split: %d, split %d components", getNumActiveComponents(), splitCount);
+
+        SLog(mitsuba::EInfo, "components after the split: %d", getNumActiveComponents());
     }
 
     void splitComponent(size_t index) {
@@ -416,6 +407,7 @@ private:
         components[index].setWeight(newWeight);
         components[index].setMean(newMean1);
         components[index].setCovariance(newCov);
+        components[index].isNew = true;
 
         GaussianComponent newComp;
         newComp.setWeight(newWeight);
@@ -426,6 +418,7 @@ private:
             if (components[i].getWeight() == 0) {
                 // found first deactivated component - replace with the new one
                 components[i] = newComp;
+                components[i].isNew = true;
                 break;
             }
         }
@@ -850,8 +843,10 @@ public:
             else
                 componentsWeight += components[i].getWeight();
         }
-        for (auto& component : components)
+        for (auto& component : components) {
             component.setWeight(component.getWeight() / componentsWeight);
+            component.isNew = false;
+        }
 
         auto logLikelihoodNew = computeLogLikelihood(batch);
         auto diff = std::abs(logLikelihood - logLikelihoodNew);

@@ -192,7 +192,7 @@ public:
                 mitsuba::Point3f samplePoint = origin + tMid * direction;
                 float ps = gmm.pdf(samplePoint);
 
-                pdf += ps * tMid * tMid * (tFar - tNear);
+                pdf += ps * tMid * tMid;
             }
         });
 
