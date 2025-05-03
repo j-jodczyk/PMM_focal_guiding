@@ -220,9 +220,13 @@ private:
         }
 
         N_prev = NNew; // update sample count
-        SLog(mitsuba::EInfo, "sample count: %d", N_prev);
+        SLog(mitsuba::EInfo, "updating responsibiliites");
+        Eigen::MatrixXd updatedResponsibilities(batch.size(), components.size());
+        computeResponsibilities(batch, updatedResponsibilities);
 
-        splitAllComponents(batch);
+        SLog(mitsuba::EInfo, "Splitting and merging");
+
+        splitAllComponents(batch, updatedResponsibilities);
         mergeAllComponents();
 
         // prune too small weights
@@ -237,6 +241,13 @@ private:
             component.setWeight(component.getWeight() / componentsWeight);
             component.isNew = false;
         }
+
+        // auto logLikelihoodNew = computeLogLikelihood(batch);
+        // auto diff = std::abs(logLikelihood - logLikelihoodNew);
+        // SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLikelihoodNew, diff);
+        // logLikelihood = logLikelihoodNew;
+
+        // return diff < 1e-6f;
     }
 
     void deactivateComponent(int idx) {
@@ -717,7 +728,7 @@ public:
             init(batch);
 
         const size_t d = batch[0].point.size();
-        const size_t chunkSize = 5000000;
+        const size_t chunkSize = 50000000;
         const size_t k = components.size();
         const size_t totalSamples = batch.size();
 
@@ -848,15 +859,15 @@ public:
             component.isNew = false;
         }
 
-        auto logLikelihoodNew = computeLogLikelihood(batch);
-        auto diff = std::abs(logLikelihood - logLikelihoodNew);
-        SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLikelihoodNew, diff);
-        logLikelihood = logLikelihoodNew;
+        // auto logLikelihoodNew = computeLogLikelihood(batch);
+        // auto diff = std::abs(logLikelihood - logLikelihoodNew);
+        // SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLikelihoodNew, diff);
+        // logLikelihood = logLikelihoodNew;
 
-        return diff < 1e-6f;
+        // return diff < 1e-6f;
     }
 
-    void processBatchParallel(const std::vector<WeightedSample>& batch) {
+    bool processBatchParallel(const std::vector<WeightedSample>& batch) {
         SLog(mitsuba::EInfo, "Starting batch processing in parallel");
 
         if (!initialized)
@@ -944,6 +955,7 @@ public:
         updateSufficientStatistics(batch, responsibilities);
 
         SLog(mitsuba::EInfo, "Finish M step");
+        return false; // todo: adjust
     }
 
     void processBatch(const std::vector<WeightedSample>& batch) {

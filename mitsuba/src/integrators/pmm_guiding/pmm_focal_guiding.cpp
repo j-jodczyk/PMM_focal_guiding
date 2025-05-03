@@ -335,7 +335,7 @@ public:
         // }
 
         // second approach - chunks inside
-        bool shouldTerminateEarly = m_gmm.processInChunks(iterationSamples);
+        bool shouldTerminateEarly = m_gmm.processBatchParallel(iterationSamples);
         training = !shouldTerminateEarly;
 
         const Float convThreshold = m_octree.sumDensities();
