@@ -174,16 +174,17 @@ public:
                 Float weight = w0 * segment + w1 * intersectionLength;
 
                 points->emplace_back(point, weight * contribution);
-                child.accumulator += weight * contribution; // count the ammount of points comming through the node
+                child.accumulator += weight * contribution;
             }
         });
     }
 
     float splatPdf(const Point &origin, const Vector &direction, pmm_focal::GaussianMixtureModel<float, EnvMitsuba3D>& gmm) {
         Traversal traversal{*this, origin, direction};
+
         float pdf = 0.0f;
 
-        traversal.traverse(pdf, [&](
+        traversal.traverse(std::numeric_limits<Float>::infinity(), [&](
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
