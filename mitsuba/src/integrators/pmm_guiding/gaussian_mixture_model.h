@@ -325,49 +325,51 @@ private:
     ) {
         const auto& comp = components[k];
         if (comp.getWeight() == 0) return 0.0f;
-
+    
         const Eigen::VectorXd& mu = comp.getMean();
         const Eigen::MatrixXd& cov = comp.getCovariance();
         const Eigen::MatrixXd& invCov = comp.getInverseCovariance();
         float logDet = comp.getLogDetCov();
         const size_t d = mu.size();
-
+    
         std::vector<std::pair<size_t, float>> weightedIndices;
         for (size_t i = 0; i < batch.size(); ++i) {
             float resp = responsibilities(i, k);
             if (resp > 1e-10f)
                 weightedIndices.emplace_back(i, resp);
         }
-
+    
         if (topN > 0 && weightedIndices.size() > topN) {
             std::partial_sort(weightedIndices.begin(), weightedIndices.begin() + topN, weightedIndices.end(),
                               [](const std::pair<size_t, float>& a, const std::pair<size_t, float>& b) { return a.second > b.second; });
             weightedIndices.resize(topN);
         }
-
+    
+        float totalWeight = 0.0f;
+        for (const auto& [_, resp] : weightedIndices)
+            totalWeight += resp;
+    
+        if (totalWeight < 1e-6f) return 0.0f;
+    
         float divergence = 0.0f;
-        float weightSum = 0.0f;
-
-        for (const auto& weightedIdx : weightedIndices) {
-            size_t idx = weightedIdx.first;
-            float resp = weightedIdx.second;
+        for (const auto& [idx, resp] : weightedIndices) {
             const auto& x = batch[idx].point;
             Eigen::VectorXd diff = x - mu;
-
-            // Gaussian density (un-normalized; cancels in divergence sum)
+    
+            // Normalized Gaussian density
             float logG = -0.5f * (diff.transpose() * invCov * diff)(0)
                          - 0.5f * (d * std::log(2 * M_PI) + logDet);
             float g = std::exp(logG);
-
-            // Approximate p_k(x) from posteriors
-            float p = resp / std::max(weightSum, 1e-6f);  // will renormalize later
-
-            divergence += (p - g) * (p - g) / std::max(g, 1e-10f);
-            weightSum += resp;
+    
+            float p = resp / totalWeight;
+    
+            if (g > 1e-10f) {
+                divergence += (p - g) * (p - g) / g;
+            }
         }
-
+    
         return divergence;
-    }
+    }    
 
 
     void splitAllComponents(const std::vector<WeightedSample>& batch, const Eigen::MatrixXd& responsibilities) {
@@ -376,7 +378,7 @@ private:
 
         for (size_t i = 0; i < components.size(); ++i) {
             if (getNumActiveComponents() >= maxNumComp) break;
-            float jsplit = computeChiSquareDivergence(i, batch, responsibilities, batch.size());
+            float jsplit = computeChiSquareDivergence(i, batch, responsibilities, 0);
             SLog(mitsuba::EInfo, "split score: %f", jsplit);
             if (jsplit < splittingThreshold) continue;
             splitComponent(i);
@@ -867,8 +869,16 @@ public:
         // return diff < 1e-6f;
     }
 
-    bool processBatchParallel(const std::vector<WeightedSample>& batch) {
+    bool processBatchParallel(std::vector<WeightedSample>& batch) {
         SLog(mitsuba::EInfo, "Starting batch processing in parallel");
+        if (batch.size() > 50000000) {
+            std::vector<WeightedSample>every_10th;
+            for (size_t i = 0; i < batch.size(); i += 10)
+                every_10th.push_back(batch[i]);
+            batch = every_10th;
+            SLog(mitsuba::EInfo, "Reduced the number of samples");
+        }
+        
 
         if (!initialized)
             init(batch);
@@ -950,6 +960,8 @@ public:
         }
 
         for (auto& t : normThreads) t.join();
+
+        SLog(mitsuba::EInfo, "Normalized responibilities");
 
         // M-step
         updateSufficientStatistics(batch, responsibilities);

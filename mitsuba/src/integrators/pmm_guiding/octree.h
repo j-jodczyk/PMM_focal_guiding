@@ -163,7 +163,7 @@ public:
 
                 auto point = child.getRayIntersection(origin, direction, intersect1, intersect2);
                 if (point.size() == 0) {
-                    SLog(mitsuba::EInfo, "point: %f, %f, %f; direction: %f, %f, %f", origin.x, origin.y, origin.z, direction[0], direction[1], direction[2]);
+                    // SLog.mitsuba::EInfo, "point: %f, %f, %f; direction: %f, %f, %f", origin.x, origin.y, origin.z, direction[0], direction[1], direction[2]);
                     return;
                 }
                 auto intersectionLength = (intersect1 - intersect2).norm();
@@ -296,7 +296,7 @@ private:
                 if (tymin > tymax) std::swap(tymin, tymax);
 
                 if ((tmin > tymax) || (tymin > tmax)) {
-                    SLog(mitsuba::EInfo, "No intersection found");
+                    // SLog(mitsuba::EInfo, "No intersection found");
                     return Eigen::VectorXd();  // No intersection
                 }
 
@@ -308,7 +308,7 @@ private:
                 if (tzmin > tzmax) std::swap(tzmin, tzmax);
 
                 if ((tmin > tzmax) || (tzmin > tmax)) {
-                    SLog(mitsuba::EInfo, "No intersection found");
+                    // SLog(mitsuba::EInfo, "No intersection found");
                     return Eigen::VectorXd();  // No intersection
                 }
 
@@ -316,7 +316,7 @@ private:
                 if (tzmax < tmax) tmax = tzmax;
 
                 if (tmin < 0 && tmax < 0) {
-                    SLog(mitsuba::EInfo, "No intersection found");
+                    // SLog(mitsuba::EInfo, "No intersection found");
                     return Eigen::VectorXd();  // Intersection is behind the ray
                 }
 
