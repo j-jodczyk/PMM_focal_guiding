@@ -189,11 +189,21 @@ public:
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
             if (child.isLeaf()) {
-                float tMid = 0.5f * (tNear + tFar);
-                mitsuba::Point3f samplePoint = origin + tMid * direction;
-                float ps = gmm.pdf(samplePoint);
+                float t0 = tNear;
+                float t1 = tFar;
 
-                pdf += ps * tMid * tMid;
+                mitsuba::Point3f p1 = origin + t1 * direction;
+                mitsuba::Point3f p0 = origin + t0 * direction;
+
+                float ps0 = gmm.pdf(p0);
+                float ps1 = gmm.pdf(p1);
+
+                // Trapezoidal rule for ∫ ps(t) * t² dt over [t0, t1]
+                float weight = 1.0f / 2.0f * (
+                    ps0 * t0 * t0 + ps1 * t1 * t1
+                ) * (t1 - t0);
+
+                pdf += weight;
             }
         });
 
