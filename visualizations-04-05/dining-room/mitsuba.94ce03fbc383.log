@@ -1,0 +1,1202 @@
+2025-05-04 18:01:16 INFO  main [mitsuba.cpp:274] Mitsuba version 0.6.0 (Linux, 64 bit), Copyright (c) 2017 Wenzel Jakob
+2025-05-04 18:01:16 INFO  main [mitsuba.cpp:377] Parsing scene description from "scene/dining-room/dining-room.xml" ..
+2025-05-04 18:01:16 INFO  main [scenehandler.cpp:675] In file "/mitsuba/scene/dining-room/dining-room.xml" (near line 18): Parsing included file "pmm_focal_guiding.xml" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/pmm_focal_guiding.so" ..
+2025-05-04 18:01:16 INFO  main [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 18:01:16 INFO  main [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 18:01:16 INFO  main [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 18:01:16 INFO  main [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 18:01:16 INFO  main [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 18:01:16 INFO  main [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 18:01:16 INFO  main [PMMFocalGuidingIntegrator] Saving to: 
+2025-05-04 18:01:16 INFO  main [PMMFocalGuidingIntegrator] mis fraction: 0.500000
+2025-05-04 18:01:16 INFO  main [PMMFocalGuidingIntegrator] GMM params: alpha = 0.250000, split_th = 0.500000, merge_th = 0.500000, min_num_comp = 3, max_num_comp = 20, init = Random
+2025-05-04 18:01:16 INFO  main [PMMFocalGuidingIntegrator] iterationCount: 15
+2025-05-04 18:01:16 INFO  main [PMMFocalGuidingIntegrator] PMMFocalGuidingIntegrator
+  maxDepth = 40,
+  rrDepth = 14,
+  strictNormals = 1
+  gmm = GMM[
+]
+]
+2025-05-04 18:01:16 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "budget" in element "integrator"
+2025-05-04 18:01:16 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "dumpPrimaryRays" in element "integrator"
+2025-05-04 18:01:16 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "dumpScene" in element "integrator"
+2025-05-04 18:01:16 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "normalBinning" in element "integrator"
+2025-05-04 18:01:16 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "samplingMode" in element "integrator"
+2025-05-04 18:01:16 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/dining-room/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "unboundedSplatting" in element "integrator"
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/independent.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/box.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/hdrfilm.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/perspective.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/roughplastic.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/twosided.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/roughconductor.so" ..
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/diffuse.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/bitmap.so" ..
+2025-05-04 18:01:16 INFO  main [BitmapTexture] Loading texture "picture3.jpg"
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/lanczos.so" ..
+2025-05-04 18:01:16 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/dining-room/textures/picture3.mip" ..
+2025-05-04 18:01:16 INFO  main [BitmapTexture] Loading texture "Tiles.jpg"
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/conductor.so" ..
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Ir.eta.spd": loaded a spectral power distribution with 28 entries (between 302.389984 and 885.570984 nm)
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Ir.k.spd": loaded a spectral power distribution with 28 entries (between 302.389984 and 885.570984 nm)
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [BitmapTexture] Loading texture "Teacup.png"
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/area.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/disk.so" ..
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/ply.so" ..
+2025-05-04 18:01:16 INFO  main [PLYLoader] Loading geometry from "parabol1.ply" ..
+2025-05-04 18:01:16 INFO  main [PLYLoader] "parabol1": Loaded 25856 triangles, 13057 vertices (456.0 KiB in 23 ms).
+2025-05-04 18:01:16 INFO  main [PLYLoader] Loading geometry from "parabol2.ply" ..
+2025-05-04 18:01:16 INFO  main [PLYLoader] "parabol2": Loaded 25856 triangles, 13057 vertices (456.0 KiB in 22 ms).
+2025-05-04 18:01:16 INFO  main [PluginManager] Loading plugin "plugins/obj.so" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh013.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh013: 1056 triangles, 577 vertices (merged 2591 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh013.obj" (took 5 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh016.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh016: 384 triangles, 768 vertices (merged 384 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh016.obj" (took 3 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh015.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh015: 3136 triangles, 1680 vertices (merged 7728 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh015.obj" (took 16 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh023.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh023: 1056 triangles, 577 vertices (merged 2591 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh023.obj" (took 5 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh020.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh020: 384 triangles, 768 vertices (merged 384 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh020.obj" (took 3 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh017.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh017: 3136 triangles, 1680 vertices (merged 7728 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh017.obj" (took 17 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh024.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh024: 34 triangles, 68 vertices (merged 34 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh024.obj" (took 0 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh041.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh041: 8 triangles, 16 vertices (merged 8 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh041.obj" (took 0 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh011.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh011: 8992 triangles, 4544 vertices (merged 22432 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh011.obj" (took 46 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh026.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh026: 7624 triangles, 4070 vertices (merged 18802 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh026.obj" (took 39 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh018.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh018: 2016 triangles, 1260 vertices (merged 4788 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh018.obj" (took 10 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh007.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh007: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh007.obj" (took 21 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh005.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh005: 160 triangles, 144 vertices (merged 336 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh005.obj" (took 0 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh019.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh019: 560 triangles, 400 vertices (merged 1280 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh019.obj" (took 3 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh021.obj" ..
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Mesh021: 720 triangles, 482 vertices (merged 1678 vertices).
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Done with "Mesh021.obj" (took 3 ms)
+2025-05-04 18:01:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh037.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh037: 7624 triangles, 4070 vertices (merged 18802 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh037.obj" (took 39 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh004.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh004: 2016 triangles, 1260 vertices (merged 4788 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh004.obj" (took 13 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh014.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh014: 160 triangles, 144 vertices (merged 336 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh014.obj" (took 1 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh012.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh012: 560 triangles, 400 vertices (merged 1280 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh012.obj" (took 3 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh028.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh028: 720 triangles, 482 vertices (merged 1678 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh028.obj" (took 4 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh025.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh025: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh025.obj" (took 22 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh008.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh008: 6320 triangles, 3270 vertices (merged 15690 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh008.obj" (took 32 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh032.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh032: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh032.obj" (took 67 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh035.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh035: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh035.obj" (took 72 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh042.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh042: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh042.obj" (took 13 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh010.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh010: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh010.obj" (took 67 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh036.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh036: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh036.obj" (took 72 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh027.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh027: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh027.obj" (took 12 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh043.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh043: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh043.obj" (took 66 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh044.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh044: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh044.obj" (took 72 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh031.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh031: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh031.obj" (took 12 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh022.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh022: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh022.obj" (took 67 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh038.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh038: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh038.obj" (took 72 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh030.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh030: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh030.obj" (took 12 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh046.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh046: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh046.obj" (took 68 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh047.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh047: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh047.obj" (took 73 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh034.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh034: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh034.obj" (took 12 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh033.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh033: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh033.obj" (took 0 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh006.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh006: 4 triangles, 6 vertices (merged 6 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh006.obj" (took 0 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh048.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh048: 30 triangles, 38 vertices (merged 52 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh048.obj" (took 0 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh049.obj" ..
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Mesh049: 13248 triangles, 6686 vertices (merged 33058 vertices).
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Done with "Mesh049.obj" (took 66 ms)
+2025-05-04 18:01:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh051.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh051: 14480 triangles, 7404 vertices (merged 36036 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh051.obj" (took 73 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh040.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh040: 2320 triangles, 1492 vertices (merged 5468 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh040.obj" (took 12 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh003.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh003: 18176 triangles, 9150 vertices (merged 45378 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh003.obj" (took 91 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh002.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh002: 7624 triangles, 4070 vertices (merged 18802 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh002.obj" (took 39 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh009.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh009: 2016 triangles, 1260 vertices (merged 4788 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh009.obj" (took 11 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh045.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh045: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh045.obj" (took 22 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh029.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh029: 160 triangles, 144 vertices (merged 336 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh029.obj" (took 1 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh039.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh039: 560 triangles, 400 vertices (merged 1280 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh039.obj" (took 3 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh050.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh050: 720 triangles, 482 vertices (merged 1678 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh050.obj" (took 4 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh001.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh001: 170 triangles, 340 vertices (merged 170 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh001.obj" (took 1 ms)
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh000.obj" ..
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Mesh000: 22 triangles, 44 vertices (merged 22 vertices).
+2025-05-04 18:01:18 INFO  main [WavefrontOBJ] Done with "Mesh000.obj" (took 0 ms)
+2025-05-04 18:01:18 INFO  main [PluginManager] Loading plugin "plugins/rectangle.so" ..
+2025-05-04 18:01:18 INFO  ren0 [KDTreeBase] Constructing a SAH kd-tree (321251 primitives) ..
+2025-05-04 18:01:20 INFO  ren0 [KDTreeBase] Finished -- took 2755 ms.
+2025-05-04 18:01:21 INFO  ren0 [PMMFocalGuidingIntegrator] Starting preprocess
+2025-05-04 18:01:21 INFO  ren0 [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 18:01:21 INFO  ren0 [octree.h:533] root weight: 4.096e-17 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:534] splitting threshold: 4.096e-20 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:549] node count: 585 -> 585 -> 585
+
+2025-05-04 18:01:21 INFO  ren0 [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 18:01:21 INFO  ren0 [octree.h:533] root weight: 4.096e-17 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:534] splitting threshold: 4.096e-20 (0.000000)
+2025-05-04 18:01:21 INFO  ren0 [octree.h:549] node count: 585 -> 585 -> 585
+
+2025-05-04 18:01:21 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 585
+]
+2025-05-04 18:01:21 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 585
+]
+2025-05-04 18:01:21 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+]
+2025-05-04 18:01:21 INFO  ren0 [PMMFocalGuidingIntegrator] Starting training... (15) iterations
+2025-05-04 18:01:21 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 0 iteration
+2025-05-04 18:01:21 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:02:23 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 1.0400m
+2025-05-04 18:02:23 INFO  ren0 [PMMFocalGuidingIntegrator] Got 1241848 non-zero samples
+2025-05-04 18:02:23 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:02:23 INFO  ren0 [gaussian_mixture_model.h:557] Random
+2025-05-04 18:02:23 INFO  ren0 [gaussian_mixture_model.h:623] Starting initialization using random value from the first batch
+2025-05-04 18:02:23 INFO  ren0 [gaussian_mixture_model.h:636] Initialized using random value from the first batch
+2025-05-04 18:02:23 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:02:23 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:02:32 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:02:32 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:02:45 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:02:53 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:02:53 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 20
+2025-05-04 18:02:53 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:02:53 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 14, merged 6 component
+2025-05-04 18:02:53 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:02:53 INFO  ren0 [octree.h:533] root weight: 3.042e+07 (30418726.000000)
+2025-05-04 18:02:53 INFO  ren0 [octree.h:534] splitting threshold: 3.042e+04 (30418.726562)
+2025-05-04 18:02:53 INFO  ren0 [octree.h:533] root weight: 9.367e+03 (9367.188477)
+2025-05-04 18:02:53 INFO  ren0 [octree.h:534] splitting threshold: 9.367e+00 (9.367188)
+2025-05-04 18:02:53 INFO  ren0 [octree.h:549] node count: 585 -> 976 -> 934
+
+2025-05-04 18:02:53 INFO  ren0 [octree.h:549] node count: 585 -> 585 -> 577
+
+2025-05-04 18:02:53 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 18:02:53 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 30.1489s
+2025-05-04 18:02:53 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.000303204 mean = [4.15215 4.79683 -2.40451] covariance = [[0.785489 0.282018 -0.302748][0.282018 3.32374 0.300264][-0.302748 0.300264 2.0983]]
+weight = 0.0234063 mean = [-2.27792 3.45347 -1.91737] covariance = [[5.78689 -3.25952 2.05998][-3.25952 2.23256 -1.2446][2.05998 -1.2446 0.757398]]
+weight = 0.08732 mean = [-2.17359 3.66909 -1.93001] covariance = [[0.24726 -0.906045 -0.52953][-0.906045 4.18366 2.29114][-0.52953 2.29114 1.29207]]
+weight = 0.00176882 mean = [-4.12621 0.310007 -1.77183] covariance = [[10.0932 -4.00633 -3.38529][-4.00633 2.89058 1.49125][-3.38529 1.49125 1.20176]]
+weight = 0.000109957 mean = [3.46987 0.0353982 5.37159] covariance = [[3.55193 3.33658 -0.256204][3.33658 6.25437 0.325354][-0.256204 0.325354 4.16561]]
+weight = 0.00031057 mean = [3.31955 5.53868 1.89311] covariance = [[2.30261 -0.602964 -0.497851][-0.602964 4.3875 0.0624896][-0.497851 0.0624896 1.49176]]
+weight = 0.179457 mean = [-4.61728 -0.301343 -1.68238] covariance = [[0.315343 0.46144 0.27501][0.46144 0.729191 -0.0506775][0.27501 -0.0506775 5.97114]]
+weight = 0.000151844 mean = [3.36154 7.27579 -2.70542] covariance = [[3.36357 0.271825 0.215026][0.271825 0.704246 0.40489][0.215026 0.40489 1.76617]]
+weight = 0.686262 mean = [-2.74047 2.74147 -1.87807] covariance = [[1.30086 0.480742 0.359096][0.480742 0.893354 -0.0832749][0.359096 -0.0832749 0.164499]]
+weight = 0.0101736 mean = [-2.20799 3.58248 -1.94049] covariance = [[4.20404 -1.3287 -4.75112][-1.3287 0.569861 1.58853][-4.75112 1.58853 5.44191]]
+weight = 0.000346487 mean = [-1.48628 4.84496 7.44421] covariance = [[12.7967 -1.10604 -0.532524][-1.10604 6.40942 -1.81124][-0.532524 -1.81124 4.28034]]
+weight = 7.61586e-05 mean = [4.07285 5.83062 5.42058] covariance = [[0.744897 0.0636778 0.244808][0.0636778 4.18614 0.34458][0.244808 0.34458 3.82179]]
+weight = 0.0089337 mean = [-3.48506 1.41922 -1.73711] covariance = [[4.64589 -1.25515 4.53245][-1.25515 2.22162 -2.26377][4.53245 -2.26377 5.12103]]
+weight = 0.00138046 mean = [-1.37313 3.3128 -2.22902] covariance = [[8.18725 -4.52949 -2.37529][-4.52949 4.95028 0.608774][-2.37529 0.608774 3.24272]]
+]
+2025-05-04 18:02:53 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 934
+]
+2025-05-04 18:02:53 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:02:53 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 1 iteration
+2025-05-04 18:02:53 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:03:33 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 39.9640s
+2025-05-04 18:03:33 INFO  ren0 [PMMFocalGuidingIntegrator] Got 1641700 non-zero samples
+2025-05-04 18:03:33 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:03:33 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:03:33 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:03:41 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:03:42 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:03:54 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:04:01 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:04:01 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 14
+2025-05-04 18:04:04 INFO  ren0 [gaussian_mixture_model.h:384] split score: 442.158997
+2025-05-04 18:04:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 92353.492188
+2025-05-04 18:04:07 INFO  ren0 [gaussian_mixture_model.h:384] split score: 156201.765625
+2025-05-04 18:04:07 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:04:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 16820.466797
+2025-05-04 18:04:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:04:12 INFO  ren0 [gaussian_mixture_model.h:384] split score: 445.082672
+2025-05-04 18:04:12 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:04:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 541.719604
+2025-05-04 18:04:15 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:04:15 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:04:15 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 19, merged 1 component
+2025-05-04 18:04:15 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:04:15 INFO  ren0 [octree.h:533] root weight: 1.993e+08 (199345904.000000)
+2025-05-04 18:04:15 INFO  ren0 [octree.h:534] splitting threshold: 1.993e+05 (199345.906250)
+2025-05-04 18:04:15 INFO  ren0 [octree.h:533] root weight: 4.229e+05 (422944.062500)
+2025-05-04 18:04:15 INFO  ren0 [octree.h:534] splitting threshold: 4.229e+02 (422.944092)
+2025-05-04 18:04:15 INFO  ren0 [octree.h:549] node count: 934 -> 1292 -> 1070
+
+2025-05-04 18:04:15 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:04:15 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.002
+
+2025-05-04 18:04:15 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 42.1019s
+2025-05-04 18:04:15 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.000247157 mean = [3.78777 5.19568 -2.08782] covariance = [[1.47428 0.319731 -0.547984][0.319731 1.98231 0.210555][-0.547984 0.210555 1.55664]]
+weight = 0.0141873 mean = [-1.79524 3.25505 -1.80832] covariance = [[0.537372 -0.189758 0.159267][-0.189758 0.357098 -0.14177][0.159267 -0.14177 0.0958072]]
+weight = 0.0616315 mean = [-2.14834 3.16908 -2.19005] covariance = [[0.053442 -0.0547665 -0.0341795][-0.0547665 0.368488 0.193923][-0.0341795 0.193923 0.126933]]
+weight = 0.000247157 mean = [2.59513 3.58439 -1.5579] covariance = [[1.47428 0.319731 -0.547984][0.319731 1.98231 0.210555][-0.547984 0.210555 1.55664]]
+weight = 0.00147702 mean = [-0.523655 2.50071 -2.16956] covariance = [[4.55933 1.38866 -0.705371][1.38866 2.75573 0.129512][-0.705371 0.129512 0.235141]]
+weight = 0.0141873 mean = [-2.74765 3.88908 -2.19066] covariance = [[0.537372 -0.189758 0.159267][-0.189758 0.357098 -0.14177][0.159267 -0.14177 0.0958072]]
+weight = 7.80274e-05 mean = [2.92218 0.440374 5.02334] covariance = [[3.70515 0.484825 3.2632][0.484825 2.04606 0.0229901][3.2632 0.0229901 7.33055]]
+weight = 0.0616315 mean = [-2.29373 4.0209 -1.71588] covariance = [[0.053442 -0.0547665 -0.0341795][-0.0547665 0.368488 0.193923][-0.0341795 0.193923 0.126933]]
+weight = 0.000167314 mean = [2.81469 5.51481 1.69787] covariance = [[3.0258 0.81246 0.504917][0.81246 4.0319 0.723576][0.504917 0.723576 1.86153]]
+weight = 0.000174547 mean = [1.78457 6.55155 -2.23781] covariance = [[5.59642 1.34403 -0.893343][1.34403 1.18202 -0.302345][-0.893343 -0.302345 1.41724]]
+weight = 0.235812 mean = [-1.79153 2.75582 -1.51892] covariance = [[1.93873 -0.621114 0.927928][-0.621114 1.20231 -0.595828][0.927928 -0.595828 0.533053]]
+weight = 0.0139521 mean = [-2.30411 3.48521 -1.98263] covariance = [[0.734551 -0.152773 -0.743315][-0.152773 0.18503 0.308749][-0.743315 0.308749 0.933396]]
+weight = 0.00147702 mean = [-3.41022 0.987828 -1.81152] covariance = [[4.55933 1.38866 -0.705371][1.38866 2.75573 0.129512][-0.705371 0.129512 0.235141]]
+weight = 7.80274e-05 mean = [0.733672 0.281504 1.32115] covariance = [[3.70515 0.484825 3.2632][0.484825 2.04606 0.0229901][3.2632 0.0229901 7.33055]]
+weight = 0.0011107 mean = [-3.05342 5.17845 6.39851] covariance = [[10.6358 -2.40602 2.51594][-2.40602 4.72123 -0.737967][2.51594 -0.737967 3.09198]]
+weight = 0.000167314 mean = [1.34764 2.95628 0.800943] covariance = [[3.0258 0.81246 0.504917][0.81246 4.0319 0.723576][0.504917 0.723576 1.86153]]
+weight = 6.06231e-05 mean = [3.50803 4.9908 5.31251] covariance = [[0.931252 0.707329 -0.0522488][0.707329 4.64972 0.937085][-0.0522488 0.937085 3.07348]]
+weight = 0.358528 mean = [-3.69672 1.11815 -2.28613] covariance = [[2.50198 1.77885 1.18576][1.77885 3.2715 -0.609322][1.18576 -0.609322 2.49823]]
+weight = 0.234786 mean = [-0.732741 1.28646 -1.90695] covariance = [[3.58519 -3.74342 1.09551][-3.74342 7.72623 -1.69073][1.09551 -1.69073 2.44163]]
+]
+2025-05-04 18:04:15 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1070
+]
+2025-05-04 18:04:15 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:04:15 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 2 iteration
+2025-05-04 18:04:15 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:04:48 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 32.5047s
+2025-05-04 18:04:48 INFO  ren0 [PMMFocalGuidingIntegrator] Got 1932155 non-zero samples
+2025-05-04 18:04:48 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:04:48 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:04:48 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:05:00 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:05:01 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:05:20 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:05:32 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:05:32 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 19
+2025-05-04 18:05:33 INFO  ren0 [gaussian_mixture_model.h:384] split score: 622.962891
+2025-05-04 18:05:33 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:05:33 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:05:33 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 9, merged 13 component
+2025-05-04 18:05:33 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:05:33 INFO  ren0 [octree.h:533] root weight: 7.810e+08 (780954752.000000)
+2025-05-04 18:05:33 INFO  ren0 [octree.h:534] splitting threshold: 7.810e+05 (780954.812500)
+2025-05-04 18:05:33 INFO  ren0 [octree.h:533] root weight: 5.854e+05 (585393.500000)
+2025-05-04 18:05:33 INFO  ren0 [octree.h:534] splitting threshold: 5.854e+02 (585.393555)
+2025-05-04 18:05:33 INFO  ren0 [octree.h:549] node count: 1070 -> 1404 -> 1152
+
+2025-05-04 18:05:33 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:05:33 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:05:33 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 45.4356s
+2025-05-04 18:05:33 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.0760239 mean = [-2.36744 3.58867 -2.01365] covariance = [[0.463951 -0.0489823 0.115842][-0.0489823 0.350338 -0.1226][0.115842 -0.1226 0.0804041]]
+weight = 0.00290722 mean = [3.77691 3.22373 -2.56386] covariance = [[1.82524 -0.663988 -1.14992][-0.663988 2.06574 0.902919][-1.14992 0.902919 1.24834]]
+weight = 5.52867e-05 mean = [1.53065 5.63115 -2.05227] covariance = [[4.04557 1.67045 -0.213069][1.67045 2.25535 -0.333131][-0.213069 -0.333131 0.878271]]
+weight = 0.170632 mean = [-2.21445 2.86338 -1.71465] covariance = [[0.643776 -0.0896963 0.273492][-0.0896963 1.13069 -0.367511][0.273492 -0.367511 0.213306]]
+weight = 0.161282 mean = [-2.21208 3.60758 -1.95826] covariance = [[0.0411873 -0.0237934 -0.0311689][-0.0237934 0.27154 0.116361][-0.0311689 0.116361 0.0970904]]
+weight = 0.00878992 mean = [0.695669 2.44823 -2.31371] covariance = [[14.1656 2.86035 -1.75458][2.86035 1.82618 -0.103271][-1.75458 -0.103271 0.323158]]
+weight = 0.0107878 mean = [-3.07645 0.96847 6.28529] covariance = [[1.94682 -0.252415 0.472484][-0.252415 26.1957 0.531891][0.472484 0.531891 0.609478]]
+weight = 2.59528e-05 mean = [3.43523 4.60224 5.05529] covariance = [[0.67762 0.378428 -0.465071][0.378428 3.47646 0.316314][-0.465071 0.316314 1.81996]]
+weight = 0.569496 mean = [-2.90702 1.34574 -1.62471] covariance = [[3.13631 -0.0239129 0.372359][-0.0239129 2.75909 -0.724908][0.372359 -0.724908 2.09642]]
+]
+2025-05-04 18:05:33 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1152
+]
+2025-05-04 18:05:33 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:05:33 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 3 iteration
+2025-05-04 18:05:33 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:06:09 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 35.1636s
+2025-05-04 18:06:09 INFO  ren0 [PMMFocalGuidingIntegrator] Got 3386899 non-zero samples
+2025-05-04 18:06:09 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:06:09 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:06:09 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:06:19 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:06:20 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:06:38 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:06:48 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:06:48 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 9
+2025-05-04 18:06:48 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:48 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:48 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:48 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:48 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 467048.718750
+2025-05-04 18:06:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:06:54 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1578.996216
+2025-05-04 18:07:00 INFO  ren0 [gaussian_mixture_model.h:384] split score: 4348.192871
+2025-05-04 18:07:01 INFO  ren0 [gaussian_mixture_model.h:384] split score: 746027.875000
+2025-05-04 18:07:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1060106.375000
+2025-05-04 18:07:07 INFO  ren0 [gaussian_mixture_model.h:384] split score: 17778.667969
+2025-05-04 18:07:07 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:07:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 263.571747
+2025-05-04 18:07:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:07:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 234.517746
+2025-05-04 18:07:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:07:14 INFO  ren0 [gaussian_mixture_model.h:384] split score: 14865.734375
+2025-05-04 18:07:14 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 18
+2025-05-04 18:07:14 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 18
+2025-05-04 18:07:14 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 17, merged 2 component
+2025-05-04 18:07:14 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:07:14 INFO  ren0 [octree.h:533] root weight: 1.251e+09 (1251413376.000000)
+2025-05-04 18:07:14 INFO  ren0 [octree.h:534] splitting threshold: 1.251e+06 (1251413.375000)
+2025-05-04 18:07:14 INFO  ren0 [octree.h:533] root weight: 9.233e+05 (923254.125000)
+2025-05-04 18:07:14 INFO  ren0 [octree.h:534] splitting threshold: 9.233e+02 (923.254150)
+2025-05-04 18:07:14 INFO  ren0 [octree.h:549] node count: 1152 -> 1428 -> 1233
+
+2025-05-04 18:07:14 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:07:14 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:07:14 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 1.0938m
+2025-05-04 18:07:14 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.0018505 mean = [2.09854 3.20165 -0.222398] covariance = [[1.31099 0.122635 -0.804491][0.122635 1.00672 0.203378][-0.804491 0.203378 1.76303]]
+weight = 3.50738e-05 mean = [1.40747 4.9516 -1.79919] covariance = [[3.79 0.350597 0.618992][0.350597 3.36023 -1.23137][0.618992 -1.23137 1.10992]]
+weight = 0.0219121 mean = [-2.19795 3.09519 -1.77685] covariance = [[0.0833742 0.00538932 0.0300389][0.00538932 0.358224 -0.103616][0.0300389 -0.103616 0.0420886]]
+weight = 0.122852 mean = [-2.22056 3.70613 -1.88139] covariance = [[0.0233906 -0.00399632 -0.00875677][-0.00399632 0.0691162 0.0125058][-0.00875677 0.0125058 0.0548323]]
+weight = 0.090364 mean = [-2.20859 3.3243 -1.87427] covariance = [[0.279573 0.0117801 0.0658108][0.0117801 0.301155 -0.104758][0.0658108 -0.104758 0.0671046]]
+weight = 0.00612587 mean = [1.18788 1.49694 -2.68752] covariance = [[2.11584 0.342016 -0.285166][0.342016 3.44107 0.766758][-0.285166 0.766758 0.277718]]
+weight = 0.00898156 mean = [-6.48004 1.57612 4.37311] covariance = [[3.44337 -0.137942 1.49524][-0.137942 3.40972 -0.132444][1.49524 -0.132444 1.51969]]
+weight = 0.000115744 mean = [3.67147 3.63677 4.52322] covariance = [[0.785622 -1.29057 -1.05818][-1.29057 5.72172 2.30726][-1.05818 2.30726 2.44405]]
+weight = 0.0018505 mean = [3.39795 3.05897 -1.96826] covariance = [[1.31099 0.122635 -0.804491][0.122635 1.00672 0.203378][-0.804491 0.203378 1.76303]]
+weight = 3.50738e-05 mean = [3.07184 3.09186 -0.587028] covariance = [[3.79 0.350597 0.618992][0.350597 3.36023 -1.23137][0.618992 -1.23137 1.10992]]
+weight = 0.0219121 mean = [-2.20793 3.94031 -2.02999] covariance = [[0.0833742 0.00538932 0.0300389][0.00538932 0.358224 -0.103616][0.0300389 -0.103616 0.0420886]]
+weight = 0.122852 mean = [-2.16299 3.37471 -2.08614] covariance = [[0.0233906 -0.00399632 -0.00875677][-0.00399632 0.0691162 0.0125058][-0.00875677 0.0125058 0.0548323]]
+weight = 0.00612587 mean = [-0.813182 1.77188 -2.26541] covariance = [[2.11584 0.342016 -0.285166][0.342016 3.44107 0.766758][-0.285166 0.766758 0.277718]]
+weight = 0.292945 mean = [-3.00409 1.53504 -0.830987] covariance = [[2.24371 0.0575809 0.437492][0.0575809 2.01809 0.104131][0.437492 0.104131 2.86504]]
+weight = 0.00898156 mean = [-3.96445 0.979208 5.75552] covariance = [[3.44337 -0.137942 1.49524][-0.137942 3.40972 -0.132444][1.49524 -0.132444 1.51969]]
+weight = 0.000115744 mean = [4.60117 0.363211 2.77307] covariance = [[0.785622 -1.29057 -1.05818][-1.29057 5.72172 2.30726][-1.05818 2.30726 2.44405]]
+weight = 0.292945 mean = [-1.29566 2.01551 -1.77315] covariance = [[2.24371 0.0575809 0.437492][0.0575809 2.01809 0.104131][0.437492 0.104131 2.86504]]
+]
+2025-05-04 18:07:14 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1233
+]
+2025-05-04 18:07:14 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:07:14 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 4 iteration
+2025-05-04 18:07:14 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:07:48 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 34.0959s
+2025-05-04 18:07:49 INFO  ren0 [PMMFocalGuidingIntegrator] Got 6071505 non-zero samples
+2025-05-04 18:07:49 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:07:49 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:07:49 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:08:24 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:08:25 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:09:19 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:09:53 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:09:53 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 17
+2025-05-04 18:09:53 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:09:59 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2409.754639
+2025-05-04 18:10:09 INFO  ren0 [gaussian_mixture_model.h:384] split score: 9070.979492
+2025-05-04 18:10:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2781806.750000
+2025-05-04 18:10:10 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:10:10 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:10:10 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 7, merged 13 component
+2025-05-04 18:10:10 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:10:10 INFO  ren0 [octree.h:533] root weight: 2.434e+09 (2434211072.000000)
+2025-05-04 18:10:10 INFO  ren0 [octree.h:534] splitting threshold: 2.434e+06 (2434211.250000)
+2025-05-04 18:10:10 INFO  ren0 [octree.h:533] root weight: 1.815e+06 (1814991.125000)
+2025-05-04 18:10:10 INFO  ren0 [octree.h:534] splitting threshold: 1.815e+03 (1814.991211)
+2025-05-04 18:10:10 INFO  ren0 [octree.h:549] node count: 1233 -> 1518 -> 1255
+
+2025-05-04 18:10:10 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:10:10 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:10:10 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 2.3596m
+2025-05-04 18:10:10 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.337393 mean = [-2.20051 3.51543 -1.91639] covariance = [[0.0908614 0.00499448 0.00334639][0.00499448 0.162659 -0.00712507][0.00334639 -0.00712507 0.0520056]]
+weight = 0.0130097 mean = [-0.522017 1.68791 -2.31278] covariance = [[2.12418 -0.525281 -0.468175][-0.525281 2.65443 0.828806][-0.468175 0.828806 0.349819]]
+weight = 0.00257206 mean = [-3.16184 1.64344 5.24366] covariance = [[10.2565 0.030787 3.42975][0.030787 4.4512 -0.238609][3.42975 -0.238609 3.90634]]
+weight = 0.0103907 mean = [3.4285 1.46983 -1.62713] covariance = [[1.27245 -1.02466 -0.425956][-1.02466 3.52516 0.239562][-0.425956 0.239562 0.866102]]
+weight = 0.00143257 mean = [4.52799 1.09849 2.51789] covariance = [[0.527773 -1.0267 -0.856559][-1.0267 3.52086 2.31927][-0.856559 2.31927 2.93136]]
+weight = 0.021144 mean = [-2.13656 3.45048 -1.86173] covariance = [[0.0400068 -0.033325 0.0234973][-0.033325 0.234666 -0.0802015][0.0234973 -0.0802015 0.0316829]]
+weight = 0.614059 mean = [-2.26304 1.74167 -1.44612] covariance = [[5.31551 -0.0673864 -0.180899][-0.0673864 1.63208 -0.0110887][-0.180899 -0.0110887 1.97478]]
+]
+2025-05-04 18:10:10 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1255
+]
+2025-05-04 18:10:10 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:10:10 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 5 iteration
+2025-05-04 18:10:10 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:10:44 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 33.3540s
+2025-05-04 18:10:44 INFO  ren0 [PMMFocalGuidingIntegrator] Got 5774481 non-zero samples
+2025-05-04 18:10:44 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:10:44 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:10:44 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:10:58 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:10:59 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:11:27 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 7
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:11:46 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1783651.875000
+2025-05-04 18:11:54 INFO  ren0 [gaussian_mixture_model.h:384] split score: 64571.167969
+2025-05-04 18:11:54 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:12:00 INFO  ren0 [gaussian_mixture_model.h:384] split score: 439.003723
+2025-05-04 18:12:09 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2109.739258
+2025-05-04 18:12:09 INFO  ren0 [gaussian_mixture_model.h:384] split score: 363.036957
+2025-05-04 18:12:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 5047674.500000
+2025-05-04 18:12:20 INFO  ren0 [gaussian_mixture_model.h:384] split score: 24544.990234
+2025-05-04 18:12:20 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 14
+2025-05-04 18:12:20 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 14
+2025-05-04 18:12:20 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 13, merged 2 component
+2025-05-04 18:12:20 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:12:20 INFO  ren0 [octree.h:533] root weight: 2.553e+09 (2553415680.000000)
+2025-05-04 18:12:20 INFO  ren0 [octree.h:534] splitting threshold: 2.553e+06 (2553415.750000)
+2025-05-04 18:12:20 INFO  ren0 [octree.h:533] root weight: 1.994e+06 (1993816.000000)
+2025-05-04 18:12:20 INFO  ren0 [octree.h:534] splitting threshold: 1.994e+03 (1993.816040)
+2025-05-04 18:12:20 INFO  ren0 [octree.h:549] node count: 1255 -> 1491 -> 1278
+
+2025-05-04 18:12:20 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:12:20 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:12:20 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 1.6142m
+2025-05-04 18:12:20 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.177769 mean = [-2.30225 3.37112 -1.98275] covariance = [[0.0774219 -0.0099362 0.0120611][-0.0099362 0.0641973 -0.00351383][0.0120611 -0.00351383 0.049931]]
+weight = 0.00272351 mean = [-2.55849 2.34407 -1.79925] covariance = [[1.78099 -0.0940708 -0.264604][-0.0940708 1.44102 0.499578][-0.264604 0.499578 0.276643]]
+weight = 0.00272171 mean = [-5.97242 0.474054 3.5891] covariance = [[5.78313 -0.0321213 0.669447][-0.0321213 2.74973 1.56197][0.669447 1.56197 3.13545]]
+weight = 0.00038981 mean = [3.24504 -1.44651 2.89545] covariance = [[0.964796 0.743268 -0.754621][0.743268 2.68312 0.206501][-0.754621 0.206501 1.3296]]
+weight = 0.0119787 mean = [-2.23132 3.73002 -1.97518] covariance = [[0.0136245 -0.0072069 0.00696235][-0.0072069 0.0408767 -0.0142727][0.00696235 -0.0142727 0.00672345]]
+weight = 0.303234 mean = [-3.37141 1.86167 -2.27592] covariance = [[2.455 -0.158815 -0.0289163][-0.158815 1.3865 -0.0559984][-0.0289163 -0.0559984 2.50614]]
+weight = 0.177769 mean = [-2.16806 3.68337 -1.92712] covariance = [[0.0774219 -0.0099362 0.0120611][-0.0099362 0.0641973 -0.00351383][0.0120611 -0.00351383 0.049931]]
+weight = 0.00272351 mean = [-0.900541 1.45189 -2.3382] covariance = [[1.78099 -0.0940708 -0.264604][-0.0940708 1.44102 0.499578][-0.264604 0.499578 0.276643]]
+weight = 0.00272171 mean = [-2.69803 0.93392 4.60962] covariance = [[5.78313 -0.0321213 0.669447][-0.0321213 2.74973 1.56197][0.669447 1.56197 3.13545]]
+weight = 0.00236611 mean = [2.36571 1.72448 -0.278213] covariance = [[2.84923 -0.653921 -2.33308][-0.653921 5.15527 -0.962661][-2.33308 -0.962661 4.35127]]
+weight = 0.00038981 mean = [4.13359 0.816718 2.77112] covariance = [[0.964796 0.743268 -0.754621][0.743268 2.68312 0.206501][-0.754621 0.206501 1.3296]]
+weight = 0.0119787 mean = [-2.15152 3.44952 -1.86601] covariance = [[0.0136245 -0.0072069 0.00696235][-0.0072069 0.0408767 -0.0142727][0.00696235 -0.0142727 0.00672345]]
+weight = 0.303234 mean = [-1.41002 1.52252 -1.28913] covariance = [[2.455 -0.158815 -0.0289163][-0.158815 1.3865 -0.0559984][-0.0289163 -0.0559984 2.50614]]
+]
+2025-05-04 18:12:20 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1278
+]
+2025-05-04 18:12:20 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:12:21 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 6 iteration
+2025-05-04 18:12:21 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:12:54 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 33.2582s
+2025-05-04 18:12:55 INFO  ren0 [PMMFocalGuidingIntegrator] Got 7292691 non-zero samples
+2025-05-04 18:12:55 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:12:55 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:12:55 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:13:27 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:13:28 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:14:18 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:14:49 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:14:49 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 13
+2025-05-04 18:14:56 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2207720.000000
+2025-05-04 18:15:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 134370.062500
+2025-05-04 18:15:18 INFO  ren0 [gaussian_mixture_model.h:384] split score: 614.509094
+2025-05-04 18:15:19 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:15:20 INFO  ren0 [gaussian_mixture_model.h:384] split score: 626.608093
+2025-05-04 18:15:21 INFO  ren0 [gaussian_mixture_model.h:384] split score: 10556530.000000
+2025-05-04 18:15:33 INFO  ren0 [gaussian_mixture_model.h:384] split score: 44884.367188
+2025-05-04 18:15:34 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:15:34 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:15:34 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:15:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:15:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:15:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 3391649.250000
+2025-05-04 18:15:41 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:15:41 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:15:41 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 17, merged 3 component
+2025-05-04 18:15:41 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:15:41 INFO  ren0 [octree.h:533] root weight: 2.024e+09 (2024473088.000000)
+2025-05-04 18:15:41 INFO  ren0 [octree.h:534] splitting threshold: 2.024e+06 (2024473.125000)
+2025-05-04 18:15:41 INFO  ren0 [octree.h:533] root weight: 2.396e+06 (2395633.750000)
+2025-05-04 18:15:41 INFO  ren0 [octree.h:534] splitting threshold: 2.396e+03 (2395.633789)
+2025-05-04 18:15:41 INFO  ren0 [octree.h:549] node count: 1278 -> 1428 -> 1261
+
+2025-05-04 18:15:41 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:15:41 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:15:41 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 2.7905m
+2025-05-04 18:15:41 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.0767798 mean = [-2.12037 3.30997 -1.91788] covariance = [[0.0546821 0.00142438 0.00214972][0.00142438 0.0747737 0.00978199][0.00214972 0.00978199 0.0564805]]
+weight = 0.00154883 mean = [-1.90513 2.26212 -1.88886] covariance = [[0.66599 0.122988 -0.0372538][0.122988 0.621064 0.218447][-0.0372538 0.218447 0.168714]]
+weight = 0.00314294 mean = [-1.22962 1.09019 5.68327] covariance = [[7.18614 0.925817 2.04365][0.925817 1.14991 -0.088181][2.04365 -0.088181 3.6045]]
+weight = 0.0767798 mean = [-2.41879 3.39183 -2.03856] covariance = [[0.0546821 0.00142438 0.00214972][0.00142438 0.0747737 0.00978199][0.00214972 0.00978199 0.0564805]]
+weight = 0.00013371 mean = [4.03441 -1.05875 0.210267] covariance = [[0.868235 0.0707775 -1.02263][0.0707775 1.10102 0.0279116][-1.02263 0.0279116 3.06583]]
+weight = 0.0122419 mean = [-2.20136 3.63995 -1.93791] covariance = [[0.00372723 -0.000289815 0.0015743][-0.000289815 0.01903 -0.00518022][0.0015743 -0.00518022 0.00210671]]
+weight = 0.00154883 mean = [-2.72544 2.86671 -1.50534] covariance = [[0.66599 0.122988 -0.0372538][0.122988 0.621064 0.218447][-0.0372538 0.218447 0.168714]]
+weight = 0.00314294 mean = [-4.91089 0.62746 4.05696] covariance = [[7.18614 0.925817 2.04365][0.925817 1.14991 -0.088181][2.04365 -0.088181 3.6045]]
+weight = 0.00013371 mean = [3.07038 -1.05867 2.66114] covariance = [[0.868235 0.0707775 -1.02263][0.0707775 1.10102 0.0279116][-1.02263 0.0279116 3.06583]]
+weight = 0.0122419 mean = [-2.20992 3.83459 -1.9934] covariance = [[0.00372723 -0.000289815 0.0015743][-0.000289815 0.01903 -0.00518022][0.0015743 -0.00518022 0.00210671]]
+weight = 0.0809531 mean = [-2.09986 3.5842 -1.85026] covariance = [[0.0346609 0.00210573 0.00128129][0.00210573 0.0375663 0.00457015][0.00128129 0.00457015 0.0391073]]
+weight = 0.0809531 mean = [-2.25568 3.76181 -1.95212] covariance = [[0.0346609 0.00210573 0.00128129][0.00210573 0.0375663 0.00457015][0.00128129 0.00457015 0.0391073]]
+weight = 0.0268115 mean = [-1.49068 0.942274 5.19726] covariance = [[5.82758 -0.0156462 0.782914][-0.0156462 1.08225 -0.166691][0.782914 -0.166691 3.35274]]
+weight = 0.00944043 mean = [2.46437 0.0122156 1.10375] covariance = [[2.64643 -1.20041 -2.28472][-1.20041 6.66558 -3.16522][-2.28472 -3.16522 6.50462]]
+weight = 0.000261141 mean = [3.86217 0.934781 2.30547] covariance = [[0.903177 0.00575298 -0.972693][0.00575298 6.98268 3.75979][-0.972693 3.75979 4.88803]]
+weight = 0.0191472 mean = [-2.19022 3.50255 -1.89673] covariance = [[0.00493378 -0.00437502 0.00316472][-0.00437502 0.0493046 -0.0150077][0.00316472 -0.0150077 0.0054055]]
+weight = 0.594739 mean = [-2.30102 1.68834 -1.57431] covariance = [[3.14183 -0.491687 0.539806][-0.491687 1.46082 -0.0463607][0.539806 -0.0463607 2.62819]]
+]
+2025-05-04 18:15:41 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1261
+]
+2025-05-04 18:15:41 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:15:41 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 7 iteration
+2025-05-04 18:15:41 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:16:16 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 34.0307s
+2025-05-04 18:16:16 INFO  ren0 [PMMFocalGuidingIntegrator] Got 6997053 non-zero samples
+2025-05-04 18:16:16 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:16:16 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:16:16 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:16:58 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:17:00 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:18:05 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:18:45 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:18:45 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 17
+2025-05-04 18:18:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2077969.000000
+2025-05-04 18:19:02 INFO  ren0 [gaussian_mixture_model.h:384] split score: 131954.718750
+2025-05-04 18:19:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1036.597656
+2025-05-04 18:19:10 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:19:10 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:19:10 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 8, merged 12 component
+2025-05-04 18:19:10 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:19:10 INFO  ren0 [octree.h:533] root weight: 3.135e+09 (3135043840.000000)
+2025-05-04 18:19:10 INFO  ren0 [octree.h:534] splitting threshold: 3.135e+06 (3135044.000000)
+2025-05-04 18:19:10 INFO  ren0 [octree.h:533] root weight: 2.946e+06 (2946495.000000)
+2025-05-04 18:19:10 INFO  ren0 [octree.h:534] splitting threshold: 2.946e+03 (2946.495117)
+2025-05-04 18:19:10 INFO  ren0 [octree.h:549] node count: 1261 -> 1449 -> 1205
+
+2025-05-04 18:19:10 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:19:10 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:19:10 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 2.9124m
+2025-05-04 18:19:10 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 4.49858e-05 mean = [4.06489 -1.01142 -2.60642] covariance = [[0.564871 0.00600238 -1.38561][0.00600238 0.581537 0.501918][-1.38561 0.501918 17.6903]]
+weight = 0.00285456 mean = [-2.39435 2.4341 -1.76571] covariance = [[0.466995 0.0116218 -0.0567479][0.0116218 0.414227 0.158184][-0.0567479 0.158184 0.154256]]
+weight = 0.559233 mean = [-2.18636 3.75263 -2.1024] covariance = [[0.0305555 0.0225485 -0.0139587][0.0225485 0.110401 -0.0404419][-0.0139587 -0.0404419 0.0816778]]
+weight = 0.0102774 mean = [0.302722 1.06525 3.55948] covariance = [[19.2029 4.75883 -1.76898][4.75883 2.37762 0.892949][-1.76898 0.892949 6.00186]]
+weight = 0.00306348 mean = [2.10612 1.21017 0.596744] covariance = [[1.90783 -1.98692 -1.62304][-1.98692 8.00561 -0.911316][-1.62304 -0.911316 5.65634]]
+weight = 0.000820356 mean = [3.88986 2.03294 3.48646] covariance = [[0.323458 0.132607 -0.105529][0.132607 4.45152 3.01499][-0.105529 3.01499 3.63351]]
+weight = 0.0262124 mean = [-2.19916 3.61875 -1.93094] covariance = [[0.00215522 -0.000954256 0.00110375][-0.000954256 0.0310303 -0.00879252][0.00110375 -0.00879252 0.00296988]]
+weight = 0.397494 mean = [-2.4281 1.48686 -2.1005] covariance = [[2.5753 0.203702 0.190828][0.203702 1.76208 -0.076148][0.190828 -0.076148 2.25224]]
+]
+2025-05-04 18:19:10 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1205
+]
+2025-05-04 18:19:10 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:19:10 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 8 iteration
+2025-05-04 18:19:10 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:19:46 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 35.3980s
+2025-05-04 18:19:47 INFO  ren0 [PMMFocalGuidingIntegrator] Got 6742318 non-zero samples
+2025-05-04 18:19:47 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:19:47 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:19:47 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:20:06 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:20:08 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:20:43 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:21:02 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:21:02 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 8
+2025-05-04 18:21:02 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:02 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:02 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:02 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 289.433105
+2025-05-04 18:21:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:03 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:12 INFO  ren0 [gaussian_mixture_model.h:384] split score: 141468.328125
+2025-05-04 18:21:12 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:12 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:21:19 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2889465.250000
+2025-05-04 18:21:30 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1309.406372
+2025-05-04 18:21:37 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1976.352905
+2025-05-04 18:21:38 INFO  ren0 [gaussian_mixture_model.h:384] split score: 684.149048
+2025-05-04 18:21:39 INFO  ren0 [gaussian_mixture_model.h:384] split score: 20703988.000000
+2025-05-04 18:21:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 35436.562500
+2025-05-04 18:21:51 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 16
+2025-05-04 18:21:51 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 16
+2025-05-04 18:21:51 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 14, merged 4 component
+2025-05-04 18:21:51 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:21:51 INFO  ren0 [octree.h:533] root weight: 3.339e+09 (3339389696.000000)
+2025-05-04 18:21:51 INFO  ren0 [octree.h:534] splitting threshold: 3.339e+06 (3339389.750000)
+2025-05-04 18:21:51 INFO  ren0 [octree.h:533] root weight: 2.999e+06 (2998609.500000)
+2025-05-04 18:21:51 INFO  ren0 [octree.h:534] splitting threshold: 2.999e+03 (2998.609619)
+2025-05-04 18:21:52 INFO  ren0 [octree.h:549] node count: 1205 -> 1394 -> 1273
+
+2025-05-04 18:21:52 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:21:52 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:21:52 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 2.0937m
+2025-05-04 18:21:52 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 2.85863e-05 mean = [3.96751 -0.775166 -0.956996] covariance = [[0.825649 0.328574 1.03717][0.328574 0.951075 4.2795][1.03717 4.2795 29.6982]]
+weight = 0.00734462 mean = [-2.55315 2.20611 -1.83733] covariance = [[0.210098 -0.0421203 -0.03496][-0.0421203 0.168713 0.0538914][-0.03496 0.0538914 0.0866536]]
+weight = 0.161104 mean = [-2.27846 3.29114 -1.80429] covariance = [[0.0268446 0.019246 -0.00873929][0.019246 0.115773 -0.0414054][-0.00873929 -0.0414054 0.063502]]
+weight = 2.85863e-05 mean = [4.25061 0.34927 6.74866] covariance = [[0.825649 0.328574 1.03717][0.328574 0.951075 4.2795][1.03717 4.2795 29.6982]]
+weight = 0.00352657 mean = [2.10564 0.733281 0.500093] covariance = [[0.82688 -0.533445 -0.456268][-0.533445 2.63279 -0.317855][-0.456268 -0.317855 2.59255]]
+weight = 0.000801217 mean = [3.68909 1.70837 3.73935] covariance = [[0.386257 0.206718 -0.167444][0.206718 1.7682 0.0693842][-0.167444 0.0693842 1.67956]]
+weight = 0.0248663 mean = [-2.20693 3.72495 -1.95869] covariance = [[0.00117073 -0.000482878 0.000526668][-0.000482878 0.0121937 -0.00299108][0.000526668 -0.00299108 0.00100168]]
+weight = 0.286597 mean = [-1.91221 1.74053 -1.28377] covariance = [[1.1603 -0.0828487 -0.0463308][-0.0828487 1.3325 -0.287792][-0.0463308 -0.287792 1.95582]]
+weight = 0.00734462 mean = [-2.19842 2.59898 -1.69832] covariance = [[0.210098 -0.0421203 -0.03496][-0.0421203 0.168713 0.0538914][-0.03496 0.0538914 0.0866536]]
+weight = 0.161104 mean = [-2.18272 3.75172 -2.05646] covariance = [[0.0268446 0.019246 -0.00873929][0.019246 0.115773 -0.0414054][-0.00873929 -0.0414054 0.063502]]
+weight = 0.0349882 mean = [0.636662 0.916205 3.39826] covariance = [[7.18971 1.71508 0.73172][1.71508 1.68421 -0.0479601][0.73172 -0.0479601 3.45247]]
+weight = 0.000801217 mean = [3.37079 1.082 5.43554] covariance = [[0.386257 0.206718 -0.167444][0.206718 1.7682 0.0693842][-0.167444 0.0693842 1.67956]]
+weight = 0.0248663 mean = [-2.19879 3.56896 -1.91936] covariance = [[0.00117073 -0.000482878 0.000526668][-0.000482878 0.0121937 -0.00299108][0.000526668 -0.00299108 0.00100168]]
+weight = 0.286597 mean = [-3.10468 0.934134 -1.61614] covariance = [[1.1603 -0.0828487 -0.0463308][-0.0828487 1.3325 -0.287792][-0.0463308 -0.287792 1.95582]]
+]
+2025-05-04 18:21:52 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1273
+]
+2025-05-04 18:21:52 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:21:52 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 9 iteration
+2025-05-04 18:21:52 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:22:28 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 35.9163s
+2025-05-04 18:22:28 INFO  ren0 [PMMFocalGuidingIntegrator] Got 5850139 non-zero samples
+2025-05-04 18:22:28 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:22:28 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:22:28 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:22:58 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:22:59 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:23:45 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:24:14 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:24:14 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 14
+2025-05-04 18:24:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 471.835785
+2025-05-04 18:24:22 INFO  ren0 [gaussian_mixture_model.h:384] split score: 144165.546875
+2025-05-04 18:24:28 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2434457.750000
+2025-05-04 18:24:28 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:24:28 INFO  ren0 [gaussian_mixture_model.h:384] split score: 364.069153
+2025-05-04 18:24:34 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1938.509644
+2025-05-04 18:24:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1069.920044
+2025-05-04 18:24:35 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:24:35 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:24:35 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 17, merged 4 component
+2025-05-04 18:24:35 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:24:35 INFO  ren0 [octree.h:533] root weight: 5.076e+09 (5075643392.000000)
+2025-05-04 18:24:35 INFO  ren0 [octree.h:534] splitting threshold: 5.076e+06 (5075643.500000)
+2025-05-04 18:24:35 INFO  ren0 [octree.h:533] root weight: 3.238e+06 (3237676.250000)
+2025-05-04 18:24:35 INFO  ren0 [octree.h:534] splitting threshold: 3.238e+03 (3237.676514)
+2025-05-04 18:24:35 INFO  ren0 [octree.h:549] node count: 1273 -> 1496 -> 1306
+
+2025-05-04 18:24:35 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:24:35 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.001
+
+2025-05-04 18:24:35 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 2.1280m
+2025-05-04 18:24:35 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 2.40055e-05 mean = [3.73435 -0.67592 0.03868] covariance = [[0.51352 0.0632348 0.344858][0.0632348 0.254945 0.747583][0.344858 0.747583 4.82842]]
+weight = 0.00711267 mean = [-2.28614 2.07762 -1.96636] covariance = [[0.115618 0.0112422 0.00137633][0.0112422 0.118011 0.0171856][0.00137633 0.0171856 0.0691869]]
+weight = 0.0762097 mean = [-2.22349 3.50885 -1.89059] covariance = [[0.0260414 0.00688328 -0.00599516][0.00688328 0.0752964 -0.00342852][-0.00599516 -0.00342852 0.0616191]]
+weight = 2.40055e-05 mean = [3.48729 -1.17108 -3.06678] covariance = [[0.51352 0.0632348 0.344858][0.0632348 0.254945 0.747583][0.344858 0.747583 4.82842]]
+weight = 1.12289e-05 mean = [4.15265 0.228202 5.85527] covariance = [[0.499195 0.344811 2.22198][0.344811 0.803998 4.14009][2.22198 4.14009 26.9539]]
+weight = 0.000130191 mean = [3.17331 1.93731 5.75862] covariance = [[0.436089 0.0348745 -0.233487][0.0348745 1.67004 0.0066924][-0.233487 0.0066924 1.56891]]
+weight = 0.00711267 mean = [-2.66425 2.32858 -1.86814] covariance = [[0.115618 0.0112422 0.00137633][0.0112422 0.118011 0.0171856][0.00137633 0.0171856 0.0691869]]
+weight = 0.0762097 mean = [-2.28586 3.1348 -1.78567] covariance = [[0.0260414 0.00688328 -0.00599516][0.00688328 0.0752964 -0.00342852][-0.00599516 -0.00342852 0.0616191]]
+weight = 0.012931 mean = [-2.22601 2.54557 -1.786] covariance = [[0.144613 -0.0383809 -0.0189156][-0.0383809 0.172567 0.0581524][-0.0189156 0.0581524 0.0973715]]
+weight = 1.12289e-05 mean = [3.54034 -0.906368 -1.48612] covariance = [[0.499195 0.344811 2.22198][0.344811 0.803998 4.14009][2.22198 4.14009 26.9539]]
+weight = 0.00343202 mean = [2.2502 0.33982 -0.852393] covariance = [[0.892983 -0.928143 -0.802216][-0.928143 2.12199 1.35366][-0.802216 1.35366 4.28614]]
+weight = 0.15954 mean = [-2.17135 3.71659 -1.98126] covariance = [[0.0237581 0.013238 -0.00384045][0.013238 0.0812509 -0.00964844][-0.00384045 -0.00964844 0.0604996]]
+weight = 0.000130191 mean = [3.52226 1.93057 3.99554] covariance = [[0.436089 0.0348745 -0.233487][0.0348745 1.67004 0.0066924][-0.233487 0.0066924 1.56891]]
+weight = 0.0313348 mean = [-1.96124 0.507822 3.58286] covariance = [[18.4853 3.71231 -1.18377][3.71231 1.8263 -0.418374][-1.18377 -0.418374 2.56168]]
+weight = 0.000383107 mean = [3.4412 1.35241 5.76034] covariance = [[0.313516 0.0633726 0.244505][0.0633726 1.04272 0.0690187][0.244505 0.0690187 0.967656]]
+weight = 0.0541626 mean = [-2.19897 3.64453 -1.93667] covariance = [[0.00076474 4.24941e-05 0.000291885][4.24941e-05 0.0181829 -0.00412681][0.000291885 -0.00412681 0.00121554]]
+weight = 0.571241 mean = [-2.52254 1.44624 -1.85504] covariance = [[1.49975 0.315219 -0.222419][0.315219 1.89817 -0.337271][-0.222419 -0.337271 2.18327]]
+]
+2025-05-04 18:24:35 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1306
+]
+2025-05-04 18:24:35 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:24:35 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 10 iteration
+2025-05-04 18:24:35 INFO  ren0 [PMMFocalGuidingIntegrator] starting now, iterative narrowing is applied
+2025-05-04 18:24:36 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:25:12 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 36.0795s
+2025-05-04 18:25:12 INFO  ren0 [PMMFocalGuidingIntegrator] Got 6025196 non-zero samples
+2025-05-04 18:25:12 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:25:12 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:25:12 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:25:48 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:25:49 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:26:45 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:27:20 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:27:20 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 17
+2025-05-04 18:27:20 INFO  ren0 [gaussian_mixture_model.h:384] split score: 605.116394
+2025-05-04 18:27:26 INFO  ren0 [gaussian_mixture_model.h:384] split score: 161771.421875
+2025-05-04 18:27:30 INFO  ren0 [gaussian_mixture_model.h:384] split score: 6552724.500000
+2025-05-04 18:27:30 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:27:30 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:27:30 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 8, merged 13 component
+2025-05-04 18:27:30 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:27:30 INFO  ren0 [octree.h:533] root weight: 4.333e+11 (433323311104.000000)
+2025-05-04 18:27:30 INFO  ren0 [octree.h:534] splitting threshold: 4.333e+08 (433323328.000000)
+2025-05-04 18:27:30 INFO  ren0 [octree.h:533] root weight: 2.441e+06 (2441322.250000)
+2025-05-04 18:27:30 INFO  ren0 [octree.h:534] splitting threshold: 2.441e+03 (2441.322266)
+2025-05-04 18:27:30 INFO  ren0 [octree.h:549] node count: 1306 -> 1775 -> 1634
+
+2025-05-04 18:27:30 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:27:30 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 18:27:30 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 2.3145m
+2025-05-04 18:27:30 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.00842986 mean = [-2.1918 2.33854 -1.87731] covariance = [[0.123299 -0.0168539 -0.000188459][-0.0168539 0.17927 0.0310361][-0.000188459 0.0310361 0.0486253]]
+weight = 1.39858e-05 mean = [3.80322 -0.459498 0.0586411] covariance = [[0.195869 0.192696 0.902979][0.192696 0.424082 1.86686][0.902979 1.86686 11.2664]]
+weight = 0.000703615 mean = [1.64598 1.67982 -0.734603] covariance = [[1.78783 -2.1622 -1.84616][-2.1622 3.84275 1.84917][-1.84616 1.84917 5.48411]]
+weight = 0.225718 mean = [-2.19212 3.54978 -1.95461] covariance = [[0.0112356 0.00651695 -0.00314268][0.00651695 0.0581183 -0.00990937][-0.00314268 -0.00990937 0.0316524]]
+weight = 0.00621583 mean = [-1.17765 1.09444 2.88594] covariance = [[7.77256 3.41489 -1.42912][3.41489 3.26742 -1.22974][-1.42912 -1.22974 2.84649]]
+weight = 0.000126039 mean = [3.2044 2.17413 5.83595] covariance = [[0.463989 -0.272187 0.144823][-0.272187 1.11659 0.926876][0.144823 0.926876 3.69428]]
+weight = 0.633333 mean = [-2.19879 3.61875 -1.93286] covariance = [[0.000195369 -9.58154e-05 7.56529e-05][-9.58154e-05 0.00531443 -0.00106134][7.56529e-05 -0.00106134 0.000327492]]
+weight = 0.12546 mean = [-2.21412 1.73699 -1.98877] covariance = [[0.787039 0.128681 -0.0582417][0.128681 2.30423 -0.293249][-0.0582417 -0.293249 1.0628]]
+]
+2025-05-04 18:27:30 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1634
+]
+2025-05-04 18:27:30 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:27:31 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 11 iteration
+2025-05-04 18:27:31 INFO  ren0 [PMMFocalGuidingIntegrator] starting now, iterative narrowing is applied
+2025-05-04 18:27:31 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:28:07 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 36.6694s
+2025-05-04 18:28:08 INFO  ren0 [PMMFocalGuidingIntegrator] Got 8536595 non-zero samples
+2025-05-04 18:28:08 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:28:08 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:28:08 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:28:32 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:28:34 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:29:17 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 8
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:29:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 563351.875000
+2025-05-04 18:29:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 163.443146
+2025-05-04 18:30:01 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1730.860229
+2025-05-04 18:30:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 307479296.000000
+2025-05-04 18:30:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:30:23 INFO  ren0 [gaussian_mixture_model.h:384] split score: 23086.433594
+2025-05-04 18:30:24 INFO  ren0 [gaussian_mixture_model.h:384] split score: 749.063660
+2025-05-04 18:30:27 INFO  ren0 [gaussian_mixture_model.h:384] split score: 46327451648.000000
+2025-05-04 18:30:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 477799.187500
+2025-05-04 18:30:41 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 16
+2025-05-04 18:30:41 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 16
+2025-05-04 18:30:41 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 15, merged 2 component
+2025-05-04 18:30:41 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:30:41 INFO  ren0 [octree.h:533] root weight: 6.127e+16 (61267304750514176.000000)
+2025-05-04 18:30:41 INFO  ren0 [octree.h:534] splitting threshold: 6.127e+13 (61267305824256.000000)
+2025-05-04 18:30:41 INFO  ren0 [octree.h:533] root weight: 1.256e+06 (1256067.125000)
+2025-05-04 18:30:41 INFO  ren0 [octree.h:534] splitting threshold: 1.256e+03 (1256.067139)
+2025-05-04 18:30:41 INFO  ren0 [octree.h:549] node count: 1634 -> 1952 -> 1778
+
+2025-05-04 18:30:41 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:30:41 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 18:30:41 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 2.5578m
+2025-05-04 18:30:41 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.000634125 mean = [-2.30246 2.62826 -1.80133] covariance = [[0.0345267 -0.00415381 -0.0125088][-0.00415381 0.0646205 0.00323512][-0.0125088 0.00323512 0.0219263]]
+weight = 1.04884e-06 mean = [3.79299 -0.114809 1.4125] covariance = [[0.0323403 0.0186956 0.0959174][0.0186956 0.555763 2.14661][0.0959174 2.14661 9.11347]]
+weight = 5.27664e-05 mean = [1.12191 1.85053 0.0798192] covariance = [[0.954615 -0.596907 -0.894029][-0.596907 1.41728 0.623852][-0.894029 0.623852 3.41699]]
+weight = 0.0174669 mean = [-2.19996 3.64605 -1.95455] covariance = [[0.0018763 0.000373179 -0.000454776][0.000373179 0.00716017 -8.94228e-05][-0.000454776 -8.94228e-05 0.00563306]]
+weight = 0.000466145 mean = [-2.6787 2.14849 -3.02807] covariance = [[2.26605 0.211289 2.16136][0.211289 1.53687 -1.73978][2.16136 -1.73978 9.97882]]
+weight = 0.471958 mean = [-2.20222 3.63617 -1.93662] covariance = [[3.5246e-05 -6.44872e-06 9.28598e-06][-6.44872e-06 0.000411824 -7.77139e-05][9.28598e-06 -7.77139e-05 3.62225e-05]]
+weight = 0.00941185 mean = [-2.28704 2.44623 -1.92038] covariance = [[0.165459 -0.0436876 -0.0521582][-0.0436876 0.896291 0.0208058][-0.0521582 0.0208058 0.274752]]
+weight = 0.000634125 mean = [-2.23756 2.27418 -1.84595] covariance = [[0.0345267 -0.00415381 -0.0125088][-0.00415381 0.0646205 0.00323512][-0.0125088 0.00323512 0.0219263]]
+weight = 1.04884e-06 mean = [3.83765 0.895906 5.68121] covariance = [[0.0323403 0.0186956 0.0959174][0.0186956 0.555763 2.14661][0.0959174 2.14661 9.11347]]
+weight = 5.27664e-05 mean = [2.04109 1.01308 -2.44095] covariance = [[0.954615 -0.596907 -0.894029][-0.596907 1.41728 0.623852][-0.894029 0.623852 3.41699]]
+weight = 0.0174669 mean = [-2.20914 3.52681 -1.94506] covariance = [[0.0018763 0.000373179 -0.000454776][0.000373179 0.00716017 -8.94228e-05][-0.000454776 -8.94228e-05 0.00563306]]
+weight = 0.000466145 mean = [-1.5759 1.34073 1.42079] covariance = [[2.26605 0.211289 2.16136][0.211289 1.53687 -1.73978][2.16136 -1.73978 9.97882]]
+weight = 1.89042e-05 mean = [3.35766 1.23862 5.20463] covariance = [[0.16571 -0.256799 -0.180073][-0.256799 1.42553 0.791853][-0.180073 0.791853 1.20304]]
+weight = 0.471958 mean = [-2.20161 3.6075 -1.93091] covariance = [[3.5246e-05 -6.44872e-06 9.28598e-06][-6.44872e-06 0.000411824 -7.77139e-05][9.28598e-06 -7.77139e-05 3.62225e-05]]
+weight = 0.00941185 mean = [-2.20378 1.10831 -1.97186] covariance = [[0.165459 -0.0436876 -0.0521582][-0.0436876 0.896291 0.0208058][-0.0521582 0.0208058 0.274752]]
+]
+2025-05-04 18:30:41 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1778
+]
+2025-05-04 18:30:41 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:30:41 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 12 iteration
+2025-05-04 18:30:41 INFO  ren0 [PMMFocalGuidingIntegrator] starting now, iterative narrowing is applied
+2025-05-04 18:30:41 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:31:17 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 35.8118s
+2025-05-04 18:31:18 INFO  ren0 [PMMFocalGuidingIntegrator] Got 12159653 non-zero samples
+2025-05-04 18:31:18 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:31:18 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:31:18 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:32:20 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:32:23 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:34:04 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:35:07 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:35:07 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 15
+2025-05-04 18:35:25 INFO  ren0 [gaussian_mixture_model.h:384] split score: 147335392.000000
+2025-05-04 18:35:26 INFO  ren0 [gaussian_mixture_model.h:384] split score: 399.706207
+2025-05-04 18:35:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 211266.406250
+2025-05-04 18:35:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 16979154944.000000
+2025-05-04 18:36:05 INFO  ren0 [gaussian_mixture_model.h:384] split score: 359375.750000
+2025-05-04 18:36:05 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:36:05 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:36:05 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 17, merged 3 component
+2025-05-04 18:36:05 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:36:06 INFO  ren0 [octree.h:533] root weight: 7.947e+17 (794674159278882816.000000)
+2025-05-04 18:36:06 INFO  ren0 [octree.h:534] splitting threshold: 7.947e+14 (794674176458752.000000)
+2025-05-04 18:36:06 INFO  ren0 [octree.h:533] root weight: 6.280e+05 (628033.562500)
+2025-05-04 18:36:06 INFO  ren0 [octree.h:534] splitting threshold: 6.280e+02 (628.033569)
+2025-05-04 18:36:06 INFO  ren0 [octree.h:549] node count: 1778 -> 2117 -> 1961
+
+2025-05-04 18:36:06 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:36:06 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 18:36:06 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 4.8109m
+2025-05-04 18:36:06 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 4.73392e-05 mean = [-2.17164 3.91809 -1.982] covariance = [[0.0103321 0.0464883 -0.00845181][0.0464883 0.449294 -0.060364][-0.00845181 -0.060364 0.0119127]]
+weight = 3.93916e-06 mean = [-0.0581358 2.47592 -0.630095] covariance = [[5.51566 -2.91856 3.0989][-2.91856 1.70664 -1.60995][3.0989 -1.60995 2.46339]]
+weight = 0.00132413 mean = [-2.20766 3.6146 -1.92821] covariance = [[0.000284976 2.27187e-05 -5.31592e-05][2.27187e-05 0.00102813 -4.87541e-05][-5.31592e-05 -4.87541e-05 0.000981612]]
+weight = 3.47991e-05 mean = [-1.98308 4.04008 -1.37652] covariance = [[0.385222 0.329309 0.396837][0.329309 1.51007 0.358463][0.396837 0.358463 1.59268]]
+weight = 4.73392e-05 mean = [-2.27151 2.97035 -1.85313] covariance = [[0.0103321 0.0464883 -0.00845181][0.0464883 0.449294 -0.060364][-0.00845181 -0.060364 0.0119127]]
+weight = 3.93916e-06 mean = [-3.34637 4.24115 -2.63296] covariance = [[5.51566 -2.91856 3.0989][-2.91856 1.70664 -1.60995][3.0989 -1.60995 2.46339]]
+weight = 0.00132413 mean = [-2.20481 3.65304 -1.95346] covariance = [[0.000284976 2.27187e-05 -5.31592e-05][2.27187e-05 0.00102813 -4.87541e-05][-5.31592e-05 -4.87541e-05 0.000981612]]
+weight = 7.87831e-06 mean = [-1.55989 3.22955 -2.01406] covariance = [[17.6944 -10.8637 -2.24351][-10.8637 6.83307 1.38896][-2.24351 1.38896 0.776185]]
+weight = 0.00263184 mean = [-2.20816 3.61448 -1.93993] covariance = [[0.000349062 0.000751917 2.95205e-05][0.000751917 0.00974218 0.00105246][2.95205e-05 0.00105246 0.000987276]]
+weight = 3.47991e-05 mean = [-2.57838 2.7547 -2.83707] covariance = [[0.385222 0.329309 0.396837][0.329309 1.51007 0.358463][0.396837 0.358463 1.59268]]
+weight = 6.95981e-05 mean = [-2.11582 3.27476 -1.44061] covariance = [[0.726553 -1.3584 2.38856][-1.3584 5.27964 -7.70853][2.38856 -7.70853 12.5507]]
+weight = 2.82251e-06 mean = [3.9531 0.0227884 3.98204] covariance = [[0.542091 -1.01052 -1.07284][-1.01052 2.5907 2.18596][-1.07284 2.18596 2.32628]]
+weight = 0.991562 mean = [-2.20605 3.62839 -1.93727] covariance = [[1.21734e-05 -1.23901e-05 6.87394e-06][-1.23901e-05 0.000279987 -5.84851e-05][6.87394e-06 -5.84851e-05 1.88553e-05]]
+weight = 0.00290518 mean = [-2.21421 3.2765 -1.94198] covariance = [[0.027942 0.0432747 -0.00803671][0.0432747 3.62387 0.0314709][-0.00803671 0.0314709 0.0419748]]
+]
+2025-05-04 18:36:06 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1961
+]
+2025-05-04 18:36:06 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:36:06 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 13 iteration
+2025-05-04 18:36:06 INFO  ren0 [PMMFocalGuidingIntegrator] starting now, iterative narrowing is applied
+2025-05-04 18:36:06 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:36:43 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 36.8585s
+2025-05-04 18:36:44 INFO  ren0 [PMMFocalGuidingIntegrator] Got 9785696 non-zero samples
+2025-05-04 18:36:44 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:36:44 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:36:44 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:37:32 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:37:34 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:38:49 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:39:36 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:39:36 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 14
+2025-05-04 18:39:50 INFO  ren0 [gaussian_mixture_model.h:384] split score: 972745472.000000
+2025-05-04 18:39:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:39:57 INFO  ren0 [gaussian_mixture_model.h:384] split score: 737086.687500
+2025-05-04 18:40:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 113562664960.000000
+2025-05-04 18:40:19 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1683398.500000
+2025-05-04 18:40:33 INFO  ren0 [gaussian_mixture_model.h:384] split score: 634390784.000000
+2025-05-04 18:40:33 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:40:34 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:40:34 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:40:40 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1156133.875000
+2025-05-04 18:40:40 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:40:40 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:40:40 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 17, merged 3 component
+2025-05-04 18:40:41 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:40:41 INFO  ren0 [octree.h:533] root weight: 2.252e+18 (2251658526441078784.000000)
+2025-05-04 18:40:41 INFO  ren0 [octree.h:534] splitting threshold: 2.252e+15 (2251658616635392.000000)
+2025-05-04 18:40:41 INFO  ren0 [octree.h:533] root weight: 3.140e+05 (314016.781250)
+2025-05-04 18:40:41 INFO  ren0 [octree.h:534] splitting threshold: 3.140e+02 (314.016785)
+2025-05-04 18:40:41 INFO  ren0 [octree.h:549] node count: 1961 -> 2239 -> 1946
+
+2025-05-04 18:40:41 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:40:41 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 18:40:41 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 3.9634m
+2025-05-04 18:40:41 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 5.61352e-06 mean = [-2.17342 3.91168 -1.97812] covariance = [[0.00227636 0.00957602 -0.00193065][0.00957602 0.0950934 -0.0140438][-0.00193065 -0.0140438 0.00302665]]
+weight = 5.61352e-06 mean = [-2.21827 3.47568 -1.91286] covariance = [[0.00227636 0.00957602 -0.00193065][0.00957602 0.0950934 -0.0140438][-0.00193065 -0.0140438 0.00302665]]
+weight = 4.12404e-06 mean = [-2.00377 4.01793 -1.42874] covariance = [[0.0927341 0.0774651 0.0984308][0.0774651 0.350165 0.0849454][0.0984308 0.0849454 0.390499]]
+weight = 5.61249e-06 mean = [-2.18155 3.82504 -1.95953] covariance = [[0.00418658 0.0269622 -0.00386533][0.0269622 0.25303 -0.0314184][-0.00386533 -0.0314184 0.0048174]]
+weight = 4.12404e-06 mean = [-2.29903 3.42806 -2.17565] covariance = [[0.0927341 0.0774651 0.0984308][0.0774651 0.350165 0.0849454][0.0984308 0.0849454 0.390499]]
+weight = 5.61249e-06 mean = [-2.25791 3.11372 -1.87074] covariance = [[0.00418658 0.0269622 -0.00386533][0.0269622 0.25303 -0.0314184][-0.00386533 -0.0314184 0.0048174]]
+weight = 1.86732e-06 mean = [-2.05103 3.53077 -1.95324] covariance = [[4.58265 -2.81191 -0.581263][-2.81191 1.76408 0.359393][-0.581263 0.359393 0.190278]]
+weight = 0.00131742 mean = [-2.20443 3.62433 -1.93573] covariance = [[0.000110356 8.77125e-05 3.46289e-05][8.77125e-05 0.00153939 -2.82323e-05][3.46289e-05 -2.82323e-05 0.00036946]]
+weight = 8.24807e-06 mean = [-2.29225 3.41791 -2.14815] covariance = [[0.225641 0.386499 0.416364][0.386499 1.06617 0.825015][0.416364 0.825015 1.1508]]
+weight = 1.64961e-05 mean = [-2.18279 3.54147 -1.81732] covariance = [[0.179118 -0.349912 0.605864][-0.349912 1.36441 -1.98776][0.605864 -1.98776 3.20322]]
+weight = 0.997937 mean = [-2.20343 3.62389 -1.93433] covariance = [[2.64027e-05 -4.09133e-05 2.50815e-05][-4.09133e-05 0.000132936 -5.37761e-05][2.50815e-05 -5.37761e-05 3.01287e-05]]
+weight = 0.000688604 mean = [-2.20617 3.542 -1.93621] covariance = [[0.0067814 0.0144349 -0.0017872][0.0144349 0.970845 0.0105783][-0.0017872 0.0105783 0.010038]]
+]
+2025-05-04 18:40:41 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1946
+]
+2025-05-04 18:40:41 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:40:41 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 14 iteration
+2025-05-04 18:40:41 INFO  ren0 [PMMFocalGuidingIntegrator] starting now, iterative narrowing is applied
+2025-05-04 18:40:41 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 18:41:15 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 33.6292s
+2025-05-04 18:41:15 INFO  ren0 [PMMFocalGuidingIntegrator] Got 8092471 non-zero samples
+2025-05-04 18:41:15 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 18:41:15 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 18:41:15 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 18:41:50 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 18:41:52 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 18:42:45 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 18:43:19 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 18:43:19 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 12
+2025-05-04 18:43:30 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2854325504.000000
+2025-05-04 18:43:40 INFO  ren0 [gaussian_mixture_model.h:384] split score: 4815726080.000000
+2025-05-04 18:43:40 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:43:41 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:43:47 INFO  ren0 [gaussian_mixture_model.h:384] split score: 6895609.000000
+2025-05-04 18:43:58 INFO  ren0 [gaussian_mixture_model.h:384] split score: 2935822848.000000
+2025-05-04 18:43:58 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:43:59 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:44:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 11452106.000000
+2025-05-04 18:44:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:44:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:44:17 INFO  ren0 [gaussian_mixture_model.h:384] split score: 1824801920.000000
+2025-05-04 18:44:17 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 18:44:23 INFO  ren0 [gaussian_mixture_model.h:384] split score: 6887186.500000
+2025-05-04 18:44:32 INFO  ren0 [gaussian_mixture_model.h:384] split score: 92342640640.000000
+2025-05-04 18:44:32 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 18:44:32 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 18:44:32 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 13, merged 8 component
+2025-05-04 18:44:32 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 18:44:32 INFO  ren0 [octree.h:533] root weight: 1.270e+18 (1270325569514373120.000000)
+2025-05-04 18:44:32 INFO  ren0 [octree.h:534] splitting threshold: 1.270e+15 (1270325564145664.000000)
+2025-05-04 18:44:32 INFO  ren0 [octree.h:533] root weight: 1.570e+05 (157008.390625)
+2025-05-04 18:44:32 INFO  ren0 [octree.h:534] splitting threshold: 1.570e+02 (157.008392)
+2025-05-04 18:44:32 INFO  ren0 [octree.h:549] node count: 1946 -> 1969 -> 1927
+
+2025-05-04 18:44:32 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 18:44:32 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 18:44:32 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 3.2967m
+2025-05-04 18:44:32 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 5.22812e-06 mean = [-2.20782 3.61677 -1.93719] covariance = [[0.00156318 0.0113674 -0.00162103][0.0113674 0.107405 -0.0140815][-0.00162103 -0.0140815 0.00210496]]
+weight = 0.000175128 mean = [-2.20621 3.61289 -1.93829] covariance = [[4.67144e-05 -1.04617e-05 1.96901e-05][-1.04617e-05 0.000356536 -1.06484e-05][1.96901e-05 -1.06484e-05 9.65871e-05]]
+weight = 1.91467e-06 mean = [-2.22926 3.57994 -1.98651] covariance = [[0.0598688 0.106428 0.114643][0.106428 0.286325 0.23273][0.114643 0.23273 0.311407]]
+weight = 3.82934e-06 mean = [-2.20355 3.60815 -1.90948] covariance = [[0.0421403 -0.0828821 0.142926][-0.0828821 0.322867 -0.469823][0.142926 -0.469823 0.756202]]
+weight = 0.000175128 mean = [-2.20718 3.63959 -1.93946] covariance = [[4.67144e-05 -1.04617e-05 1.96901e-05][-1.04617e-05 0.000356536 -1.06484e-05][1.96901e-05 -1.06484e-05 9.65871e-05]]
+weight = 0.999479 mean = [-2.20479 3.6257 -1.93576] covariance = [[1.65166e-05 -2.43203e-05 1.27369e-05][-2.43203e-05 6.7768e-05 -2.65327e-05][1.27369e-05 -2.65327e-05 1.48182e-05]]
+weight = 0.000159881 mean = [-2.20946 3.60952 -1.93806] covariance = [[0.00169118 0.00344024 -0.00043844][0.00344024 0.231453 0.00274399][-0.00043844 0.00274399 0.00241708]]
+]
+2025-05-04 18:44:32 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 1927
+]
+2025-05-04 18:44:32 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-6.3658, -1.5274, -4.73046], max=[5.27597, 8.04131, 10.0598]]
+Nodes count: 577
+]
+2025-05-04 18:44:33 INFO  ren0 [PMMFocalGuidingIntegrator] Finished training phase. Starting real rendering.
+2025-05-04 18:44:33 INFO  ren0 [PMMFocalGuidingIntegrator] Starting render job (1280x720, 256 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 19:13:19 INFO  ren0 [PMMFocalGuidingIntegrator] Remaining rendering time: 1280
+2025-05-04 19:13:19 INFO  ren0 [PMMFocalGuidingIntegrator] rendered 256 samples per pixel in 28.7748m.
+2025-05-04 19:13:19 INFO  ren0 [RenderJob] Render time: 1.2004h
+2025-05-04 19:13:19 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 28.7749m
+2025-05-04 19:13:19 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 5.22812e-06 mean = [-2.20782 3.61677 -1.93719] covariance = [[0.00156318 0.0113674 -0.00162103][0.0113674 0.107405 -0.0140815][-0.00162103 -0.0140815 0.00210496]]
+weight = 0.000175128 mean = [-2.20621 3.61289 -1.93829] covariance = [[4.67144e-05 -1.04617e-05 1.96901e-05][-1.04617e-05 0.000356536 -1.06484e-05][1.96901e-05 -1.06484e-05 9.65871e-05]]
+weight = 1.91467e-06 mean = [-2.22926 3.57994 -1.98651] covariance = [[0.0598688 0.106428 0.114643][0.106428 0.286325 0.23273][0.114643 0.23273 0.311407]]
+weight = 3.82934e-06 mean = [-2.20355 3.60815 -1.90948] covariance = [[0.0421403 -0.0828821 0.142926][-0.0828821 0.322867 -0.469823][0.142926 -0.469823 0.756202]]
+weight = 0.000175128 mean = [-2.20718 3.63959 -1.93946] covariance = [[4.67144e-05 -1.04617e-05 1.96901e-05][-1.04617e-05 0.000356536 -1.06484e-05][1.96901e-05 -1.06484e-05 9.65871e-05]]
+weight = 0.999479 mean = [-2.20479 3.6257 -1.93576] covariance = [[1.65166e-05 -2.43203e-05 1.27369e-05][-2.43203e-05 6.7768e-05 -2.65327e-05][1.27369e-05 -2.65327e-05 1.48182e-05]]
+weight = 0.000159881 mean = [-2.20946 3.60952 -1.93806] covariance = [[0.00169118 0.00344024 -0.00043844][0.00344024 0.231453 0.00274399][-0.00043844 0.00274399 0.00241708]]
+]
+2025-05-04 19:13:19 INFO  ren0 [HDRFilm] Writing image to "/mitsuba/scene/dining-room/dining-room.exr" ..
+2025-05-04 19:13:19 INFO  main [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/conductor.so [Smooth conductor]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/disk.so [Disk intersection primitive]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/ply.so [PLY mesh loader]
+    -  plugins/pmm_focal_guiding.so [PMM focal guiding path tracer]
+    -  plugins/rectangle.so [Rectangle intersection primitive]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 1.834 G
+    -  Shadow rays traced : 641.492 M
+
+  * Path tracer :
+    -  Average path length : 7.79 (1.84 G / 235.93 M)
+    -  Sampled from Converging : 736.356 M
+    -  Sampled from Diverging : 178
+    -  Sampled from GMM : 736.356 M
+
+  * Texture system :
+    -  Filtered texture lookups : 21.17 % (32.59 M of 153.93 M)
+------------------------------------------------------------

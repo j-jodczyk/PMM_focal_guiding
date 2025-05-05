@@ -1,0 +1,560 @@
+2025-05-04 22:48:26 INFO  main [mitsuba.cpp:274] Mitsuba version 0.6.0 (Linux, 64 bit), Copyright (c) 2017 Wenzel Jakob
+2025-05-04 22:48:26 INFO  main [mitsuba.cpp:377] Parsing scene description from "scene/camera-obscura/camera-obscura.xml" ..
+2025-05-04 22:48:26 INFO  main [scenehandler.cpp:675] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 10): Parsing included file "pmm_focal_guiding.xml" ..
+2025-05-04 22:48:26 INFO  main [PluginManager] Loading plugin "plugins/pmm_focal_guiding.so" ..
+2025-05-04 22:48:26 INFO  main [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 22:48:26 INFO  main [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 22:48:26 INFO  main [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 22:48:26 INFO  main [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 22:48:26 INFO  main [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 22:48:26 INFO  main [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 22:48:26 INFO  main [PMMFocalGuidingIntegrator] Saving to: 
+2025-05-04 22:48:26 INFO  main [PMMFocalGuidingIntegrator] mis fraction: 0.500000
+2025-05-04 22:48:26 INFO  main [PMMFocalGuidingIntegrator] GMM params: alpha = 0.250000, split_th = 0.500000, merge_th = 0.500000, min_num_comp = 3, max_num_comp = 20, init = Random
+2025-05-04 22:48:26 INFO  main [PMMFocalGuidingIntegrator] iterationCount: 5
+2025-05-04 22:48:26 INFO  main [PMMFocalGuidingIntegrator] PMMFocalGuidingIntegrator
+  maxDepth = 40,
+  rrDepth = 14,
+  strictNormals = 1
+  gmm = GMM[
+]
+]
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "budget" in element "integrator"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "dumpPrimaryRays" in element "integrator"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "dumpScene" in element "integrator"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "normalBinning" in element "integrator"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "samplingMode" in element "integrator"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/../_integrators/pmm_focal_guiding.xml" (near line 49): Unqueried attribute "unboundedSplatting" in element "integrator"
+2025-05-04 22:48:26 INFO  main [PluginManager] Loading plugin "plugins/independent.so" ..
+2025-05-04 22:48:26 INFO  main [PluginManager] Loading plugin "plugins/hdrfilm.so" ..
+2025-05-04 22:48:26 INFO  main [PluginManager] Loading plugin "plugins/gaussian.so" ..
+2025-05-04 22:48:26 INFO  main [PluginManager] Loading plugin "plugins/perspective.so" ..
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 34): Unqueried attribute "far_clip" in element "sensor"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 34): Unqueried attribute "fov_axis" in element "sensor"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 34): Unqueried attribute "near_clip" in element "sensor"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 34): Unqueried attribute "principal_point_offset_x" in element "sensor"
+2025-05-04 22:48:26 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 34): Unqueried attribute "principal_point_offset_y" in element "sensor"
+2025-05-04 22:48:26 INFO  main [PluginManager] Loading plugin "plugins/diffuse.so" ..
+2025-05-04 22:48:26 INFO  main [PluginManager] Loading plugin "plugins/bitmap.so" ..
+2025-05-04 22:48:26 INFO  main [BitmapTexture] Loading texture "dry_ground_rocks_diff_4k.jpg"
+2025-05-04 22:48:27 INFO  main [PluginManager] Loading plugin "plugins/lanczos.so" ..
+2025-05-04 22:48:27 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/camera-obscura/textures/dry_ground_rocks_diff_4k.mip" ..
+2025-05-04 22:48:29 INFO  main [PluginManager] Loading plugin "plugins/twosided.so" ..
+2025-05-04 22:48:29 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 73): Unqueried attribute "specular" in element "bsdf"
+2025-05-04 22:48:29 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 79): Unqueried attribute "specular" in element "bsdf"
+2025-05-04 22:48:29 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 85): Unqueried attribute "specular" in element "bsdf"
+2025-05-04 22:48:29 INFO  main [BitmapTexture] Loading texture "red_bricks_04_diff_4k.jpg"
+2025-05-04 22:48:29 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/camera-obscura/textures/red_bricks_04_diff_4k.mip" ..
+2025-05-04 22:48:31 INFO  main [BitmapTexture] Loading texture "plank_flooring_diff_4k.jpg"
+2025-05-04 22:48:31 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/camera-obscura/textures/plank_flooring_diff_4k.mip" ..
+2025-05-04 22:48:33 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 129): Unqueried attribute "specular" in element "bsdf"
+2025-05-04 22:48:33 INFO  main [PluginManager] Loading plugin "plugins/spot.so" ..
+2025-05-04 22:48:33 INFO  main [PluginManager] Loading plugin "plugins/area.so" ..
+2025-05-04 22:48:33 INFO  main [PluginManager] Loading plugin "plugins/rectangle.so" ..
+2025-05-04 22:48:33 INFO  main [PluginManager] Loading plugin "plugins/point.so" ..
+2025-05-04 22:48:33 INFO  main [PluginManager] Loading plugin "plugins/ply.so" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Statue.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Statue": Loaded 2666 triangles, 1321 vertices (62.2 KiB in 3 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Floor.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Floor": Loaded 1024 triangles, 562 vertices (23.0 KiB in 1 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_012.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_012": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_011.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_011": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_010.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_010": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_009.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_009": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_008.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_008": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_007.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_007": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_006.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_006": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_024.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_024": Loaded 68 triangles, 80 vertices (2.4 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_023.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_023": Loaded 60 triangles, 74 vertices (2.1 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_022.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_022": Loaded 36 triangles, 50 vertices (1.4 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_021.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_021": Loaded 72 triangles, 96 vertices (2.7 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_020.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_020": Loaded 12 triangles, 24 vertices (624 B in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_019.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_019": Loaded 76 triangles, 84 vertices (2.5 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Cube_002.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Cube_002": Loaded 22720 triangles, 13355 vertices (683.6 KiB in 30 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_018.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_018": Loaded 44 triangles, 58 vertices (1.6 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Plane_017.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Plane_017": Loaded 120 triangles, 144 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_035.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_035": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_034.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_034": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_033.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_033": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_032.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_032": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_031.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_031": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_030.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_030": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_029.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_029": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_028.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_028": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_027.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_027": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_026.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_026": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_025.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_025": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_023.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_023": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_022.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_022": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_021.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_021": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_020.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_020": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Circle_019.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Circle_019": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base-Wall_Lamp_01_metal.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base-Wall_Lamp_01_metal": Loaded 32064 triangles, 16200 vertices (882.0 KiB in 40 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base-Wall_Lamp_01_Plastic.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base-Wall_Lamp_01_Plastic": Loaded 1440 triangles, 760 vertices (40.6 KiB in 1 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light": Loaded 1024 triangles, 678 vertices (33.2 KiB in 1 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_001.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_001": Loaded 1024 triangles, 678 vertices (33.2 KiB in 1 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 2 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support_001.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support_001": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 2 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 61 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth_001.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth_001": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 60 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_translucency": Loaded 384 triangles, 216 vertices (11.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency_001.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_translucency_001": Loaded 384 triangles, 216 vertices (11.2 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_001-Wall_Lamp_01_metal.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_001-Wall_Lamp_01_metal": Loaded 8016 triangles, 4088 vertices (221.7 KiB in 10 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_001-Wall_Lamp_01_Plastic.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_001-Wall_Lamp_01_Plastic": Loaded 360 triangles, 200 vertices (10.5 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_002.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_002": Loaded 1024 triangles, 678 vertices (33.2 KiB in 1 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_003.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_003": Loaded 1024 triangles, 678 vertices (33.2 KiB in 1 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support_002.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support_002": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 2 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support_003.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support_003": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 2 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth_002.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth_002": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 61 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth_003.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth_003": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 60 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency_002.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_translucency_002": Loaded 96 triangles, 60 vertices (3.0 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency_003.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Wall_Lamp_01_translucency_003": Loaded 96 triangles, 60 vertices (3.0 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Walls.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Walls": Loaded 48 triangles, 72 vertices (2.0 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Walls_Plate.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Walls_Plate": Loaded 4320 triangles, 2397 vertices (97.4 KiB in 4 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Walls_Top.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Walls_Top": Loaded 300 triangles, 199 vertices (7.4 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Walls_Bottom.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Walls_Bottom": Loaded 300 triangles, 200 vertices (7.4 KiB in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Walls_W_Outer.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Walls_W_Outer": Loaded 12 triangles, 12 vertices (384 B in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Walls_W_Ceiling.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Walls_W_Ceiling": Loaded 2 triangles, 4 vertices (104 B in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "Walls_W_Floor.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "Walls_W_Floor": Loaded 2 triangles, 4 vertices (104 B in 0 ms).
+2025-05-04 22:48:33 INFO  main [PLYLoader] Loading geometry from "ND-Filter.ply" ..
+2025-05-04 22:48:33 INFO  main [PLYLoader] "ND-Filter": Loaded 2 triangles, 4 vertices (104 B in 0 ms).
+2025-05-04 22:48:33 INFO  ren0 [KDTreeBase] Constructing a SAH kd-tree (271149 primitives) ..
+2025-05-04 22:48:36 INFO  ren0 [KDTreeBase] Finished -- took 2804 ms.
+2025-05-04 22:48:36 INFO  ren0 [PMMFocalGuidingIntegrator] Starting preprocess
+2025-05-04 22:48:36 INFO  ren0 [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 22:48:36 INFO  ren0 [octree.h:533] root weight: 4.096e-17 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:534] splitting threshold: 4.096e-20 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:549] node count: 585 -> 585 -> 585
+
+2025-05-04 22:48:36 INFO  ren0 [octree.h:533] root weight: 8.000e-20 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:534] splitting threshold: 8.000e-23 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:549] node count: 1 -> 585 -> 585
+
+2025-05-04 22:48:36 INFO  ren0 [octree.h:533] root weight: 4.096e-17 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:534] splitting threshold: 4.096e-20 (0.000000)
+2025-05-04 22:48:36 INFO  ren0 [octree.h:549] node count: 585 -> 585 -> 585
+
+2025-05-04 22:48:36 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 585
+]
+2025-05-04 22:48:36 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 585
+]
+2025-05-04 22:48:36 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+]
+2025-05-04 22:48:36 INFO  ren0 [PMMFocalGuidingIntegrator] Starting training... (5) iterations
+2025-05-04 22:48:36 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 0 iteration
+2025-05-04 22:48:36 INFO  ren0 [SamplingIntegrator] Starting render job (1920x1080, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 22:50:12 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 1.5905m
+2025-05-04 22:50:28 INFO  ren0 [PMMFocalGuidingIntegrator] Got 140143453 non-zero samples
+2025-05-04 22:50:28 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 22:50:38 INFO  ren0 [gaussian_mixture_model.h:881] Reduced the number of samples
+2025-05-04 22:50:38 INFO  ren0 [gaussian_mixture_model.h:557] Random
+2025-05-04 22:50:38 INFO  ren0 [gaussian_mixture_model.h:623] Starting initialization using random value from the first batch
+2025-05-04 22:50:39 INFO  ren0 [gaussian_mixture_model.h:636] Initialized using random value from the first batch
+2025-05-04 22:50:39 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 22:50:39 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 22:52:20 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 22:52:23 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 22:54:57 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 22:56:34 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 22:56:34 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 20
+2025-05-04 22:56:34 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 22:56:34 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 5, merged 15 component
+2025-05-04 22:56:34 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 22:56:34 INFO  ren0 [octree.h:533] root weight: 3.232e+08 (323230784.000000)
+2025-05-04 22:56:34 INFO  ren0 [octree.h:534] splitting threshold: 3.232e+05 (323230.812500)
+2025-05-04 22:56:34 INFO  ren0 [octree.h:533] root weight: 4.096e-17 (0.000000)
+2025-05-04 22:56:34 INFO  ren0 [octree.h:534] splitting threshold: 4.096e-20 (0.000000)
+2025-05-04 22:56:34 INFO  ren0 [octree.h:549] node count: 585 -> 1170 -> 1101
+
+2025-05-04 22:56:34 INFO  ren0 [octree.h:549] node count: 585 -> 585 -> 577
+
+2025-05-04 22:56:34 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 22:56:34 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 6.3681m
+2025-05-04 22:56:34 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.237128 mean = [2.11794 1.96366 -4.62072] covariance = [[3.08517 -0.267507 -0.151539][-0.267507 0.936482 -0.0869801][-0.151539 -0.0869801 0.38423]]
+weight = 0.0725834 mean = [-0.827046 0.85393 -2.63524] covariance = [[3.11459 -1.09593 -1.0069][-1.09593 1.12959 0.465031][-1.0069 0.465031 0.976731]]
+weight = 0.343067 mean = [0.417658 1.8441 -0.506527] covariance = [[1.84528 0.0494785 -0.560015][0.0494785 0.918611 0.0754161][-0.560015 0.0754161 1.7619]]
+weight = 0.250459 mean = [3.67743 1.37027 -1.23182] covariance = [[1.65617 0.165733 -0.613412][0.165733 0.94103 -0.134644][-0.613412 -0.134644 4.95586]]
+weight = 0.0967633 mean = [0.652666 1.3541 2.66517] covariance = [[1.04487 -0.025708 -0.0183772][-0.025708 0.450187 0.0521557][-0.0183772 0.0521557 1.69034]]
+]
+2025-05-04 22:56:34 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 1101
+]
+2025-05-04 22:56:34 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 577
+]
+2025-05-04 22:56:34 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 1 iteration
+2025-05-04 22:56:34 INFO  ren0 [SamplingIntegrator] Starting render job (1920x1080, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 22:57:14 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 39.1131s
+2025-05-04 22:57:17 INFO  ren0 [PMMFocalGuidingIntegrator] Got 28523605 non-zero samples
+2025-05-04 22:57:17 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 22:57:17 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 22:57:17 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 22:58:07 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 22:58:14 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 22:59:58 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 5
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:00:52 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:01:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 87499.921875
+2025-05-04 23:01:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:01:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:01:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:01:35 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:02:04 INFO  ren0 [gaussian_mixture_model.h:384] split score: 49473.742188
+2025-05-04 23:02:51 INFO  ren0 [gaussian_mixture_model.h:384] split score: 102803.671875
+2025-05-04 23:03:43 INFO  ren0 [gaussian_mixture_model.h:384] split score: 155441.953125
+2025-05-04 23:04:30 INFO  ren0 [gaussian_mixture_model.h:384] split score: 96659.054688
+2025-05-04 23:04:30 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 10
+2025-05-04 23:04:30 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 10
+2025-05-04 23:04:30 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 9, merged 2 component
+2025-05-04 23:04:30 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 23:04:30 INFO  ren0 [octree.h:533] root weight: 3.660e+08 (366021600.000000)
+2025-05-04 23:04:30 INFO  ren0 [octree.h:534] splitting threshold: 3.660e+05 (366021.625000)
+2025-05-04 23:04:30 INFO  ren0 [octree.h:533] root weight: 1.280e-18 (0.000000)
+2025-05-04 23:04:30 INFO  ren0 [octree.h:534] splitting threshold: 1.280e-21 (0.000000)
+2025-05-04 23:04:30 INFO  ren0 [octree.h:549] node count: 1101 -> 1696 -> 1184
+
+2025-05-04 23:04:30 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 23:04:30 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 23:04:30 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 7.2794m
+2025-05-04 23:04:30 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.0142889 mean = [0.117049 1.83517 -4.04856] covariance = [[3.45536 0.16215 -0.589021][0.16215 0.743076 -0.245691][-0.589021 -0.245691 0.649635]]
+weight = 0.40121 mean = [-3.56359 0.007593 -1.57755] covariance = [[2.09632 0.485719 -0.732086][0.485719 0.406264 -0.240414][-0.732086 -0.240414 0.404559]]
+weight = 0.0629446 mean = [-3.40835 -0.181655 -2.31023] covariance = [[4.32766 2.11701 1.5789][2.11701 1.27784 0.988224][1.5789 0.988224 1.28613]]
+weight = 0.00622139 mean = [0.537481 1.3299 2.00278] covariance = [[0.810591 0.0324659 0.0269716][0.0324659 0.391874 0.0108706][0.0269716 0.0108706 0.856773]]
+weight = 0.0142889 mean = [2.73386 2.03093 -4.58927] covariance = [[3.45536 0.16215 -0.589021][0.16215 0.743076 -0.245691][-0.589021 -0.245691 0.649635]]
+weight = 0.40121 mean = [-1.53563 0.564427 -2.34719] covariance = [[2.09632 0.485719 -0.732086][0.485719 0.406264 -0.240414][-0.732086 -0.240414 0.404559]]
+weight = 0.0629446 mean = [-0.515774 1.33764 -1.05592] covariance = [[4.32766 2.11701 1.5789][2.11701 1.27784 0.988224][1.5789 0.988224 1.28613]]
+weight = 0.0306694 mean = [3.07348 1.44654 -1.63105] covariance = [[2.53886 0.113925 0.0391696][0.113925 0.632206 -0.0594424][0.0391696 -0.0594424 3.43051]]
+weight = 0.00622139 mean = [1.10901 1.39565 3.1901] covariance = [[0.810591 0.0324659 0.0269716][0.0324659 0.391874 0.0108706][0.0269716 0.0108706 0.856773]]
+]
+2025-05-04 23:04:30 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 1184
+]
+2025-05-04 23:04:30 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 577
+]
+2025-05-04 23:04:31 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 2 iteration
+2025-05-04 23:04:31 INFO  ren0 [SamplingIntegrator] Starting render job (1920x1080, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 23:05:13 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 41.4791s
+2025-05-04 23:05:17 INFO  ren0 [PMMFocalGuidingIntegrator] Got 43586877 non-zero samples
+2025-05-04 23:05:17 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 23:05:17 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 23:05:17 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 23:07:37 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 23:07:47 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 23:11:48 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 23:14:11 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 23:14:11 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 9
+2025-05-04 23:15:29 INFO  ren0 [gaussian_mixture_model.h:384] split score: 95470.359375
+2025-05-04 23:16:40 INFO  ren0 [gaussian_mixture_model.h:384] split score: 453862.500000
+2025-05-04 23:17:21 INFO  ren0 [gaussian_mixture_model.h:384] split score: 234025.281250
+2025-05-04 23:17:23 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:17:43 INFO  ren0 [gaussian_mixture_model.h:384] split score: 63517.027344
+2025-05-04 23:17:45 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:17:47 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:17:49 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:17:49 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:17:49 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:17:49 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:19:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 150904.515625
+2025-05-04 23:19:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:19:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:19:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:19:08 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:20:14 INFO  ren0 [gaussian_mixture_model.h:384] split score: 898410.937500
+2025-05-04 23:21:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 293576.906250
+2025-05-04 23:22:20 INFO  ren0 [gaussian_mixture_model.h:384] split score: 102322.429688
+2025-05-04 23:23:32 INFO  ren0 [gaussian_mixture_model.h:384] split score: 53865.355469
+2025-05-04 23:23:32 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 18
+2025-05-04 23:23:32 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 18
+2025-05-04 23:23:32 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 15, merged 4 component
+2025-05-04 23:23:32 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 23:23:33 INFO  ren0 [octree.h:533] root weight: 8.669e+08 (866946688.000000)
+2025-05-04 23:23:33 INFO  ren0 [octree.h:534] splitting threshold: 8.669e+05 (866946.750000)
+2025-05-04 23:23:33 INFO  ren0 [octree.h:533] root weight: 6.400e-19 (0.000000)
+2025-05-04 23:23:33 INFO  ren0 [octree.h:534] splitting threshold: 6.400e-22 (0.000000)
+2025-05-04 23:23:33 INFO  ren0 [octree.h:549] node count: 1184 -> 1772 -> 1251
+
+2025-05-04 23:23:33 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 23:23:33 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 23:23:33 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 18.3323m
+2025-05-04 23:23:33 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.00193588 mean = [-0.567263 2.06882 -3.61558] covariance = [[3.78904 -0.777575 -0.610413][-0.777575 0.40379 0.371362][-0.610413 0.371362 2.24166]]
+weight = 0.0284761 mean = [0.625616 2.25064 -2.70458] covariance = [[5.13337 2.33085 -1.31226][2.33085 1.69514 -0.610614][-1.31226 -0.610614 0.479506]]
+weight = 0.00193588 mean = [-3.22679 2.7077 -2.66279] covariance = [[3.78904 -0.777575 -0.610413][-0.777575 0.40379 0.371362][-0.610413 0.371362 2.24166]]
+weight = 0.00351509 mean = [0.289929 1.69007 1.29692] covariance = [[0.38286 -0.339548 0.704558][-0.339548 0.574572 -1.00541][0.704558 -1.00541 2.15949]]
+weight = 0.0284761 mean = [-2.54654 0.655709 -1.87209] covariance = [[5.13337 2.33085 -1.31226][2.33085 1.69514 -0.610614][-1.31226 -0.610614 0.479506]]
+weight = 0.00351509 mean = [-0.425879 2.69152 -0.768719] covariance = [[0.38286 -0.339548 0.704558][-0.339548 0.574572 -1.00541][0.704558 -1.00541 2.15949]]
+weight = 0.0011247 mean = [-0.682513 2.12564 -3.03326] covariance = [[5.22564 -0.308902 -1.76608][-0.308902 0.770488 0.0203162][-1.76608 0.0203162 1.89404]]
+weight = 0.0309398 mean = [-1.09311 0.950954 -2.37264] covariance = [[1.43021 0.610399 -0.197732][0.610399 0.652788 -0.0276002][-0.197732 -0.0276002 0.11732]]
+weight = 0.0011247 mean = [2.49591 1.93272 -4.40006] covariance = [[5.22564 -0.308902 -1.76608][-0.308902 0.770488 0.0203162][-1.76608 0.0203162 1.89404]]
+weight = 0.0125186 mean = [-1.62587 2.69469 0.0390116] covariance = [[6.24348 -1.56919 -1.84724][-1.56919 0.553937 0.548254][-1.84724 0.548254 1.61082]]
+weight = 0.000581025 mean = [0.424074 1.8784 1.41986] covariance = [[0.774083 -0.126887 0.469824][-0.126887 0.43755 -0.388544][0.469824 -0.388544 1.72265]]
+weight = 0.0309398 mean = [0.558388 1.8456 -2.58312] covariance = [[1.43021 0.610399 -0.197732][0.610399 0.652788 -0.0276002][-0.197732 -0.0276002 0.11732]]
+weight = 0.841818 mean = [-0.302797 2.18022 -0.263498] covariance = [[1.9427 1.47462 1.256][1.47462 1.61475 1.42773][1.256 1.42773 1.34838]]
+weight = 0.0125186 mean = [1.87586 1.78052 -1.18619] covariance = [[6.24348 -1.56919 -1.84724][-1.56919 0.553937 0.548254][-1.84724 0.548254 1.61082]]
+weight = 0.000581025 mean = [1.15505 1.37702 3.22434] covariance = [[0.774083 -0.126887 0.469824][-0.126887 0.43755 -0.388544][0.469824 -0.388544 1.72265]]
+]
+2025-05-04 23:23:33 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 1251
+]
+2025-05-04 23:23:33 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 577
+]
+2025-05-04 23:23:34 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 3 iteration
+2025-05-04 23:23:34 INFO  ren0 [SamplingIntegrator] Starting render job (1920x1080, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 23:24:09 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 34.8561s
+2025-05-04 23:24:12 INFO  ren0 [PMMFocalGuidingIntegrator] Got 28330986 non-zero samples
+2025-05-04 23:24:12 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 23:24:12 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 23:24:12 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 23:26:43 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 23:26:49 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 23:30:42 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 23:33:10 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 23:33:10 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 15
+2025-05-04 23:34:00 INFO  ren0 [gaussian_mixture_model.h:384] split score: 94687.257812
+2025-05-04 23:34:26 INFO  ren0 [gaussian_mixture_model.h:384] split score: 111631.726562
+2025-05-04 23:34:28 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:35:14 INFO  ren0 [gaussian_mixture_model.h:384] split score: 63665.218750
+2025-05-04 23:35:54 INFO  ren0 [gaussian_mixture_model.h:384] split score: 233613.718750
+2025-05-04 23:36:24 INFO  ren0 [gaussian_mixture_model.h:384] split score: 94858.828125
+2025-05-04 23:36:24 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 20
+2025-05-04 23:36:24 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 20
+2025-05-04 23:36:24 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 5, merged 15 component
+2025-05-04 23:36:24 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 23:36:25 INFO  ren0 [octree.h:533] root weight: 1.380e+09 (1380487552.000000)
+2025-05-04 23:36:25 INFO  ren0 [octree.h:534] splitting threshold: 1.380e+06 (1380487.625000)
+2025-05-04 23:36:25 INFO  ren0 [octree.h:533] root weight: 3.200e-19 (0.000000)
+2025-05-04 23:36:25 INFO  ren0 [octree.h:534] splitting threshold: 3.200e-22 (0.000000)
+2025-05-04 23:36:25 INFO  ren0 [octree.h:549] node count: 1251 -> 1406 -> 767
+
+2025-05-04 23:36:25 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 23:36:25 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 23:36:25 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 12.2608m
+2025-05-04 23:36:25 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.000725371 mean = [-3.2926 2.38431 -2.57466] covariance = [[0.95369 -0.387393 -0.0579308][-0.387393 0.898129 -0.093275][-0.0579308 -0.093275 0.869222]]
+weight = 0.526683 mean = [-2.1331 1.29097 -2.3197] covariance = [[3.42893 0.758224 -0.460147][0.758224 0.753036 -0.258969][-0.460147 -0.258969 0.207055]]
+weight = 0.46229 mean = [-1.88066 0.574921 -1.73948] covariance = [[5.00295 4.91627 4.47421][4.91627 5.03332 4.6106][4.47421 4.6106 4.26043]]
+weight = 0.00752326 mean = [0.997655 1.80507 -0.789124] covariance = [[7.91218 -1.98202 -1.24293][-1.98202 1.14613 0.623373][-1.24293 0.623373 2.44446]]
+weight = 0.00277876 mean = [0.410145 1.79126 1.09889] covariance = [[0.813277 -0.337604 0.992098][-0.337604 0.861172 -1.15632][0.992098 -1.15632 3.16289]]
+]
+2025-05-04 23:36:25 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 767
+]
+2025-05-04 23:36:25 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 577
+]
+2025-05-04 23:36:25 INFO  ren0 [PMMFocalGuidingIntegrator] Rendering 4 iteration
+2025-05-04 23:36:25 INFO  ren0 [PMMFocalGuidingIntegrator] starting now, iterative narrowing is applied
+2025-05-04 23:36:26 INFO  ren0 [SamplingIntegrator] Starting render job (1920x1080, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-04 23:37:04 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 37.9398s
+2025-05-04 23:37:07 INFO  ren0 [PMMFocalGuidingIntegrator] Got 32940775 non-zero samples
+2025-05-04 23:37:07 INFO  ren0 [gaussian_mixture_model.h:875] Starting batch processing in parallel
+2025-05-04 23:37:07 INFO  ren0 [gaussian_mixture_model.h:906] Finished component cache
+2025-05-04 23:37:07 INFO  ren0 [gaussian_mixture_model.h:912] Allocated
+2025-05-04 23:38:06 INFO  ren0 [gaussian_mixture_model.h:947] Finish E step
+2025-05-04 23:38:13 INFO  ren0 [gaussian_mixture_model.h:966] Normalized responibilities
+2025-05-04 23:40:13 INFO  ren0 [gaussian_mixture_model.h:223] updating responsibiliites
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:227] Splitting and merging
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:378] components before the split: 5
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:41:15 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:42:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 212330.453125
+2025-05-04 23:42:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:42:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:42:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:42:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:42:06 INFO  ren0 [gaussian_mixture_model.h:384] split score: 0.000000
+2025-05-04 23:42:48 INFO  ren0 [gaussian_mixture_model.h:384] split score: 915421.000000
+2025-05-04 23:43:12 INFO  ren0 [gaussian_mixture_model.h:384] split score: 333279.062500
+2025-05-04 23:44:10 INFO  ren0 [gaussian_mixture_model.h:384] split score: 186235.640625
+2025-05-04 23:44:45 INFO  ren0 [gaussian_mixture_model.h:384] split score: 75375.593750
+2025-05-04 23:44:45 INFO  ren0 [gaussian_mixture_model.h:389] components after the split: 10
+2025-05-04 23:44:45 INFO  ren0 [gaussian_mixture_model.h:298] components before the merge: 10
+2025-05-04 23:44:45 INFO  ren0 [gaussian_mixture_model.h:317] components after the merge: 9, merged 2 component
+2025-05-04 23:44:46 INFO  ren0 [gaussian_mixture_model.h:971] Finish M step
+2025-05-04 23:44:46 INFO  ren0 [octree.h:533] root weight: 8.417e+09 (8416624640.000000)
+2025-05-04 23:44:46 INFO  ren0 [octree.h:534] splitting threshold: 8.417e+06 (8416625.000000)
+2025-05-04 23:44:46 INFO  ren0 [octree.h:533] root weight: 1.600e-19 (0.000000)
+2025-05-04 23:44:46 INFO  ren0 [octree.h:534] splitting threshold: 1.600e-22 (0.000000)
+2025-05-04 23:44:46 INFO  ren0 [octree.h:549] node count: 767 -> 1142 -> 936
+
+2025-05-04 23:44:46 INFO  ren0 [octree.h:549] node count: 577 -> 577 -> 577
+
+2025-05-04 23:44:46 INFO  ren0 [PMMFocalGuidingIntegrator] diverge probability: 0.000
+
+2025-05-04 23:44:46 INFO  ren0 [PMMFocalGuidingIntegrator] iteration postprocessing time: 7.7041m
+2025-05-04 23:44:46 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.000214232 mean = [-2.79551 2.07345 -2.28834] covariance = [[1.41254 -0.619017 0.838361][-0.619017 0.929209 0.00943][0.838361 0.00943 1.1601]]
+weight = 0.404545 mean = [-2.27868 1.05359 -2.19266] covariance = [[0.366524 0.0204235 -0.00865235][0.0204235 0.180279 -0.0640702][-0.00865235 -0.0640702 0.0688442]]
+weight = 0.0318067 mean = [-2.2449 2.86708 -0.160732] covariance = [[3.42046 -1.03043 -0.568184][-1.03043 0.496407 0.280579][-0.568184 0.280579 0.537031]]
+weight = 0.00717151 mean = [-1.92676 2.85404 -0.869055] covariance = [[1.65171 -0.681897 1.27616][-0.681897 0.467015 -0.625116][1.27616 -0.625116 1.35845]]
+weight = 0.000214232 mean = [-1.16587 1.34648 -1.09728] covariance = [[1.41254 -0.619017 0.838361][-0.619017 0.929209 0.00943][0.838361 0.00943 1.1601]]
+weight = 0.404545 mean = [-1.42705 1.16154 -2.24016] covariance = [[0.366524 0.0204235 -0.00865235][0.0204235 0.180279 -0.0640702][-0.00865235 -0.0640702 0.0688442]]
+weight = 0.112525 mean = [-1.59991 1.25843 -1.36575] covariance = [[0.867245 0.894669 0.756979][0.894669 1.27764 0.965806][0.756979 0.965806 0.797567]]
+weight = 0.0318067 mean = [0.355587 2.02877 -0.675378] covariance = [[3.42046 -1.03043 -0.568184][-1.03043 0.496407 0.280579][-0.568184 0.280579 0.537031]]
+weight = 0.00717151 mean = [-0.171156 2.03062 0.701243] covariance = [[1.65171 -0.681897 1.27616][-0.681897 0.467015 -0.625116][1.27616 -0.625116 1.35845]]
+]
+2025-05-04 23:44:46 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 936
+]
+2025-05-04 23:44:46 INFO  ren0 [PMMFocalGuidingIntegrator] Octree[
+AABB: AABB3[min=[-20.041, -0.209581, -38.4127], max=[20.041, 2.94557, 5.04441]]
+Nodes count: 577
+]
+2025-05-04 23:44:47 INFO  ren0 [PMMFocalGuidingIntegrator] Finished training phase. Starting real rendering.
+2025-05-04 23:44:47 INFO  ren0 [PMMFocalGuidingIntegrator] Starting render job (1920x1080, 256 samples, 12 cores, SSE2 enabled) ..
+2025-05-05 00:09:04 INFO  ren0 [PMMFocalGuidingIntegrator] Remaining rendering time: 1920
+2025-05-05 00:09:04 INFO  ren0 [PMMFocalGuidingIntegrator] rendered 256 samples per pixel in 24.2942m.
+2025-05-05 00:09:04 INFO  ren0 [RenderJob] Render time: 1.3420h
+2025-05-05 00:09:04 INFO  ren0 [PMMFocalGuidingIntegrator] iteration render time: 24.2946m
+2025-05-05 00:09:05 INFO  ren0 [PMMFocalGuidingIntegrator] GMM[
+weight = 0.000214232 mean = [-2.79551 2.07345 -2.28834] covariance = [[1.41254 -0.619017 0.838361][-0.619017 0.929209 0.00943][0.838361 0.00943 1.1601]]
+weight = 0.404545 mean = [-2.27868 1.05359 -2.19266] covariance = [[0.366524 0.0204235 -0.00865235][0.0204235 0.180279 -0.0640702][-0.00865235 -0.0640702 0.0688442]]
+weight = 0.0318067 mean = [-2.2449 2.86708 -0.160732] covariance = [[3.42046 -1.03043 -0.568184][-1.03043 0.496407 0.280579][-0.568184 0.280579 0.537031]]
+weight = 0.00717151 mean = [-1.92676 2.85404 -0.869055] covariance = [[1.65171 -0.681897 1.27616][-0.681897 0.467015 -0.625116][1.27616 -0.625116 1.35845]]
+weight = 0.000214232 mean = [-1.16587 1.34648 -1.09728] covariance = [[1.41254 -0.619017 0.838361][-0.619017 0.929209 0.00943][0.838361 0.00943 1.1601]]
+weight = 0.404545 mean = [-1.42705 1.16154 -2.24016] covariance = [[0.366524 0.0204235 -0.00865235][0.0204235 0.180279 -0.0640702][-0.00865235 -0.0640702 0.0688442]]
+weight = 0.112525 mean = [-1.59991 1.25843 -1.36575] covariance = [[0.867245 0.894669 0.756979][0.894669 1.27764 0.965806][0.756979 0.965806 0.797567]]
+weight = 0.0318067 mean = [0.355587 2.02877 -0.675378] covariance = [[3.42046 -1.03043 -0.568184][-1.03043 0.496407 0.280579][-0.568184 0.280579 0.537031]]
+weight = 0.00717151 mean = [-0.171156 2.03062 0.701243] covariance = [[1.65171 -0.681897 1.27616][-0.681897 0.467015 -0.625116][1.27616 -0.625116 1.35845]]
+]
+2025-05-05 00:09:05 INFO  ren0 [HDRFilm] Writing image to "/mitsuba/scene/camera-obscura/camera-obscura.exr" ..
+2025-05-05 00:09:05 INFO  main [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/gaussian.so [Gaussian reconstruction filter]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/ply.so [PLY mesh loader]
+    -  plugins/pmm_focal_guiding.so [PMM focal guiding path tracer]
+    -  plugins/point.so [Point emitter]
+    -  plugins/rectangle.so [Rectangle intersection primitive]
+    -  plugins/spot.so [Spot light]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 1.473 G
+    -  Shadow rays traced : 1.260 G
+
+  * Path tracer :
+    -  Average path length : 2.78 (1.47 G / 530.84 M)
+    -  Sampled from Converging : 631.366 M
+    -  Sampled from Diverging : 146
+    -  Sampled from GMM : 631.366 M
+
+  * Texture system :
+    -  Average EWA samples / lookup : 2.91 (386.46 M / 133.03 M)
+    -  Filtered texture lookups : 39.95 % (95.97 M of 240.19 M)
+    -  Lookups with clamped anisotropy : 0.00 % (0.00 of 95.97 M)
+------------------------------------------------------------
