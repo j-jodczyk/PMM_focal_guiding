@@ -439,8 +439,6 @@ public:
         mitsuba::Vector dir;
         bool isDiverging = false;
         bool isGuided = false;
-        
-        Eigen::VectorXd gmmSample = Eigen::VectorXd::Zero(3);
 
         if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
             // sample BSDF
@@ -460,6 +458,7 @@ public:
             }
 
             result *= bsdfPdf;
+            dir = bRec.its.toWorld(bRec.wo);
             // Log(EInfo, "bsdf (before /wo) %f", result);
 
         } else {
@@ -469,7 +468,7 @@ public:
 
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
 
-            gmmSample = m_gmm.sample(rRec);
+            Eigen::VectorXd gmmSample = m_gmm.sample(rRec);
             mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
             dir = endPoint - bRec.its.p;
             bRec.wo = normalize(dir);
@@ -495,13 +494,13 @@ public:
             }
         }
 
-        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, rRec.its.p, gmmSample, isDiverging);
+        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, rRec.its.p, dir, isDiverging);
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
 
         result /= woPdf;
-        if (result.average() > 1)
+        if (result.average() > 1 && isGuided)
             Log(EInfo, ("isGuided: %d, result: " + result.toString() + " woPdf: %f, bsdfPdf: %f, gmmPdf: %f").c_str(), isGuided, woPdf, bsdfPdf, gmmPdf);
 
         return result;
@@ -515,13 +514,13 @@ public:
         const BSDF* bsdf,
         const BSDFSamplingRecord& bRec,
         const Point &origin,
-        Eigen::VectorXd gmmSample,
+        mitsuba::Vector dir,
         bool isDiverging
     ) const {
         gmmPdf = 0.0f;
 
         auto type = bsdf->getType();
-        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding || gmmSample.isZero() // EDelta = scattering into a discrete set of directions; Eall = any kind of scattering
+        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding // EDelta = scattering into a discrete set of directions; Eall = any kind of scattering
         ) {
             woPdf = bsdfPdf = bsdf->pdf(bRec);
             return;
@@ -529,10 +528,6 @@ public:
 
         bsdfPdf = bsdf->pdf(bRec);
         assert(std::isfinite(bsdfPdf));
-
-        mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
-        auto dir = (origin - endPoint);
-        // auto cosTheta = std::max(1e-4f, std::abs(Frame::cosTheta(bRec.wo)));
 
         gmmPdf = isDiverging ? m_octreeDiverging.splatPdf(origin, dir, m_gmm) : m_octree.splatPdf(origin, dir, m_gmm);
         assert(std::isfinite(gmmPdf));
@@ -848,9 +843,9 @@ public:
                     if (currentIntersectionData.woPdf == 0) {
                         continue;
                     }
-                    m_octree.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  currentIntersectionData.woPdf / (1 - divergeProbability));
+                    m_octree.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / (1 - divergeProbability));
                     if (endpointIsGlossy && divergeProbability != 0) {
-                        m_octreeDiverging.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  currentIntersectionData.woPdf / divergeProbability);
+                        m_octreeDiverging.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / divergeProbability);
                     }
                 }
 
