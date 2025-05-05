@@ -313,6 +313,7 @@ private:
 
             bhattacharyyaCoefficients.maxCoeff(&i, &j);
             maxBC = bhattacharyyaCoefficients(i, j);
+            SLog(mitsuba::EInfo, "merge maxBC = %f", maxBC);
         } while(maxBC > mergingThreshold && mergeCount < maxMergeCount);
         SLog(mitsuba::EInfo, "components after the merge: %d, merged %d component", getNumActiveComponents(), mergeCount);
     }

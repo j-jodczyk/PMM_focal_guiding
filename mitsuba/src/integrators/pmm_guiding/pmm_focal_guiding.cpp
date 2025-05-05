@@ -438,7 +438,8 @@ public:
         Spectrum result;
         mitsuba::Vector dir;
         bool isDiverging = false;
-
+        bool isGuided = false;
+        
         Eigen::VectorXd gmmSample = Eigen::VectorXd::Zero(3);
 
         if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
@@ -464,6 +465,7 @@ public:
         } else {
             // sample guiding distribution
             ++samplesFromGMMCount; // add to statistics
+            isGuided = true;
 
             sample.x = (sample.x - bsdfSamplingFraction) / (1 - bsdfSamplingFraction);
 
@@ -498,7 +500,11 @@ public:
             return Spectrum{0.0f};
         }
 
-        return result / woPdf;
+        result /= woPdf;
+        if (result.average() > 1)
+            Log(EInfo, ("isGuided: %d, result: " + result.toString() + " woPdf: %f, bsdfPdf: %f, gmmPdf: %f").c_str(), isGuided, woPdf, bsdfPdf, gmmPdf);
+
+        return result;
     }
 
     void pdfMat(
@@ -581,6 +587,8 @@ public:
                     && (!m_hideEmitters || scattered)) {
                     const Spectrum envmapRadiance = rRec.scene->evalEnvironment(ray);
                     Li += throughput * envmapRadiance;
+                    if (Li.average() > 1e4)
+                        Log(EInfo, ("1 " + Li.toString() + " " + throughput.toString()).c_str());
                     currentIntersectionData.emission = ContributionAndThroughput{envmapRadiance, Spectrum{1.0f}};
                 }
                 break;
@@ -593,6 +601,8 @@ public:
                 && (!m_hideEmitters || scattered)) {
                 const Spectrum emittedRadiance = rRec.its.Le(-ray.d);
                 Li += throughput * emittedRadiance;
+                if (Li.average() > 1e4)
+                    Log(EInfo, ("2 " + Li.toString() + " " + throughput.toString()).c_str());
 
                 currentIntersectionData.emission.contribution = emittedRadiance;
             }
@@ -602,6 +612,8 @@ public:
             if (rRec.its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance)) {
                 const Spectrum subsurfaceScatteredRadiance = rRec.its.LoSub(rRec.scene, rRec.sampler, -ray.d, rRec.depth);
                 Li += throughput * subsurfaceScatteredRadiance;
+                if (Li.average() > 1e4)
+                    Log(EInfo, ("3 " + Li.toString() + " " + throughput.toString()).c_str());
 
                 currentIntersectionData.emission.contribution += subsurfaceScatteredRadiance;
             }
@@ -651,6 +663,8 @@ public:
                         Float weight = miWeight(dRec.pdf, bsdfPdf);
 
                         Li += throughput * value * bsdfVal * weight;
+                        if (Li.average() > 1e4)
+                            Log(EInfo, ("4 " + Li.toString() + " " + throughput.toString()).c_str());
                         // if (shouldUseGuiding) {
                         //     Log(EInfo, "Li after direct sampling %f", Li.average());
                         // Log(EInfo, ("throughput = " + throughput.toString() + " value = " + value.toString() + " bsdfVal = " + bsdfVal.toString() + " weight = %f").c_str(), weight);
@@ -737,6 +751,8 @@ public:
                     rRec.scene->pdfEmitterDirect(dRec) : 0;
                 Float weight = miWeight(woPdf, lumPdf);
                 Li += throughput * value * weight;
+                if (Li.average() > 1e4)
+                    Log(EInfo, ("5 " + Li.toString() + " " + throughput.toString()).c_str());
 
                 currentIntersectionData.bsdfDirectLight = ContributionAndThroughput{value, bsdfWeight*weight};
                 currentIntersectionData.bsdfMiWeight = weight;
@@ -813,7 +829,7 @@ public:
                     // do nothing
                 } else {
                     float clampedPdf = std::max(minPdf, currentIntersectionData.woPdf);
-                    float weight = clampedLight.average() / clampedPdf;
+                    // float weight = clampedLight.average() / clampedPdf;
                     // Log(EInfo, "clampedLight: %f, clampedPdf: %f, weight: %f", clampedLight.average(), clampedPdf, weight);
                     // Log(EInfo, "bsdfDirect: %f, neeDirect: %f, emitted: %f, rest: %f", bsdfLight.average(), neeLight.average(), emissionLight.average(), (currentIntersectionData.bsdfDirectLight.contribution*currentIntersectionData.bsdfMiWeight).average());
                     const BSDF *endpointBSDF = currentIntersectionData.its.getBSDF();
@@ -832,9 +848,9 @@ public:
                     if (currentIntersectionData.woPdf == 0) {
                         continue;
                     }
-                    m_octree.splat(ray.o, ray.d, splatDistance, weight, samples,  currentIntersectionData.woPdf / (1 - divergeProbability));
+                    m_octree.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  currentIntersectionData.woPdf / (1 - divergeProbability));
                     if (endpointIsGlossy && divergeProbability != 0) {
-                        m_octreeDiverging.splat(ray.o, ray.d, splatDistance, weight, samples,  currentIntersectionData.woPdf / divergeProbability);
+                        m_octreeDiverging.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  currentIntersectionData.woPdf / divergeProbability);
                     }
                 }
 
@@ -846,6 +862,9 @@ public:
             }
             intersectionData->clear();
         }
+
+        if (Li.average() > 1e4)
+            Log(EInfo, Li.toString().c_str());
 
         return Li;
     }
