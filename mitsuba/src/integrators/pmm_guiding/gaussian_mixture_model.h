@@ -542,16 +542,14 @@ public:
 
     float pdf(const Eigen::VectorXd& x) {
         float totalPdf = 0;
-        float totalWeight = 0;
 
         for (const auto& component: components) {
             if (component.getWeight() < 1e-6f)
                 continue;
             totalPdf += componentPdf(component, x);
-            totalWeight += component.getWeight();
         }
 
-        return totalPdf / totalWeight;
+        return totalPdf;
     }
 
     void init(const std::vector<WeightedSample>& batch) {

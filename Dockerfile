@@ -73,7 +73,7 @@ COPY --from=builder /usr/local /usr/local
 COPY --from=builder /mitsuba .
 
 # Set default scene file
-ENV SCENE_FILE scene/modern-hall/modern-hall.xml
+ENV SCENE_FILE scene/dining-room/dining-room.xml
 
 # Use the environment variable for the scene file
 CMD ["sh", "-c", "mitsuba $SCENE_FILE"]

@@ -28,8 +28,8 @@ def create_visualization_folders(root):
 
 
 def run(root_dir):
-    log_file_path = f"{root_dir}/mitsuba.DESKTOP-06NEMHS.log"
-    image_path = f"../scenes/dining-room/Reference.png"
+    log_file_path = f"{root_dir}/mitsuba.5e532cb36840.log"
+    image_path = f"../scenes/modern-hall/Reference.png"
     GMMs, valid_samples, intersection_data, octrees = parse_log_file(log_file_path)
     aabb = octrees[0]["main_aabb"]
     nodes = octrees[0]["leaf_nodes"]

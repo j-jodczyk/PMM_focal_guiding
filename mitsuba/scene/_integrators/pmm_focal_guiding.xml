@@ -4,7 +4,7 @@
 	<default name="budget" value="30" />
 	<default name="treeThreshold" value="0.001" />
 
-	<default name="trainingIterations" value="10" />
+	<default name="trainingIterations" value="10"/>
 
 	<default name="normalBinning" value="disabled" />
 	<default name="dumpScene" value="false" />
@@ -14,7 +14,7 @@
 	<default name="trainingSamples" value="4" />
 
 	<default name="gmmAlpha" value="0.25" />
-	<default name="gmmSplittingThreshold" value="0.5" />
+	<default name="gmmSplittingThreshold" value="100" />
 	<default name="gmmMergingThreshold" value="0.5" />
 	<default name="gmmMinNumComp" value="3" />
 	<default name="gmmMaxNumComp" value="20" />
@@ -36,14 +36,14 @@
 		<boolean name="unboundedSplatting" value="$unboundedSplatting" />
 		<integer name="samplingMode" value="$samplingMode" />
 		<boolean name="dumpPrimaryRays" value="$dumpPrimaryRays" />
-		<integer name="renderMaxSeconds" value="36000" />
+		<integer name="renderMaxSeconds" value="60" />
 
 		<float name="gmm.alpha" value="$gmmAlpha" />
 		<float name="gmm.splittingThreshold" value="$gmmSplittingThreshold" />
 		<float name="gmm.mergingThreshold" value="$gmmMergingThreshold" />
 		<integer name="gmm.minNumComp" value="$gmmMinNumComp" />
 		<integer name="gmm.maxNumComp" value="$gmmMaxNumComp" />
-		<string name="gmm.initMethod" value="Random" />
+		<string name="gmm.initMethod" value="Uniform" />
 
 		<float name="tree.threshold" value="$treeThreshold" />
 	</integrator>

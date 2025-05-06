@@ -470,8 +470,8 @@ public:
 
             Eigen::VectorXd gmmSample = m_gmm.sample(rRec);
             mitsuba::Point endPoint(gmmSample[0], gmmSample[1], gmmSample[2]);
-            dir = endPoint - bRec.its.p;
-            bRec.wo = normalize(dir);
+            dir = normalize(endPoint - bRec.its.p);
+            bRec.wo = dir;
             bRec.wo = bRec.its.toLocal(bRec.wo);
 
             isDiverging = sample.x < divergeProbability;
@@ -529,8 +529,10 @@ public:
         bsdfPdf = bsdf->pdf(bRec);
         assert(std::isfinite(bsdfPdf));
 
-        gmmPdf = isDiverging ? m_octreeDiverging.splatPdf(origin, dir, m_gmm) : m_octree.splatPdf(origin, dir, m_gmm);
+        gmmPdf = isDiverging ? m_octreeDiverging.splatPdf(origin, -dir, m_gmm) : m_octree.splatPdf(origin, dir, m_gmm);
         assert(std::isfinite(gmmPdf));
+
+        // Log(EInfo, "bsdfPdf: %f, gmmPdf: %f", bsdfPdf, gmmPdf);
 
         // MIS
         woPdf = bsdfSamplingFraction * bsdfPdf + (1 - bsdfSamplingFraction) * gmmPdf;
@@ -577,22 +579,22 @@ public:
                     && (!m_hideEmitters || scattered)) {
                     const Spectrum envmapRadiance = rRec.scene->evalEnvironment(ray);
                     Li += throughput * envmapRadiance;
-                    if (Li.average() > 1e4)
-                        Log(EInfo, ("1 " + Li.toString() + " " + throughput.toString()).c_str());
+                    // if (Li.average() > 1e4)
+                    //     Log(EInfo, ("1 " + Li.toString() + " " + throughput.toString()).c_str());
                     currentIntersectionData.emission = ContributionAndThroughput{envmapRadiance, Spectrum{1.0f}};
                 }
                 break;
             }
 
-            const BSDF *bsdf = rRec.its.getBSDF(ray);
+            const BSDF *bsdf = rRec.its.getBSDF();
 
             /* Possibly include emitted radiance if requested */
             if (rRec.its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)
                 && (!m_hideEmitters || scattered)) {
                 const Spectrum emittedRadiance = rRec.its.Le(-ray.d);
                 Li += throughput * emittedRadiance;
-                if (Li.average() > 1e4)
-                    Log(EInfo, ("2 " + Li.toString() + " " + throughput.toString()).c_str());
+                // if (Li.average() > 1e4)
+                //     Log(EInfo, ("2 " + Li.toString() + " " + throughput.toString()).c_str());
 
                 currentIntersectionData.emission.contribution = emittedRadiance;
             }
@@ -602,8 +604,8 @@ public:
             if (rRec.its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance)) {
                 const Spectrum subsurfaceScatteredRadiance = rRec.its.LoSub(rRec.scene, rRec.sampler, -ray.d, rRec.depth);
                 Li += throughput * subsurfaceScatteredRadiance;
-                if (Li.average() > 1e4)
-                    Log(EInfo, ("3 " + Li.toString() + " " + throughput.toString()).c_str());
+                // if (Li.average() > 1e4)
+                //     Log(EInfo, ("3 " + Li.toString() + " " + throughput.toString()).c_str());
 
                 currentIntersectionData.emission.contribution += subsurfaceScatteredRadiance;
             }
@@ -653,13 +655,13 @@ public:
                         Float weight = miWeight(dRec.pdf, bsdfPdf);
 
                         Li += throughput * value * bsdfVal * weight;
-                        if (Li.average() > 1e4)
-                            Log(EInfo, ("4 " + Li.toString() + " " + throughput.toString()).c_str());
+                        // if (Li.average() > 1e4)
+                        //     Log(EInfo, ("4 " + Li.toString() + " " + throughput.toString()).c_str());
                         // if (shouldUseGuiding) {
                         //     Log(EInfo, "Li after direct sampling %f", Li.average());
                         // Log(EInfo, ("throughput = " + throughput.toString() + " value = " + value.toString() + " bsdfVal = " + bsdfVal.toString() + " weight = %f").c_str(), weight);
                         // }
-                        currentIntersectionData.neeDirectLight = ContributionAndThroughput{value, bsdfVal*weight};
+                        currentIntersectionData.neeDirectLight = ContributionAndThroughput{value, bsdfVal*weight}; 
                     }
                 }
             }
@@ -741,8 +743,8 @@ public:
                     rRec.scene->pdfEmitterDirect(dRec) : 0;
                 Float weight = miWeight(woPdf, lumPdf);
                 Li += throughput * value * weight;
-                if (Li.average() > 1e4)
-                    Log(EInfo, ("5 " + Li.toString() + " " + throughput.toString()).c_str());
+                // if (Li.average() > 1e4)
+                //     Log(EInfo, ("5 " + Li.toString() + " " + throughput.toString()).c_str());
 
                 currentIntersectionData.bsdfDirectLight = ContributionAndThroughput{value, bsdfWeight*weight};
                 currentIntersectionData.bsdfMiWeight = weight;
@@ -842,6 +844,7 @@ public:
                     if (endpointIsGlossy && divergeProbability != 0) {
                         m_octreeDiverging.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / divergeProbability);
                     }
+                    SLog(EInfo, "%d", samples->size());
                 }
 
                 if (i == 0)
@@ -852,9 +855,6 @@ public:
             }
             intersectionData->clear();
         }
-
-        if (Li.average() > 1e4)
-            Log(EInfo, Li.toString().c_str());
 
         return Li;
     }
