@@ -500,8 +500,8 @@ public:
         }
 
         result /= woPdf;
-        if (result.average() > 1 && isGuided)
-            Log(EInfo, ("isGuided: %d, result: " + result.toString() + " woPdf: %f, bsdfPdf: %f, gmmPdf: %f").c_str(), isGuided, woPdf, bsdfPdf, gmmPdf);
+        // if (result.average() > 1)
+        //     Log(EInfo, ("isGuided: %d, result: " + result.toString() + " woPdf: %f, bsdfPdf: %f, gmmPdf: %f").c_str(), isGuided, woPdf, bsdfPdf, gmmPdf);
 
         return result;
     }
@@ -551,11 +551,6 @@ public:
 
         Spectrum throughput(1.0f);
         Float eta = 1.0f;
-
-        auto miWeight = [](Float pdfA, Float pdfB) -> Float
-        {
-            return pdfA / (pdfA + pdfB);
-        };
 
         static thread_local std::vector<IntersectionData>* intersectionData {nullptr};
         static thread_local IterableBlockedVector<pmm_focal::WeightedSample>* samples {nullptr};
@@ -815,7 +810,7 @@ public:
                     // neeLight += (*intersectionData)[j].neeDirectLight.getClamped(maxThroughput);
                     // emissionLight += (*intersectionData)[j].emission.getClamped(maxThroughput);
                 }
-                clampedLight += currentIntersectionData.bsdfDirectLight.contribution * currentIntersectionData.bsdfMiWeight;
+                // clampedLight += currentIntersectionData.bsdfDirectLight.contribution * currentIntersectionData.bsdfMiWeight; -- no direct contributions
 
 
 

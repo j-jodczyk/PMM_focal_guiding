@@ -8,6 +8,7 @@ plugins += env.SharedLibrary('volpath_simple', ['path/volpath_simple.cpp'])
 plugins += env.SharedLibrary('ptracer', ['ptracer/ptracer.cpp', 'ptracer/ptracer_proc.cpp'])
 
 plugins += env.SharedLibrary('pmm_focal_guiding', ['pmm_guiding/pmm_focal_guiding.cpp'])
+plugins += env.SharedLibrary('pmm_focal_recursive', ['pmm_guiding/pmm_focal_guiding_recursive.cpp'])
 
 # Photon mapping-based techniques
 plugins += env.SharedLibrary('photonmapper', ['photonmapper/photonmapper.cpp', 'photonmapper/bre.cpp'])

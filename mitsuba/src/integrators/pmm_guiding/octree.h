@@ -147,6 +147,9 @@ public:
     }
 
     void splat(const Point &origin, const Vector &direction, Float distance,  Float contribution, IterableBlockedVector<pmm_focal::WeightedSample>* points, Float pdf) {
+        if (pdf <= 0)
+            return;
+
         Traversal traversal{*this, origin, direction};
         distance = std::min(distance, traversal.maxT());
 
@@ -157,54 +160,51 @@ public:
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {
             auto &child = m_nodes[nodeIndex].children[stratum];
-            if (child.isLeaf()) {
-                Eigen::Vector3d intersect1;
-                Eigen::Vector3d intersect2;
+            float t0 = tNear;
+            float t1 = tFar;
 
-                auto point = child.getRayIntersection(origin, direction, intersect1, intersect2);
-                if (point.size() == 0) {
-                    // SLog.mitsuba::EInfo, "point: %f, %f, %f; direction: %f, %f, %f", origin.x, origin.y, origin.z, direction[0], direction[1], direction[2]);
-                    return;
-                }
-                auto intersectionLength = (intersect1 - intersect2).norm();
+            mitsuba::Point3f p1 = origin + t1 * direction;
+            mitsuba::Point3f p0 = origin + t0 * direction;
 
-                const Float density = child.density;
-                const Float elementary = Env::segment(tNear, tFar);
-                const Float segment = density * elementary;
-                Float weight = w0 * segment + w1 * intersectionLength;
+            auto intersectionLength = (p1 - p0).length();
 
-                points->emplace_back(point, weight * contribution);
-                child.accumulator += weight * contribution;
-            }
+            auto pointM = (p0 + p1) / 2;
+            Eigen::VectorXd point(3);
+            point << pointM.x, pointM.y, pointM.z;
+
+            const Float density = child.density;
+            const Float elementary = Env::segment(tNear, tFar);
+            const Float segment = density * elementary;
+            Float weight = w0 * segment + w1 * intersectionLength;
+
+            points->emplace_back(point, weight * contribution);
+            child.accumulator += weight * contribution;
         });
     }
 
-    float splatPdf(const Point &origin, const Vector &direction, pmm_focal::GaussianMixtureModel<float, EnvMitsuba3D>& gmm) {
+    Float splatPdf(const Point &origin, const Vector &direction, pmm_focal::GaussianMixtureModel<float, EnvMitsuba3D>& gmm) {
         Traversal traversal{*this, origin, direction};
 
-        float pdf = 0.0f;
+        Float pdf = 0.0f;
 
         traversal.traverse(std::numeric_limits<Float>::infinity(), [&](
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {
-            auto &child = m_nodes[nodeIndex].children[stratum];
-            if (child.isLeaf()) {
-                float t0 = tNear;
-                float t1 = tFar;
+            float t0 = tNear;
+            float t1 = tFar;
 
-                mitsuba::Point3f p1 = origin + t1 * direction;
-                mitsuba::Point3f p0 = origin + t0 * direction;
+            mitsuba::Point3f p1 = origin + t1 * direction;
+            mitsuba::Point3f p0 = origin + t0 * direction;
 
-                float ps0 = gmm.pdf(p0);
-                float ps1 = gmm.pdf(p1);
+            float ps0 = gmm.pdf(p0);
+            float ps1 = gmm.pdf(p1);
 
-                // Trapezoidal rule for ∫ ps(t) * t² dt over [t0, t1]
-                float weight = 1.0f / 2.0f * (
-                    ps0 * t0 * t0 + ps1 * t1 * t1
-                ) * (t1 - t0);
+            // Trapezoidal rule for ∫ ps(t) * t² dt over [t0, t1]
+            float weight = 1.0f / 2.0f * (
+                ps0 * t0 * t0 + ps1 * t1 * t1
+            ) * (t1 - t0);
 
-                pdf += weight;
-            }
+            pdf += (Float)weight;
         });
 
         return pdf;
