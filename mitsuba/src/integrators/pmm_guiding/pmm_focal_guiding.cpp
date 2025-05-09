@@ -30,6 +30,8 @@ static StatsCounter avgPathLength("Path tracer", "Average path length", EAverage
 static StatsCounter samplesFromGMMCount("Path tracer", "Sampled from GMM", ENumberValue);
 static StatsCounter samplesFromDiverging("Path tracer", "Sampled from Diverging", ENumberValue);
 static StatsCounter samplesFromConverging("Path tracer", "Sampled from Converging", ENumberValue);
+static StatsCounter samplesFromBSDF("Path tracer", "Sampled from BSDF", ENumberValue);
+static StatsCounter skippedDueToInf("Path tracer", "Samples not drawn from GMM due to inf in origin", ENumberValue);
 
 #include <vector>
 #include <Eigen/Dense>
@@ -50,6 +52,11 @@ struct ContributionAndThroughput {
             return contribution*throughput*(maxThroughput/throughput.max());
         return contribution*throughput;
     }
+
+    std::string toString() const 
+    {
+        return contribution.toString() + " " + throughput.toString();
+    }
 };
 
 struct IntersectionData {
@@ -64,14 +71,15 @@ struct IntersectionData {
     float woPdf {0.0f};
     float distance;
     float endpointRoughness;
-    mitsuba::Spectrum throughputFactors;
+    Spectrum throughputFactors {1.0f};
     unsigned int sampledType;
-    const Intersection& its;
+    const Intersection its;
+    const RayDifferential ray;
 
-    IntersectionData(const Intersection& its)
+    IntersectionData(const Intersection& its, const RayDifferential ray)
         : bsdfDirectLight(Spectrum(0.0f), Spectrum(1.0f)),
           neeDirectLight(Spectrum(0.0f), Spectrum(1.0f)),
-          emission(Spectrum(0.0f), Spectrum(1.0f)), distance(its.t), its(its) {}
+          emission(Spectrum(0.0f), Spectrum(1.0f)), distance(its.t), its(its), ray(ray) {}
 
     IntersectionData& operator*=(Spectrum factor) {
         bsdfDirectLight.throughput *= factor;
@@ -79,6 +87,12 @@ struct IntersectionData {
         emission.throughput        *= factor;
 
         return *this;
+    }
+
+    bool isZero() const {
+        return ((bsdfDirectLight.contribution * bsdfDirectLight.throughput).isZero() &&
+        (neeDirectLight.contribution * neeDirectLight.throughput).isZero() &&
+        (emission.contribution * emission.throughput).isZero());
     }
 };
 
@@ -114,6 +128,7 @@ class PMMFocalGuidingIntegrator : public MonteCarloIntegrator {
     bool shouldUseGuiding = false; // no use in using guiding for the first iteration
     float divergeProbability = 0.5f;
     float bsdfMISFraction = 0.5f;
+    // size_t spp;
 
 
 public:
@@ -128,7 +143,7 @@ public:
 
             m_octree.configuration.threshold = props.getFloat("tree.threshold", 1e-3);
             m_octree.configuration.minDepth = props.getInteger("tree.minDepth", 0);
-            m_octree.configuration.maxDepth = props.getInteger("tree.maxDepth", 40);
+            m_octree.configuration.maxDepth = props.getInteger("tree.maxDepth", 14);
             m_octree.configuration.decay = props.getFloat("tree.decay", 0.5f);
 
             m_octreeDiverging.configuration = m_octree.configuration;
@@ -164,8 +179,11 @@ public:
 
         m_octree.setAABB(scene->getAABB());
         m_octreeDiverging.setAABB(scene->getAABB());
+        m_octree.configuration.splattingStrategy = Tree::SPLAT_RAY;
+        m_octreeDiverging.configuration.splattingStrategy = Tree::SPLAT_RAY;
         Log(EInfo, m_octree.toString().c_str());
         Log(EInfo, m_octreeDiverging.toString().c_str());
+        m_finalImage.clear();
 
         if (!importGmmFile.empty()) {
             // initialize from file
@@ -231,7 +249,13 @@ public:
                 // iterative narrowing applied after we're done with 66% of the training
                 Log(EInfo, "starting now, iterative narrowing is applied");
                 m_octree.configuration.splattingStrategy = Tree::SPLAT_RAY_WEIGHTED;
-                m_octreeDiverging.configuration.splattingStrategy = Tree::SPLAT_RAY_WEIGHTED;
+                m_octree.configuration.decay = 0.25;
+                m_octreeDiverging.configuration = m_octree.configuration;
+            }
+            if (i == this->trainingIterations) {
+                m_octree.configuration.pruning = true;
+                m_octree.configuration.maxDepth = 0;
+                m_octreeDiverging.configuration = m_octree.configuration;
             }
 
             Properties trainingSamplerProps = scene->getSampler()->getProperties();
@@ -278,19 +302,7 @@ public:
 
     void iterationPostprocess(const ref<Film> film, uint32_t numSPP, const RenderJob *job) {
         const Float renderTime = m_timer->stop();
-        // Log(EInfo, "Post processing of the rendering iteration");
         Log(EInfo, "iteration render time: %s", timeString(renderTime, true).c_str());
-
-        // std::vector<mitsuba::Point> iterationSampledPoints = std::accumulate(perThreadSampledPoints.begin(), perThreadSampledPoints.end(), std::vector<mitsuba::Point>{},
-        // [](std::vector<mitsuba::Point>& acc, const std::vector<mitsuba::Point>& vec) {
-        //     acc.insert(acc.end(), vec.begin(), vec.end());
-        //     return acc;
-        // });
-        // for(size_t i = 0; i < iterationSampledPoints.size(); ++i) {
-        //     if (i%1000 == 0){
-        //         Log(EInfo, iterationSampledPoints[i].toString().c_str());
-        //     }
-        // }
 
         if (!training)
             return;
@@ -326,15 +338,6 @@ public:
 
         Log(EInfo, "Got %i non-zero samples", iterationSamples.size());
 
-        // FIRST APPROACH - chunks outside
-        // size_t chunkSize = 1e6; // processing 1M samples at once - prevents bad alloc
-        // for (size_t i = 0; i < iterationSamples.size(); i += chunkSize) {
-        //     size_t end = std::min(i + chunkSize, iterationSamples.size());
-        //     std::vector<pmm_focal::WeightedSample> chunk(iterationSamples.begin() + i, iterationSamples.begin() + end);
-        //     m_gmm.processBatch(chunk);
-        // }
-
-        // second approach - chunks inside
         bool shouldTerminateEarly = m_gmm.processBatchParallel(iterationSamples);
         training = !shouldTerminateEarly;
 
@@ -360,6 +363,51 @@ public:
         Log(EDebug, m_octreeDiverging.toStringVerbose().c_str());
     }
 
+    // void renderBlock(const Scene *scene, const Sensor *sensor,
+    //     Sampler *sampler, ImageBlock *block, const bool &stop,
+    //     const std::vector< TPoint2<uint8_t> > &points) const {
+
+    //     bool needsApertureSample = sensor->needsApertureSample();
+    //     bool needsTimeSample = sensor->needsTimeSample();
+
+    //     RadianceQueryRecord rRec(scene, sampler);
+    //     Point2 apertureSample(0.5f);
+    //     Float timeSample = 0.5f;
+    //     RayDifferential sensorRay;
+
+    //     block->clear();
+
+    //     uint32_t queryType = RadianceQueryRecord::ESensorRay;
+
+    //     if (!sensor->getFilm()->hasAlpha()) // Don't compute an alpha channel if we don't have to
+    //         queryType &= ~RadianceQueryRecord::EOpacity;
+
+    //     for (size_t i = 0; i < points.size(); ++i) {
+    //         Point2i offset = Point2i(points[i]) + Vector2i(block->getOffset());
+    //         //if (stop)
+    //         //    break;
+
+    //         constexpr int sppPerPass = 1;
+    //         for (int j = 0; j < sppPerPass; j++) {
+
+    //             rRec.newQuery(queryType, sensor->getMedium());
+    //             Point2 samplePos(Point2(offset) + Vector2(rRec.nextSample2D()));
+
+    //             if (needsApertureSample)
+    //                 apertureSample = rRec.nextSample2D();
+    //             if (needsTimeSample)
+    //                 timeSample = rRec.nextSample1D();
+
+    //             Spectrum spec = sensor->sampleRayDifferential(
+    //                 sensorRay, samplePos, apertureSample, timeSample);
+
+    //             Spectrum output = Li(sensorRay, rRec, spec);
+    //             block->put(samplePos, spec * output, rRec.alpha);
+    //             sampler->advance();
+    //         }
+    //     }
+    // }
+
     bool render(Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
         ref<Timer> renderTimer = new Timer{};
 
@@ -370,6 +418,7 @@ public:
         size_t nCores = sched->getCoreCount();
         const Sampler *sampler = static_cast<const Sampler *>(sched->getResource(samplerResID, 0));
         size_t sampleCount = sampler->getSampleCount();
+        // spp = sampleCount;
 
         Log(EInfo, "Starting render job (%ix%i, " SIZE_T_FMT " %s, " SIZE_T_FMT
             " %s, " SSE_STR ") ..", film->getCropSize().x, film->getCropSize().y,
@@ -428,7 +477,10 @@ public:
         // EDelta means discrete number of directions
         // - unsuitable for guiding or importance sampling based on density distributions
         // that work over ranges of directions
-        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding) { // first iteration we should not use guiding
+        bool finiteOrigin = std::isfinite(rRec.its.p.x) && std::isfinite(rRec.its.p.y) && std::isfinite(rRec.its.p.z);
+        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding || !finiteOrigin) { // first iteration we should not use guiding
+            if (!finiteOrigin && shouldUseGuiding)
+                ++skippedDueToInf;
             auto result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
             woPdf = bsdfPdf;
             gmmPdf = 0;
@@ -440,8 +492,9 @@ public:
         bool isDiverging = false;
         bool isGuided = false;
 
-        if (sample.x < bsdfSamplingFraction) { // bsdfSamplingFraction is from MIS
+        if (sample.x < bsdfSamplingFraction) {
             // sample BSDF
+            ++samplesFromBSDF;
             sample.x /= bsdfSamplingFraction;
             result = bsdf->sample(bRec, bsdfPdf, sample);
             if (result.isZero()) {
@@ -454,13 +507,11 @@ public:
             if (bRec.sampledType & BSDF::EDelta) {
                 gmmPdf = 0;
                 woPdf = bsdfPdf * bsdfSamplingFraction;
-                return result / bsdfSamplingFraction; // woPdf and bsdfPdf set - it's fine
+                return result / bsdfSamplingFraction;
             }
 
             result *= bsdfPdf;
             dir = bRec.its.toWorld(bRec.wo);
-            // Log(EInfo, "bsdf (before /wo) %f", result);
-
         } else {
             // sample guiding distribution
             ++samplesFromGMMCount; // add to statistics
@@ -499,11 +550,10 @@ public:
             return Spectrum{0.0f};
         }
 
-        result /= woPdf;
-        // if (result.average() > 1)
-        //     Log(EInfo, ("isGuided: %d, result: " + result.toString() + " woPdf: %f, bsdfPdf: %f, gmmPdf: %f").c_str(), isGuided, woPdf, bsdfPdf, gmmPdf);
+        // if ((result / woPdf).average() > 1)
+        //     Log(EInfo, ("isGuided: %d, result before devision: " + result.toString() + " woPdf: %f, bsdfPdf: %f, gmmPdf: %f").c_str(), isGuided, woPdf, bsdfPdf, gmmPdf);
 
-        return result;
+        return result / woPdf;
     }
 
     void pdfMat(
@@ -540,7 +590,12 @@ public:
         // Log(EInfo, "bsdfPdf: %f, gmmPdf: %f, woPdf: %f", bsdfPdf, gmmPdf, woPdf);
     }
 
-    Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
+    // Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
+    //     Assert(false);
+    //     return Spectrum { 0.f };
+    // }
+
+    Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {//, Spectrum &weight) const {
         RayDifferential ray(r);
         Spectrum Li(0.0f);
 
@@ -565,11 +620,11 @@ public:
             threadLocalInitialized.get() = true;
         }
 
-        IntersectionData dummyID{rRec.its};
+        IntersectionData dummyID{rRec.its, ray};
 
         while (rRec.depth <= maxDepth || maxDepth < 0) {
             if (training)
-                intersectionData->emplace_back(rRec.its);
+                intersectionData->emplace_back(rRec.its, ray);
             IntersectionData& currentIntersectionData = training ? intersectionData->back() : dummyID;
 
             if (!rRec.its.isValid()) {
@@ -771,7 +826,7 @@ public:
                 if (rRec.nextSample1D() >= q) {
                     if (training && !currentIntersectionData.bsdfDirectLight.contribution.isZero()) {
                         Log(EInfo, "bsdfDirectLight contribution is not zero");
-                        intersectionData->emplace_back(rRec.its);
+                        intersectionData->emplace_back(rRec.its, ray);
                     }
                     break;
                 }
@@ -786,8 +841,14 @@ public:
         avgPathLength += rRec.depth;
 
         if (training) {
-            // Log(EInfo, "There are %d intersection samples to go through", intersectionData->size());
             // generate samples by traversing the path back to front
+            // for (int i=intersectionData->size() - 1; i >= 0; --i) {
+            //     const IntersectionData& currentIntersectionData = (*intersectionData)[i];
+            //     if (!currentIntersectionData.isZero())
+            //         Log(EInfo, ("i: %d/%d, " + currentIntersectionData.bsdfDirectLight.toString() + " " + currentIntersectionData.neeDirectLight.toString() + " " + currentIntersectionData.emission.toString()).c_str(), i, intersectionData->size());
+            // }
+
+
             for (int i=intersectionData->size() - 1; i >= 0; --i) {
                 const IntersectionData& currentIntersectionData = (*intersectionData)[i];
 
@@ -814,8 +875,6 @@ public:
                 }
                 // clampedLight += currentIntersectionData.bsdfDirectLight.contribution * currentIntersectionData.bsdfMiWeight; -- no direct contributions
 
-
-
                 if (clampedLight.isZero()) {
                     // could collect to statistics...
                     // do nothing
@@ -840,11 +899,10 @@ public:
                     if (currentIntersectionData.woPdf == 0) {
                         continue;
                     }
-                    m_octree.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / (1 - divergeProbability));
-                    if (endpointIsGlossy && divergeProbability != 0) {
-                        m_octreeDiverging.splat(ray.o, ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / divergeProbability);
+                    m_octree.splat(currentIntersectionData.ray.o, currentIntersectionData.ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / (1 - divergeProbability));
+                    if (endpointIsGlossy && divergeProbability > 1e-6) {
+                        m_octreeDiverging.splat(currentIntersectionData.ray.o, currentIntersectionData.ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / divergeProbability);
                     }
-                    SLog(EInfo, "%d", samples->size());
                 }
 
                 if (i == 0)
@@ -899,6 +957,12 @@ public:
         perThreadIntersectionData.clear();
         perThreadSamples.clear();
         // perThreadSampledPoints.clear();
+        m_finalImage.clear();
+        m_finalImage.add(film, static_cast<uint32_t>(scene->getSampler()->getSampleCount()), 1);
+
+        ref<Bitmap> finalBitmap = new Bitmap(Bitmap::EPixelFormat::ESpectrum, Bitmap::EComponentFormat::EFloat32, film->getSize());
+        m_finalImage.develop(finalBitmap.get());
+        film->setBitmap(finalBitmap);
 
         Log(EInfo, m_gmm.toString().c_str());
         // Log(EInfo, m_octree.toStringVerbose().c_str());
@@ -927,6 +991,99 @@ public:
             << "]";
         return oss.str();
     }
+
+    struct WeightedBitmapAccumulator {
+        void clear() {
+            m_scrap = nullptr;
+            m_bitmap = nullptr;
+            m_spp = 0;
+            m_weight = 0;
+        }
+
+        bool hasData() const {
+            return m_weight > 0;
+        }
+
+        void add(const ref<Film> &film, int spp, Float avgVariance = 1) {
+            if (avgVariance == 0 && m_weight > 0) {
+                SLog(EError, "Cannot add an image with unknown variance to an already populated accumulator");
+                return;
+            }
+
+            const Vector2i size = film->getSize();
+            const long floatCount = size.x * size.y * long(SPECTRUM_SAMPLES);
+
+            if (!m_scrap) {
+                m_scrap = new Bitmap(Bitmap::EPixelFormat::ESpectrum, Bitmap::EComponentFormat::EFloat32, size);
+            }
+            film->develop(Point2i(0, 0), size, Point2i(0, 0), m_scrap);
+            
+            ///
+
+            if (!m_bitmap) {
+                m_bitmap = new Bitmap(Bitmap::EPixelFormat::ESpectrum, Bitmap::EComponentFormat::EFloat32, size);
+
+                Float *m_bitmapData = m_bitmap->getFloat32Data();
+                for (long i = 0; i < floatCount; ++i) {
+                    m_bitmapData[i] = 0;
+                }
+            }
+
+            Float *m_bitmapData = m_bitmap->getFloat32Data();
+            if (avgVariance > 0 && m_weight == 0 && m_spp > 0) {
+                /// reweight previous frames that had unknown variance with our current variance estimate
+                const Float reweight = 1 / avgVariance;
+                for (long i = 0; i < floatCount; ++i) {
+                    m_bitmapData[i] *= reweight;
+                }
+                m_weight += m_spp * reweight;
+            }
+
+            const Float weight = avgVariance > 0 ? spp / avgVariance : spp;
+            const Float *m_scrapData = m_scrap->getFloat32Data();
+            for (long i = 0; i < floatCount; ++i) {
+                m_bitmapData[i] += m_scrapData[i] * weight;
+            }
+
+            m_weight += avgVariance > 0 ? weight : 0;
+            m_spp += spp;
+        }
+
+        void develop(Bitmap *dest) const {
+            if (!m_bitmap) {
+                SLog(EWarn, "Cannot develop bitmap, as no data is available");
+                return;
+            }
+
+            const Vector2i size = m_bitmap->getSize();
+            const long floatCount = size.x * size.y * long(SPECTRUM_SAMPLES);
+
+            const Float weight = m_weight == 0 ? m_spp : m_weight;
+            Log(EInfo, "weight: %f, m_spp: %f", m_weight, m_spp);
+            Float *m_destData = dest->getFloat32Data();
+            const Float *m_bitmapData = m_bitmap->getFloat32Data();
+            for (long i = 0; i < floatCount; ++i) {
+                // m_destData[i] = weight > 0 ? m_bitmapData[i] / (weight * 1000): 0;
+                m_destData[i] = weight > 0 ? m_bitmapData[i] / weight : 0;
+            }
+        }
+
+        void develop(const fs::path &path) const {
+            if (!m_scrap) {
+                SLog(EWarn, "Cannot develop bitmap, as no data is available");
+                return;
+            }
+
+            develop(m_scrap.get());
+            m_scrap->write(path);
+        }
+
+    private:
+        mutable ref<Bitmap> m_scrap;
+        ref<Bitmap> m_bitmap;
+        Float m_weight;
+        int m_spp;
+    } m_finalImage;
 
     MTS_DECLARE_CLASS()
 };
