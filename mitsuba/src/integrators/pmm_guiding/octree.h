@@ -151,7 +151,7 @@ public:
             return;
 
         Traversal traversal{*this, origin, direction};
-        SLog(mitsuba::EInfo, "contribution: %f, pdf: %f", contribution, pdf);
+        // SLog(mitsuba::EInfo, "contribution: %f, pdf: %f", contribution, pdf);
         
         distance = std::min(distance, traversal.maxT());
 
@@ -180,6 +180,7 @@ public:
             Float weight = w0 * segment + w1 * intersectionLength;
 
             points->emplace_back(point, weight * contribution);
+            // SLog(mitsuba::EInfo, "weight: %f, contribution: %f", weight, contribution);
             child.accumulator += weight * contribution;
         });
     }
@@ -187,29 +188,18 @@ public:
     Float splatPdf(const Point &origin, const Vector &direction, pmm_focal::GaussianMixtureModel<float, EnvMitsuba3D>& gmm) {
         Traversal traversal{*this, origin, direction};
 
-        Float pdf = 0.0f;
+        float pdf = 0.0f;
 
         traversal.traverse(std::numeric_limits<Float>::infinity(), [&](
             NodeIndex nodeIndex, StratumIndex stratum, Float tNear, Float tFar
         ) {
-            float t0 = tNear;
-            float t1 = tFar;
+            const Float elementary = Env::segment(tNear, tFar);
+            const float ps = gmm.pdf(origin + (tFar + tNear) * direction / 2);
 
-            mitsuba::Point3f p1 = origin + t1 * direction;
-            mitsuba::Point3f p0 = origin + t0 * direction;
-
-            float ps0 = gmm.pdf(p0);
-            float ps1 = gmm.pdf(p1);
-
-            // Trapezoidal rule for ∫ ps(t) * t² dt over [t0, t1]
-            float weight = 1.0f / 2.0f * (
-                ps0 * t0 * t0 + ps1 * t1 * t1
-            ) * (t1 - t0);
-
-            pdf += (Float)weight;
+            pdf += elementary * ps;
         });
 
-        return pdf;
+        return (Float)pdf;
     }
 
     [[nodiscard]] std::vector<Patch> visualize() const {

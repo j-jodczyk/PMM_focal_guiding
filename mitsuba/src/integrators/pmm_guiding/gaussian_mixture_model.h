@@ -41,7 +41,68 @@
 #define FAIL_ON_ZERO_CDF 0
 #define USE_MAX_KEEP 0
 
+namespace std {
+    template<>
+    struct hash<mitsuba::Point3f> {
+        std::size_t operator()(const mitsuba::Point3f &p) const {
+            size_t h1 = std::hash<float>()(p.x);
+            size_t h2 = std::hash<float>()(p.y);
+            size_t h3 = std::hash<float>()(p.z);
+            return h1 ^ (h2 << 1) ^ (h3 << 2);
+        }
+    };
+}
+
 namespace pmm_focal {
+
+class ThreadLocalGMMCache {
+    public:
+        static ThreadLocalGMMCache& instance() {
+            static ThreadLocalGMMCache cache;
+            return cache;
+        }
+    
+        void set_pdf(const mitsuba::Point3f &pt, float val) {
+            get_thread_cache()[pt] = val;
+        }
+    
+        bool get_pdf(const mitsuba::Point3f &pt, float &val_out) {
+            auto& cache = get_thread_cache();
+            auto it = cache.find(pt);
+            if (it != cache.end()) {
+                val_out = it->second;
+                return true;
+            }
+            return false;
+        }
+    
+        void clear_all() {
+            std::lock_guard<std::mutex> lock(mutex_);
+            for (auto& ptr : all_caches_) {
+                ptr->clear();
+            }
+        }
+    
+    private:
+        using CacheMap = std::unordered_map<mitsuba::Point3f, float>;
+    
+        ThreadLocalGMMCache() = default;
+    
+        CacheMap& get_thread_cache() {
+            thread_local std::shared_ptr<CacheMap> cache_ptr = std::make_shared<CacheMap>();
+            thread_local bool registered = register_cache(cache_ptr);
+            return *cache_ptr;
+        }
+    
+        bool register_cache(std::shared_ptr<CacheMap> cache) {
+            std::lock_guard<std::mutex> lock(mutex_);
+            all_caches_.push_back(cache);
+            return true;
+        }
+    
+        std::mutex mutex_;
+        std::vector<std::shared_ptr<CacheMap>> all_caches_;
+    };
 
 struct ComponentCache {
     Eigen::MatrixXd invCov;
@@ -90,6 +151,8 @@ private:
 
     float divergeProbability = 0.5;
     bool initialized = false;
+    float stepSize = 0.01;
+    // thread_local static std::unordered_map<Eigen::Vector3f, float, VectorHash> gmmPdfCache;
 
     float totalSampleWeight(const std::vector<WeightedSample>& batch) {
         float sum = 0;
@@ -187,7 +250,7 @@ private:
                 mean /= responsibilitySum;
 
                 for (size_t i = 0; i < NNew; ++i) {
-                    Eigen::VectorXd diff = batch[i].point - comp.getMean();
+                    Eigen::VectorXd diff = batch[i].point - mean;
                     cov += responsibilities(i, j) * batch[i].weight * (diff * diff.transpose());
                 }
 
@@ -488,6 +551,9 @@ private:
     }
 
 public:
+    void clearPdfCache() const {
+        ThreadLocalGMMCache::instance().clear_all();
+    }
     GaussianMixtureModel(): prng() {}
     GaussianMixtureModel(std::istream& in) {
         deserialize(in);
@@ -523,11 +589,25 @@ public:
         comp.setCovariance(Eigen::MatrixXd::Identity(m_dimension, m_dimension));
     }
 
-    float pdf(const mitsuba::Point3f x) {
+    float pdf(const mitsuba::Point3f &x) {
+        float cached_val;
+        if (ThreadLocalGMMCache::instance().get_pdf(x, cached_val)) {
+            return cached_val;
+        }
+
         Eigen::VectorXd xEigen(3);
         xEigen << x.x, x.y, x.z;
-        return pdf(xEigen);
+        auto val = pdf(xEigen);
+    
+        ThreadLocalGMMCache::instance().set_pdf(x, val);
+        return val;
     }
+
+    // float pdf(const mitsuba::Point3f x) {
+    //     Eigen::VectorXd xEigen(3);
+    //     xEigen << x.x, x.y, x.z;
+    //     return pdf(xEigen);
+    // }
 
     float componentPdf(const GaussianComponent& component, const Eigen::VectorXd& x) {
         int d = x.size();
@@ -541,6 +621,9 @@ public:
     }
 
     float pdf(const Eigen::VectorXd& x) {
+        // auto it = gmmPdfCache.find(x);
+        //     if (it != gmmPdfCache.end())
+        //         return it->second;
         float totalPdf = 0;
 
         for (const auto& component: components) {
@@ -548,6 +631,7 @@ public:
                 continue;
             totalPdf += componentPdf(component, x);
         }
+        // gmmPdfCache[x] = totalPdf;
 
         return totalPdf;
     }
@@ -861,13 +945,6 @@ public:
             component.setWeight(component.getWeight() / componentsWeight);
             component.isNew = false;
         }
-
-        // auto logLikelihoodNew = computeLogLikelihood(batch);
-        // auto diff = std::abs(logLikelihood - logLikelihoodNew);
-        // SLog(mitsuba::EInfo, "logLikelihoodOld: %f, logLIkelihoodNew: %f, diff: %f", logLikelihood, logLikelihoodNew, diff);
-        // logLikelihood = logLikelihoodNew;
-
-        // return diff < 1e-6f;
     }
 
     bool processBatchParallel(std::vector<WeightedSample>& batch) {
@@ -1058,41 +1135,110 @@ public:
 
     void serialize(mitsuba::FileStream* out)const
     {
-        out->write(reinterpret_cast<const char*>(&alpha), sizeof(alpha));
-        out->write(reinterpret_cast<const char*>(&splittingThreshold), sizeof(splittingThreshold));
-        out->write(reinterpret_cast<const char*>(&mergingThreshold), sizeof(mergingThreshold));
-        out->write(reinterpret_cast<const char*>(&minNumComp), sizeof(minNumComp));
-        out->write(reinterpret_cast<const char*>(&maxNumComp), sizeof(maxNumComp));
-        out->write(reinterpret_cast<const char*>(&m_dimension), sizeof(m_dimension));
-        // out->write(reinterpret_cast<const char*>(&N_prev), sizeof(N_prev));
-        // out->write(reinterpret_cast<const char*>(&divergeProbability), sizeof(divergeProbability));
+        // out->write(reinterpret_cast<const char*>(&alpha), sizeof(alpha));
+        // out->write(reinterpret_cast<const char*>(&splittingThreshold), sizeof(splittingThreshold));
+        // out->write(reinterpret_cast<const char*>(&mergingThreshold), sizeof(mergingThreshold));
+        // out->write(reinterpret_cast<const char*>(&minNumComp), sizeof(minNumComp));
+        // out->write(reinterpret_cast<const char*>(&maxNumComp), sizeof(maxNumComp));
+        // out->write(reinterpret_cast<const char*>(&m_dimension), sizeof(m_dimension));
+        // // out->write(reinterpret_cast<const char*>(&N_prev), sizeof(N_prev));
+        // // out->write(reinterpret_cast<const char*>(&divergeProbability), sizeof(divergeProbability));
 
-        // Save components
-        size_t numComponents = components.size();
-        out->write(reinterpret_cast<const char*>(&numComponents), sizeof(numComponents));
-        for (const auto& comp : components) {
-            comp.serialize(out);  // Call GaussianComponent's save method
-        }
+        // // Save components
+        // size_t numComponents = components.size();
+        // out->write(reinterpret_cast<const char*>(&numComponents), sizeof(numComponents));
+        // for (const auto& comp : components) {
+        //     comp.serialize(out);  // Call GaussianComponent's save method
+        // }
     }
 
     void deserialize(mitsuba::FileStream* in)
     {
-        in->read(reinterpret_cast<char*>(&alpha), sizeof(alpha));
-        in->read(reinterpret_cast<char*>(&splittingThreshold), sizeof(splittingThreshold));
-        in->read(reinterpret_cast<char*>(&mergingThreshold), sizeof(mergingThreshold));
-        in->read(reinterpret_cast<char*>(&minNumComp), sizeof(minNumComp));
-        in->read(reinterpret_cast<char*>(&maxNumComp), sizeof(maxNumComp));
-        in->read(reinterpret_cast<char*>(&m_dimension), sizeof(m_dimension));
-        // in->read(reinterpret_cast<char*>(&N_prev), sizeof(N_prev));
-        // in->read(reinterpret_cast<char*>(&divergeProbability), sizeof(divergeProbability));
+        // in->read(reinterpret_cast<char*>(&alpha), sizeof(alpha));
+        // in->read(reinterpret_cast<char*>(&splittingThreshold), sizeof(splittingThreshold));
+        // in->read(reinterpret_cast<char*>(&mergingThreshold), sizeof(mergingThreshold));
+        // in->read(reinterpret_cast<char*>(&minNumComp), sizeof(minNumComp));
+        // in->read(reinterpret_cast<char*>(&maxNumComp), sizeof(maxNumComp));
+        // in->read(reinterpret_cast<char*>(&m_dimension), sizeof(m_dimension));
+        // // in->read(reinterpret_cast<char*>(&N_prev), sizeof(N_prev));
+        // // in->read(reinterpret_cast<char*>(&divergeProbability), sizeof(divergeProbability));
 
-        // Read components
-        size_t numComponents;
-        in->read(reinterpret_cast<char*>(&numComponents), sizeof(numComponents));
-        components.resize(numComponents);
-        for (auto& comp : components) {
-            comp.deserialize(in);
+        // // Read components
+        // size_t numComponents;
+        // in->read(reinterpret_cast<char*>(&numComponents), sizeof(numComponents));
+        // components.resize(numComponents);
+        // for (auto& comp : components) {
+        //     comp.deserialize(in);
+        // }
+    }
+
+    Eigen::MatrixXd onlineEStep(const WeightedSample& sample) {
+        Eigen::MatrixXd responsibilities(1, sample.point.size());
+        for (size_t j = 0; j < components.size(); ++j) {
+            auto& component = components[j];
+            if (component.getWeight() == 0)
+                continue;
+            Eigen::MatrixXd invCov = component.getInverseCovariance();
+            Eigen::VectorXd mean = component.getMean();
+            float logNormConst = -0.5 * (sample.point.size() * std::log(2 * M_PI) + component.getLogDetCov());
+            float weight = component.getWeight();
+            
+            Eigen::VectorXd diff = sample.point - mean;
+            float exponent = -0.5 * diff.transpose() * invCov * diff;
+            auto resp = weight * std::exp(logNormConst + exponent);
+            if (resp != resp) {
+                SLog(mitsuba::EInfo, "resp is none");
+            }
+            responsibilities(0, j) = resp; // without * batch[i].weight; - Hanebeck, Frisch - consider weights only in M step - this is an absolute game changer!
         }
+        for (int i = 0; i < responsibilities.rows(); ++i) { // rows is batch.size()
+            responsibilities.row(i) /= responsibilities.row(i).sum();
+        }
+        SLog(mitsuba::EInfo, "Finish E step");
+        return responsibilities;
+    }
+
+    void onlineMStep(const WeightedSample& sample, const Eigen::MatrixXd& responsibility) {
+        float responsibilitySum = 0.0f;
+        for (size_t k = 0; k < components.size(); ++k) {
+            responsibilitySum += responsibility(0, k) * sample.weight;
+        }
+        if (responsibilitySum == 0.0f) {
+            return;
+        }
+        for (size_t j = 0; j < components.size(); ++j) {
+            auto& component = components[j];
+            if (component.getWeight() == 0)
+                continue;
+        
+            float newWeight = (1 - stepSize) * component.getWeight() + stepSize * responsibility(0, j);
+            Eigen::VectorXd newMean = (1 - stepSize) * component.getMean() + stepSize * responsibility(0, j) * sample.point * sample.weight / responsibilitySum; 
+            Eigen::VectorXd diff = sample.point - component.getMean();  
+            Eigen::MatrixXd newCov = (1 - stepSize) *component.getCovariance() + stepSize * responsibility(0, j) * sample.weight * (diff * diff.transpose()) / responsibilitySum;
+
+            component.updateComponent(newWeight, newMean, newCov);
+        }
+        SLog(mitsuba::EInfo, "Finished M step");
+    }
+
+    bool processOnline(const std::vector<WeightedSample>& batch) {
+        SLog(mitsuba::EInfo, "Starting online processing");
+
+        if (!initialized)
+            init(batch);
+
+        for (const auto& sample : batch) {
+            std::vector<WeightedSample> microBatch {sample};
+
+            Eigen::MatrixXd responsibilities = onlineEStep(sample);
+            onlineMStep(sample, responsibilities);
+            Eigen::MatrixXd updatedResponsibilities(1, components.size());
+            computeResponsibilities(microBatch, updatedResponsibilities);
+            splitAllComponents(microBatch, updatedResponsibilities);
+        }
+
+        mergeAllComponents();
+        // todo: weight normalization?
     }
 
 public:

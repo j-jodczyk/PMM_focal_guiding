@@ -61,6 +61,16 @@ namespace pmm_focal
             updateSoftCount(N, N_new, new_weight);
         }
 
+        void updateComponent(float new_weight, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov) {
+            weight = new_weight;
+            mean = new_mean;
+            covariance = new_cov;
+            inverseCovariance = covariance.inverse();
+            logDetCov = std::log(covariance.determinant());
+            Eigen::MatrixXd L = covariance.llt().matrixL();
+
+        }
+
         void updateSoftCount(float N, float N_new, float new_weight) {
             softCount = N * weight + N_new * new_weight;
         }
@@ -137,29 +147,29 @@ namespace pmm_focal
         }
 
         void serialize(mitsuba::FileStream* out) const {
-            size_t meanSize = mean.size();
-            size_t covSize = covariance.rows();
+            // size_t meanSize = mean.size();
+            // size_t covSize = covariance.rows();
 
-            out->write(reinterpret_cast<const char*>(&weight), sizeof(weight));
-            out->write(reinterpret_cast<const char*>(&meanSize), sizeof(meanSize));
-            out->write(reinterpret_cast<const char*>(mean.data()), meanSize * sizeof(float));
+            // out->write(reinterpret_cast<const char*>(&weight), sizeof(weight));
+            // out->write(reinterpret_cast<const char*>(&meanSize), sizeof(meanSize));
+            // out->write(reinterpret_cast<const char*>(mean.data()), meanSize * sizeof(float));
 
-            out->write(reinterpret_cast<const char*>(&covSize), sizeof(covSize));
-            out->write(reinterpret_cast<const char*>(covariance.data()), covSize * covSize * sizeof(float));
+            // out->write(reinterpret_cast<const char*>(&covSize), sizeof(covSize));
+            // out->write(reinterpret_cast<const char*>(covariance.data()), covSize * covSize * sizeof(float));
         }
 
         void deserialize(mitsuba::FileStream* in) {
-            size_t meanSize, covSize;
+            // size_t meanSize, covSize;
 
-            in->read(reinterpret_cast<char*>(&weight), sizeof(weight));
+            // in->read(reinterpret_cast<char*>(&weight), sizeof(weight));
 
-            in->read(reinterpret_cast<char*>(&meanSize), sizeof(meanSize));
-            mean.resize(meanSize);
-            in->read(reinterpret_cast<char*>(mean.data()), meanSize * sizeof(float));
+            // in->read(reinterpret_cast<char*>(&meanSize), sizeof(meanSize));
+            // mean.resize(meanSize);
+            // in->read(reinterpret_cast<char*>(mean.data()), meanSize * sizeof(float));
 
-            in->read(reinterpret_cast<char*>(&covSize), sizeof(covSize));
-            covariance.resize(covSize, covSize);
-            in->read(reinterpret_cast<char*>(covariance.data()), covSize * covSize * sizeof(float));
+            // in->read(reinterpret_cast<char*>(&covSize), sizeof(covSize));
+            // covariance.resize(covSize, covSize);
+            // in->read(reinterpret_cast<char*>(covariance.data()), covSize * covSize * sizeof(float));
         }
     };
 }

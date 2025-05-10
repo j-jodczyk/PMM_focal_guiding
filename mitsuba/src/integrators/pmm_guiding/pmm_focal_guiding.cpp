@@ -31,7 +31,6 @@ static StatsCounter samplesFromGMMCount("Path tracer", "Sampled from GMM", ENumb
 static StatsCounter samplesFromDiverging("Path tracer", "Sampled from Diverging", ENumberValue);
 static StatsCounter samplesFromConverging("Path tracer", "Sampled from Converging", ENumberValue);
 static StatsCounter samplesFromBSDF("Path tracer", "Sampled from BSDF", ENumberValue);
-static StatsCounter skippedDueToInf("Path tracer", "Samples not drawn from GMM due to inf in origin", ENumberValue);
 
 #include <vector>
 #include <Eigen/Dense>
@@ -75,6 +74,8 @@ struct IntersectionData {
     unsigned int sampledType;
     const Intersection its;
     const RayDifferential ray;
+
+    Spectrum learnedContribution {0.0f};
 
     IntersectionData(const Intersection& its, const RayDifferential ray)
         : bsdfDirectLight(Spectrum(0.0f), Spectrum(1.0f)),
@@ -338,7 +339,7 @@ public:
 
         Log(EInfo, "Got %i non-zero samples", iterationSamples.size());
 
-        bool shouldTerminateEarly = m_gmm.processBatchParallel(iterationSamples);
+        bool shouldTerminateEarly = m_gmm.processOnline(iterationSamples);
         training = !shouldTerminateEarly;
 
         const Float convThreshold = m_octree.sumDensities();
@@ -347,9 +348,10 @@ public:
 
         m_octree.build(threshold);
         m_octreeDiverging.build(threshold);
-
+        
         divergeProbability = divThreshold / (divThreshold + convThreshold);
         m_gmm.setDivergeProbability(divergeProbability);
+        m_gmm.clearPdfCache();
         Log(EInfo, "diverge probability: %.3f\n", divergeProbability);
 
         const Float postprocessingTime = m_timer->stop();
@@ -362,51 +364,6 @@ public:
         Log(EInfo, m_octreeDiverging.toString().c_str());
         Log(EDebug, m_octreeDiverging.toStringVerbose().c_str());
     }
-
-    // void renderBlock(const Scene *scene, const Sensor *sensor,
-    //     Sampler *sampler, ImageBlock *block, const bool &stop,
-    //     const std::vector< TPoint2<uint8_t> > &points) const {
-
-    //     bool needsApertureSample = sensor->needsApertureSample();
-    //     bool needsTimeSample = sensor->needsTimeSample();
-
-    //     RadianceQueryRecord rRec(scene, sampler);
-    //     Point2 apertureSample(0.5f);
-    //     Float timeSample = 0.5f;
-    //     RayDifferential sensorRay;
-
-    //     block->clear();
-
-    //     uint32_t queryType = RadianceQueryRecord::ESensorRay;
-
-    //     if (!sensor->getFilm()->hasAlpha()) // Don't compute an alpha channel if we don't have to
-    //         queryType &= ~RadianceQueryRecord::EOpacity;
-
-    //     for (size_t i = 0; i < points.size(); ++i) {
-    //         Point2i offset = Point2i(points[i]) + Vector2i(block->getOffset());
-    //         //if (stop)
-    //         //    break;
-
-    //         constexpr int sppPerPass = 1;
-    //         for (int j = 0; j < sppPerPass; j++) {
-
-    //             rRec.newQuery(queryType, sensor->getMedium());
-    //             Point2 samplePos(Point2(offset) + Vector2(rRec.nextSample2D()));
-
-    //             if (needsApertureSample)
-    //                 apertureSample = rRec.nextSample2D();
-    //             if (needsTimeSample)
-    //                 timeSample = rRec.nextSample1D();
-
-    //             Spectrum spec = sensor->sampleRayDifferential(
-    //                 sensorRay, samplePos, apertureSample, timeSample);
-
-    //             Spectrum output = Li(sensorRay, rRec, spec);
-    //             block->put(samplePos, spec * output, rRec.alpha);
-    //             sampler->advance();
-    //         }
-    //     }
-    // }
 
     bool render(Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int sensorResID, int samplerResID) {
         ref<Timer> renderTimer = new Timer{};
@@ -477,10 +434,7 @@ public:
         // EDelta means discrete number of directions
         // - unsuitable for guiding or importance sampling based on density distributions
         // that work over ranges of directions
-        bool finiteOrigin = std::isfinite(rRec.its.p.x) && std::isfinite(rRec.its.p.y) && std::isfinite(rRec.its.p.z);
-        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding || !finiteOrigin) { // first iteration we should not use guiding
-            if (!finiteOrigin && shouldUseGuiding)
-                ++skippedDueToInf;
+        if ((type & BSDF::EDelta) == (type & BSDF::EAll) || !shouldUseGuiding) { // first iteration we should not use guiding
             auto result = bsdf->sample(bRec, bsdfPdf, sample); // this sets bsdfPdf
             woPdf = bsdfPdf;
             gmmPdf = 0;
@@ -527,9 +481,11 @@ public:
 
             isDiverging = sample.x < divergeProbability;
             if (isDiverging) {
+                sample.x /= divergeProbability;
                 ++samplesFromDiverging;
                 bRec.wo *= -1;
             } else {
+                sample.x = (sample.x - divergeProbability) / (1 - divergeProbability);
                 ++samplesFromConverging;
             }
 
@@ -545,15 +501,16 @@ public:
             }
         }
 
-        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, rRec.its.p, dir, isDiverging);
+        pdfMat(woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, bsdf, bRec, isDiverging);
         if (woPdf == 0) {
             return Spectrum{0.0f};
         }
 
-        // if ((result / woPdf).average() > 1)
-        //     Log(EInfo, ("isGuided: %d, result before devision: " + result.toString() + " woPdf: %f, bsdfPdf: %f, gmmPdf: %f").c_str(), isGuided, woPdf, bsdfPdf, gmmPdf);
+        result /= woPdf;
+        // if ((result).average() > 1)
+            // Log(EInfo, "isGuided: %d, result: %f, woPdf: %f, bsdfPdf: %f, gmmPdf: %f", isGuided, result, woPdf, bsdfPdf, gmmPdf);
 
-        return result / woPdf;
+        return result;
     }
 
     void pdfMat(
@@ -563,8 +520,6 @@ public:
         Float bsdfSamplingFraction,
         const BSDF* bsdf,
         const BSDFSamplingRecord& bRec,
-        const Point &origin,
-        mitsuba::Vector dir,
         bool isDiverging
     ) const {
         gmmPdf = 0.0f;
@@ -579,10 +534,8 @@ public:
         bsdfPdf = bsdf->pdf(bRec);
         assert(std::isfinite(bsdfPdf));
 
-        gmmPdf = isDiverging ? m_octreeDiverging.splatPdf(origin, -dir, m_gmm) : m_octree.splatPdf(origin, dir, m_gmm);
+        gmmPdf = isDiverging ? m_octreeDiverging.splatPdf(bRec.its.p, -bRec.its.toWorld(bRec.wo), m_gmm) : m_octree.splatPdf(bRec.its.p, -bRec.its.toWorld(bRec.wo), m_gmm);
         assert(std::isfinite(gmmPdf));
-
-        // Log(EInfo, "bsdfPdf: %f, gmmPdf: %f", bsdfPdf, gmmPdf);
 
         // MIS
         woPdf = bsdfSamplingFraction * bsdfPdf + (1 - bsdfSamplingFraction) * gmmPdf;
@@ -590,12 +543,7 @@ public:
         // Log(EInfo, "bsdfPdf: %f, gmmPdf: %f, woPdf: %f", bsdfPdf, gmmPdf, woPdf);
     }
 
-    // Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
-    //     Assert(false);
-    //     return Spectrum { 0.f };
-    // }
-
-    Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {//, Spectrum &weight) const {
+    Spectrum Li(const RayDifferential &r, RadianceQueryRecord &rRec) const {
         RayDifferential ray(r);
         Spectrum Li(0.0f);
 
@@ -638,6 +586,7 @@ public:
                     //     Log(EInfo, ("1 " + Li.toString() + " " + throughput.toString()).c_str());
                     currentIntersectionData.emission = ContributionAndThroughput{envmapRadiance, Spectrum{1.0f}};
                 }
+                currentIntersectionData.learnedContribution = Li;
                 break;
             }
 
@@ -651,7 +600,7 @@ public:
                 // if (Li.average() > 1e4)
                 //     Log(EInfo, ("2 " + Li.toString() + " " + throughput.toString()).c_str());
 
-                currentIntersectionData.emission.contribution = emittedRadiance;
+                currentIntersectionData.emission.contribution += emittedRadiance;
             }
 
 
@@ -673,6 +622,7 @@ public:
                     1. The current path length is below the specifed maximum
                     2. If 'strictNormals'=true, when the geometric and shading
                         normals classify the incident direction to the same side */
+                currentIntersectionData.learnedContribution = Li;
                 break;
             }
 
@@ -735,9 +685,11 @@ public:
             Spectrum bsdfWeight = sampleFromGMM(bsdf, bRec, woPdf, bsdfPdf, gmmPdf, bsdfSamplingFraction, rRec);
             currentIntersectionData.woPdf = woPdf;
 
-            if (bsdfWeight.isZero()) // this is why woPdf and bsdfPdf doesn't matter here
+            if (bsdfWeight.isZero()) {
+                currentIntersectionData.learnedContribution = Li;
+                // this is why woPdf and bsdfPdf doesn't matter here
                 break;
-
+            }
             scattered |= bRec.sampledType != BSDF::ENull;
 
             /* Prevent light leaks due to the use of shading normals */
@@ -747,8 +699,10 @@ public:
             ++rRec.depth;
 
             Float woDotGeoN = dot(rRec.its.geoFrame.n, wo);
-            if (m_strictNormals && woDotGeoN * Frame::cosTheta(bRec.wo) <= 0)
+            if (m_strictNormals && woDotGeoN * Frame::cosTheta(bRec.wo) <= 0){
+                currentIntersectionData.learnedContribution = Li;
                 break;
+            }
 
             bool hitEmitter = false;
             Spectrum value;
@@ -769,14 +723,19 @@ public:
 
                 if (env) {
                     Log(EInfo, "Environment map");
-                    if (m_hideEmitters && !scattered)
+                    if (m_hideEmitters && !scattered) {
+                        currentIntersectionData.learnedContribution = Li;
                         break;
+                    }
 
                     value = env->evalEnvironment(ray);
-                    if (!env->fillDirectSamplingRecord(dRec, ray))
+                    if (!env->fillDirectSamplingRecord(dRec, ray)) {
+                        currentIntersectionData.learnedContribution = Li;
                         break;
+                    }
                     hitEmitter = true;
                 } else {
+                    currentIntersectionData.learnedContribution = Li;
                     break;
                 }
             }
@@ -811,8 +770,10 @@ public:
 
             /* Set the recursive query type. Stop if no surface was hit by the
                 BSDF sample or if indirect illumination was not requested */
-            if (!rRec.its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance))
+            if (!rRec.its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance)) {
+                currentIntersectionData.learnedContribution = Li;
                 break;
+            }
 
             rRec.type = RadianceQueryRecord::ERadianceNoEmission;
 
@@ -826,8 +787,9 @@ public:
                 if (rRec.nextSample1D() >= q) {
                     if (training && !currentIntersectionData.bsdfDirectLight.contribution.isZero()) {
                         Log(EInfo, "bsdfDirectLight contribution is not zero");
-                        intersectionData->emplace_back(rRec.its, ray);
+                        intersectionData->emplace_back(rRec.its, ray); // ?
                     }
+                    currentIntersectionData.learnedContribution = Li;
                     break;
                 }
                 throughput /= q;
@@ -853,6 +815,7 @@ public:
                 const IntersectionData& currentIntersectionData = (*intersectionData)[i];
 
                 Spectrum clampedLight {0.0f};
+                Spectrum learnedContribution {0.0f};
 
                 // for debugging purposes:
                 // Spectrum bsdfLight {0.0f};
@@ -868,6 +831,7 @@ public:
                     clampedLight += (*intersectionData)[j].bsdfDirectLight.getClamped(maxThroughput);
                     clampedLight += (*intersectionData)[j].neeDirectLight.getClamped(maxThroughput);
                     clampedLight += (*intersectionData)[j].emission.getClamped(maxThroughput);
+                    learnedContribution += (*intersectionData)[j].learnedContribution;
                     // for debugging purposes:
                     // bsdfLight += (*intersectionData)[j].bsdfDirectLight.getClamped(maxThroughput);
                     // neeLight += (*intersectionData)[j].neeDirectLight.getClamped(maxThroughput);
@@ -899,6 +863,7 @@ public:
                     if (currentIntersectionData.woPdf == 0) {
                         continue;
                     }
+                    // Log(EInfo, ("Li: " + learnedContribution.toString() + " vs contribution: " + clampedLight.toString()).c_str());
                     m_octree.splat(currentIntersectionData.ray.o, currentIntersectionData.ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / (1 - divergeProbability));
                     if (endpointIsGlossy && divergeProbability > 1e-6) {
                         m_octreeDiverging.splat(currentIntersectionData.ray.o, currentIntersectionData.ray.d, splatDistance, clampedLight.average(), samples,  clampedPdf / divergeProbability);
@@ -959,6 +924,10 @@ public:
         // perThreadSampledPoints.clear();
         m_finalImage.clear();
         m_finalImage.add(film, static_cast<uint32_t>(scene->getSampler()->getSampleCount()), 1);
+
+        Vector2i size = film->getSize();
+        ref<Bitmap> image = new Bitmap(Bitmap::EPixelFormat::ESpectrum, Bitmap::EComponentFormat::EFloat32, size);
+        film->develop(Point2i(0, 0), size, Point2i(0, 0), image);
 
         ref<Bitmap> finalBitmap = new Bitmap(Bitmap::EPixelFormat::ESpectrum, Bitmap::EComponentFormat::EFloat32, film->getSize());
         m_finalImage.develop(finalBitmap.get());
@@ -1064,6 +1033,8 @@ public:
             const Float *m_bitmapData = m_bitmap->getFloat32Data();
             for (long i = 0; i < floatCount; ++i) {
                 // m_destData[i] = weight > 0 ? m_bitmapData[i] / (weight * 1000): 0;
+                if (m_bitmapData[i] > 1)
+                    Log(EInfo, "%f", m_bitmapData[i]);
                 m_destData[i] = weight > 0 ? m_bitmapData[i] / weight : 0;
             }
         }
