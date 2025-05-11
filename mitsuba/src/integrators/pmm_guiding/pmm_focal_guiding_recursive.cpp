@@ -41,11 +41,14 @@
 #include "weighted_sample.h"
 #include "stats_recursive.h"
 
+namespace pmm_focal {
+    thread_local StatsRecursiveImageBlockCache *StatsRecursiveImageBlockCache::instance = nullptr;
+    thread_local StatsRecursiveDescriptorCache *StatsRecursiveDescriptorCache::instance = nullptr;
+    thread_local StatsRecursiveValuesCache *StatsRecursiveValuesCache::instance = nullptr;
+}
+
 MTS_NAMESPACE_BEGIN
 
-thread_local pmm_focal::StatsRecursiveImageBlockCache *pmm_focal::StatsRecursiveImageBlockCache::instance = nullptr;
-thread_local pmm_focal::StatsRecursiveDescriptorCache *pmm_focal::StatsRecursiveDescriptorCache::instance = nullptr;
-thread_local pmm_focal::StatsRecursiveValuesCache *pmm_focal::StatsRecursiveValuesCache::instance = nullptr;
 
 /**
  * Based on the recursive path tracer from EARS [Rath et al. 2022].
@@ -243,7 +246,7 @@ public:
 
                 if (numValidSamples < 128) {
                     Log(EInfo, "skipping fit due to insufficient sample data (got %zu/%d valid samples).", numValidSamples, 128);
-                    return;
+                    return true;
                 }
 
                 std::vector<pmm_focal::WeightedSample> iterationSamples;
@@ -294,6 +297,7 @@ public:
 
         size_t nCores = sched->getCoreCount();
         perThreadSamples.resize(nCores);
+        maxThreadId.store(0);
         ref<Sensor> sensor = static_cast<Sensor *>(sched->getResource(sensorResID));
         ref<Film> film = sensor->getFilm();
 
@@ -512,6 +516,7 @@ public:
         // init thread variables
         if (!threadLocalInitialized.get()) {
             const size_t threadId = maxThreadId.fetch_add(1, std::memory_order_relaxed);
+            // Log(EInfo, "threadId: %d", threadId);
             samples = &perThreadSamples.at(threadId);
             threadLocalInitialized.get() = true;
         }
