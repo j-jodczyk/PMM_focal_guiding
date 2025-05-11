@@ -743,7 +743,8 @@ public:
     }
 
     void processBatchParallel(std::vector<WeightedSample>& batch) {
-        SLog(mitsuba::EInfo, "Starting batch processing in parallel");
+        if (!initialized)
+            init(batch);
 
         // create component cache so we don't recompute this a bunch of times
         std::vector<ComponentCache> componentCache(components.size());
