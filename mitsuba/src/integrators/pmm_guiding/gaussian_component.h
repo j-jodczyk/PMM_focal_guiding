@@ -9,6 +9,15 @@ namespace pmm_focal
     {
     public:
 
+        double Nk = 0.0;
+        Eigen::VectorXd Sk;     // running sum: ∑ γ_j * x
+        Eigen::MatrixXd Sk2;    // running sum: ∑ γ_j * x x^T
+
+        void initializeStats(int dim) {
+            Sk = Eigen::VectorXd::Zero(dim);
+            Sk2 = Eigen::MatrixXd::Zero(dim, dim);
+        }
+
     private:
         Eigen::VectorXd mean;
         Eigen::MatrixXd covariance;
@@ -19,8 +28,18 @@ namespace pmm_focal
         float softCount;
 
     public:
+        Eigen::VectorXd sum_x;
+        Eigen::MatrixXd sum_xxT;
+        float r_k = 0; // total soft responsibility
+        float N; 
         bool isNew = false;
-        GaussianComponent() {}
+        GaussianComponent() {
+            size_t dims = 3;
+            initializeStats(dims);
+            sum_x = Eigen::VectorXd::Zero(dims);
+            sum_xxT = Eigen::MatrixXd::Zero(dims, dims);
+        }
+
         GaussianComponent(mitsuba::FileStream* in) {
             deserialize(in);
         }
@@ -43,10 +62,6 @@ namespace pmm_focal
 
         void updateComponent(size_t N, size_t N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, float new_weight, float alpha) {
             N *= alpha; // Ruppert 2020
-            // weight = (N * weight + N_new * new_weight) / (N + N_new);
-
-            // SLog(mitsuba::EInfo, ("prior mean: " + getMeanStr() + " prior covaraince: " + getCovarianceStr() + " N: %d").c_str(), N);
-
             Eigen::VectorXd priorMean = mean;
             mean = (N * priorMean + N_new * new_mean) / (N + N_new);
 
@@ -56,7 +71,6 @@ namespace pmm_focal
             covariance += 1e-6f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
             inverseCovariance = covariance.inverse();
             logDetCov = std::log(covariance.determinant());
-            Eigen::MatrixXd L = covariance.llt().matrixL();
 
             updateSoftCount(N, N_new, new_weight);
         }
@@ -67,8 +81,37 @@ namespace pmm_focal
             covariance = new_cov;
             inverseCovariance = covariance.inverse();
             logDetCov = std::log(covariance.determinant());
-            Eigen::MatrixXd L = covariance.llt().matrixL();
+        }
 
+        void updateComponentWithSufficientStatistics(
+            const Eigen::VectorXd& sum_x_new,
+            const Eigen::MatrixXd& sum_xxT_new,
+            float r_k_new,
+            float N_new,
+            float decay
+        ) {
+            // Decay old statistics
+            sum_x *= decay;
+            sum_xxT *= decay;
+            r_k *= decay;
+            N *= decay;
+        
+            // Accumulate new statistics
+            sum_x += sum_x_new;
+            sum_xxT += sum_xxT_new;
+            r_k += r_k_new;
+            N += N_new;
+        
+            // Compute MLE estimates
+            mean = sum_x / r_k;
+            covariance = (sum_xxT / r_k) - mean * mean.transpose();
+        
+            // Regularize covariance to avoid numerical issues
+            covariance += 1e-6f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols());
+        
+            // Update cached values
+            inverseCovariance = covariance.inverse();
+            logDetCov = std::log(covariance.determinant());
         }
 
         void updateSoftCount(float N, float N_new, float new_weight) {
@@ -99,11 +142,16 @@ namespace pmm_focal
         }
 
         void deactivate(size_t dims) {
+            r_k = 0.0;
+            sum_x = Eigen::VectorXd::Zero(dims);
+            sum_xxT = Eigen::MatrixXd::Zero(dims, dims);
             weight = 0.0;
             mean = Eigen::VectorXd::Zero(dims);
             covariance = Eigen::MatrixXd::Zero(dims, dims);
             inverseCovariance = Eigen::MatrixXd::Zero(dims, dims);
             L = Eigen::MatrixXd::Zero(dims, dims);
+            Nk = 0;
+            initializeStats(dims);
         }
 
         std::string toString() const {
