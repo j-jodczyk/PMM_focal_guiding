@@ -31,7 +31,7 @@ namespace pmm_focal
         Eigen::VectorXd sum_x;
         Eigen::MatrixXd sum_xxT;
         float r_k = 0; // total soft responsibility
-        float N; 
+        float N;
         bool isNew = false;
         GaussianComponent() {
             size_t dims = 3;
@@ -60,29 +60,6 @@ namespace pmm_focal
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
         void setWeight(float newWeight) { weight = newWeight; }
 
-        void updateComponent(size_t N, size_t N_new, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, float new_weight, float alpha) {
-            N *= alpha; // Ruppert 2020
-            Eigen::VectorXd priorMean = mean;
-            mean = (N * priorMean + N_new * new_mean) / (N + N_new);
-
-            Eigen::MatrixXd correction = (N * N_new) / pow(N + N_new, 2) * (new_mean - priorMean) * (new_mean - priorMean).transpose();
-            covariance = (N * covariance + N_new * new_cov) / (N + N_new) + correction;
-
-            covariance += 1e-6f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()); // Regularization
-            inverseCovariance = covariance.inverse();
-            logDetCov = std::log(covariance.determinant());
-
-            updateSoftCount(N, N_new, new_weight);
-        }
-
-        void updateComponent(float new_weight, const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov) {
-            weight = new_weight;
-            mean = new_mean;
-            covariance = new_cov;
-            inverseCovariance = covariance.inverse();
-            logDetCov = std::log(covariance.determinant());
-        }
-
         void updateComponentWithSufficientStatistics(
             const Eigen::VectorXd& sum_x_new,
             const Eigen::MatrixXd& sum_xxT_new,
@@ -95,20 +72,20 @@ namespace pmm_focal
             sum_xxT *= decay;
             r_k *= decay;
             N *= decay;
-        
+
             // Accumulate new statistics
             sum_x += sum_x_new;
             sum_xxT += sum_xxT_new;
             r_k += r_k_new;
             N += N_new;
-        
+
             // Compute MLE estimates
             mean = sum_x / r_k;
             covariance = (sum_xxT / r_k) - mean * mean.transpose();
-        
+
             // Regularize covariance to avoid numerical issues
             covariance += 1e-6f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols());
-        
+
             // Update cached values
             inverseCovariance = covariance.inverse();
             logDetCov = std::log(covariance.determinant());

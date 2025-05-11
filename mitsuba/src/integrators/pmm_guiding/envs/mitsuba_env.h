@@ -60,4 +60,23 @@ struct EnvMitsuba3D {
         assert(tNear <= tFar);
         return (tFar * tFar * tFar - tNear * tNear * tNear) * (Float(1) / Float(3));
     }
+
+    /// Normalize a direction vector.
+    static Vector normalize(const Vector &vec) { return mitsuba::normalize(vec); }
+
+     /// Transform a point in local coordinates [0,1)^3 to world coordinates within the provided region of interest.
+    static Point absolute(const AABB &aabb, const Point &relative) {
+        Point result;
+        for (int dim = 0; dim < Dimensionality; dim++)
+            result[dim] = relative[dim] * (aabb.max[dim] - aabb.min[dim]) + aabb.min[dim];
+        return result;
+    }
+
+    /// Transform a point in world coordinates within the region of interest to local coordinates [0,1)^3.
+    static Point relative(const AABB &aabb, const Point &absolute) {
+        Point result;
+        for (int dim = 0; dim < Dimensionality; dim++)
+            result[dim] = (absolute[dim] - aabb.min[dim]) / (aabb.max[dim] - aabb.min[dim]);
+        return result;
+    }
 };

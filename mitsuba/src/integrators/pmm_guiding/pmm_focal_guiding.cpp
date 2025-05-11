@@ -52,7 +52,7 @@ struct ContributionAndThroughput {
         return contribution*throughput;
     }
 
-    std::string toString() const 
+    std::string toString() const
     {
         return contribution.toString() + " " + throughput.toString();
     }
@@ -339,8 +339,7 @@ public:
 
         Log(EInfo, "Got %i non-zero samples", iterationSamples.size());
 
-        bool shouldTerminateEarly = m_gmm.processBatchParallel(iterationSamples);
-        training = !shouldTerminateEarly;
+        m_gmm.processMegaBatch(iterationSamples);
 
         const Float convThreshold = m_octree.sumDensities();
         const Float divThreshold = m_octreeDiverging.sumDensities();
@@ -348,10 +347,9 @@ public:
 
         m_octree.build(threshold);
         m_octreeDiverging.build(threshold);
-        
+
         divergeProbability = divThreshold / (divThreshold + convThreshold);
         m_gmm.setDivergeProbability(divergeProbability);
-        m_gmm.clearPdfCache();
         Log(EInfo, "diverge probability: %.3f\n", divergeProbability);
 
         const Float postprocessingTime = m_timer->stop();
@@ -666,7 +664,7 @@ public:
                         //     Log(EInfo, "Li after direct sampling %f", Li.average());
                         // Log(EInfo, ("throughput = " + throughput.toString() + " value = " + value.toString() + " bsdfVal = " + bsdfVal.toString() + " weight = %f").c_str(), weight);
                         // }
-                        currentIntersectionData.neeDirectLight = ContributionAndThroughput{value, bsdfVal*weight}; 
+                        currentIntersectionData.neeDirectLight = ContributionAndThroughput{value, bsdfVal*weight};
                     }
                 }
             }
@@ -986,7 +984,7 @@ public:
                 m_scrap = new Bitmap(Bitmap::EPixelFormat::ESpectrum, Bitmap::EComponentFormat::EFloat32, size);
             }
             film->develop(Point2i(0, 0), size, Point2i(0, 0), m_scrap);
-            
+
             ///
 
             if (!m_bitmap) {

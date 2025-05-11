@@ -28,12 +28,7 @@
 
 #include "gaussian_component.h"
 #include "weighted_sample.h"
-
-// #define MITSUBA_LOGGING = 1
-
-#ifdef MITSUBA_LOGGING
 #include <mitsuba/core/logger.h>
-#endif
 
 #include "distribution.h"
 #include "util.h"
@@ -54,55 +49,6 @@ namespace std {
 }
 
 namespace pmm_focal {
-
-class ThreadLocalGMMCache {
-    public:
-        static ThreadLocalGMMCache& instance() {
-            static ThreadLocalGMMCache cache;
-            return cache;
-        }
-    
-        void set_pdf(const mitsuba::Point3f &pt, float val) {
-            get_thread_cache()[pt] = val;
-        }
-    
-        bool get_pdf(const mitsuba::Point3f &pt, float &val_out) {
-            auto& cache = get_thread_cache();
-            auto it = cache.find(pt);
-            if (it != cache.end()) {
-                val_out = it->second;
-                return true;
-            }
-            return false;
-        }
-    
-        void clear_all() {
-            std::lock_guard<std::mutex> lock(mutex_);
-            for (auto& ptr : all_caches_) {
-                ptr->clear();
-            }
-        }
-    
-    private:
-        using CacheMap = std::unordered_map<mitsuba::Point3f, float>;
-    
-        ThreadLocalGMMCache() = default;
-    
-        CacheMap& get_thread_cache() {
-            thread_local std::shared_ptr<CacheMap> cache_ptr = std::make_shared<CacheMap>();
-            thread_local bool registered = register_cache(cache_ptr);
-            return *cache_ptr;
-        }
-    
-        bool register_cache(std::shared_ptr<CacheMap> cache) {
-            std::lock_guard<std::mutex> lock(mutex_);
-            all_caches_.push_back(cache);
-            return true;
-        }
-    
-        std::mutex mutex_;
-        std::vector<std::shared_ptr<CacheMap>> all_caches_;
-    };
 
 struct ComponentCache {
     Eigen::MatrixXd invCov;
@@ -138,7 +84,7 @@ private:
     using AABB = typename Env::AABB;
 
     std::vector<GaussianComponent> components;
-    float alpha = 0.6;
+    float alpha = 0.25;
     float splittingThreshold;
     float mergingThreshold;
     size_t minNumComp;
@@ -247,6 +193,9 @@ private:
             });
         }
 
+        for (auto& t: threads)
+            t.join();
+
         float totalSoft = 0.f;
         for (auto& comp : components)
             totalSoft += comp.r_k;
@@ -307,7 +256,7 @@ private:
 
         if (!std::isfinite(first+second) || (first + second) == 0) {
             SLog(mitsuba::EInfo, comp1.toString().c_str());
-            SLog(mitsuba::EInfo, comp2.toString().c_str());   
+            SLog(mitsuba::EInfo, comp2.toString().c_str());
             SLog(mitsuba::EInfo, "multiply: %f, cov1Det: %f, cov2Det: %f", multiply, cov1Det, cov2Det);
         }
 
@@ -321,7 +270,7 @@ private:
         Eigen::MatrixXd bhattacharyyaCoefficients(components.size(), components.size());
         for (size_t i = 0; i < components.size(); ++i) {
             for (size_t j = i + 1; j < components.size(); ++j) {
-                if (components[j].getWeight() == 0 || components[i].getWeight() == 0 || j == i || components[i].isNew) {
+                if (components[j].getWeight() == 0 || components[i].getWeight() == 0 || j == i || components[i].isNew || components[j].isNew) {
                     bhattacharyyaCoefficients(i, j) = 0;
                     bhattacharyyaCoefficients(j, i) = 0;
                     continue;
@@ -329,8 +278,12 @@ private:
                 auto dist = exp(-bhattacharyyaDistance(i, j)); // BC = 1/exp(BD)
                 bhattacharyyaCoefficients(i, j) = dist;
                 bhattacharyyaCoefficients(j, i) = dist;
+                if (!std::isfinite(dist)) {
+                    SLog(mitsuba::EInfo, "%d, %d", i, j);
+                }
             }
         }
+        bhattacharyyaCoefficients.diagonal().setZero();
 
         size_t i, j;
         bhattacharyyaCoefficients.maxCoeff(&i, &j);
@@ -528,9 +481,6 @@ private:
     }
 
 public:
-    void clearPdfCache() const {
-        ThreadLocalGMMCache::instance().clear_all();
-    }
     GaussianMixtureModel(): prng() {}
     GaussianMixtureModel(std::istream& in) {
         deserialize(in);
@@ -573,12 +523,6 @@ public:
         return val;
     }
 
-    // float pdf(const mitsuba::Point3f x) {
-    //     Eigen::VectorXd xEigen(3);
-    //     xEigen << x.x, x.y, x.z;
-    //     return pdf(xEigen);
-    // }
-
     float componentPdf(const GaussianComponent& component, const Eigen::VectorXd& x) {
         int d = x.size();
         float logNormConst = -0.5 * (d * std::log(2 * M_PI) + component.getLogDetCov());
@@ -610,7 +554,6 @@ public:
         SLog(mitsuba::EInfo, initMethod.c_str());
         if (initMethod == "KMeans") {
             initKMeans(batch);
-            SLog(mitsuba::EInfo, this->toString().c_str());
             return;
         }
 
@@ -620,7 +563,6 @@ public:
         }
 
         initRandom(batch);
-        SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
     void initUniform(const std::vector<WeightedSample>& batch) {
@@ -696,46 +638,46 @@ public:
     void initKMeans(const std::vector<WeightedSample>& batch) {
         SLog(mitsuba::EInfo, "Starting initialization using KMeans++");
         m_dimension = batch[0].point.size();
-    
+
         if (components.size() != maxNumComp)
             components.resize(maxNumComp);
-        
+
         size_t initNumComp = maxNumComp;
-    
+
         std::vector<Eigen::VectorXd> centroids;
         centroids.reserve(initNumComp);
-    
+
         std::vector<int> clusterAssignments(batch.size(), -1);
         std::random_device rd;
         std::mt19937 gen(rd());
-    
+
         // --- KMeans++ Initialization ---
         // 1. First centroid picked randomly
         std::uniform_int_distribution<> uniDist(0, batch.size() - 1);
         centroids.push_back(batch[uniDist(gen)].point);
-    
+
         for (size_t i = 1; i < initNumComp; ++i) {
             std::vector<double> distances(batch.size(), std::numeric_limits<double>::max());
-    
+
             for (size_t j = 0; j < batch.size(); ++j) {
                 for (size_t c = 0; c < centroids.size(); ++c) {
                     double dist = (batch[j].point - centroids[c]).squaredNorm();
                     distances[j] = std::min(distances[j], dist);
                 }
             }
-    
+
             std::discrete_distribution<int> weightedDist(distances.begin(), distances.end());
             centroids.push_back(batch[weightedDist(gen)].point);
         }
-    
+
         // --- One iteration of KMeans (assign points and compute means) ---
         std::vector<int> clusterSizes(initNumComp, 0);
         std::vector<Eigen::VectorXd> newCentroids(initNumComp, Eigen::VectorXd::Zero(m_dimension));
-    
+
         for (size_t i = 0; i < batch.size(); ++i) {
             double minDist = std::numeric_limits<double>::max();
             int bestCluster = -1;
-    
+
             for (size_t k = 0; k < initNumComp; ++k) {
                 double dist = (batch[i].point - centroids[k]).squaredNorm();
                 if (dist < minDist) {
@@ -743,27 +685,27 @@ public:
                     bestCluster = static_cast<int>(k);
                 }
             }
-    
+
             clusterAssignments[i] = bestCluster;
             clusterSizes[bestCluster]++;
             newCentroids[bestCluster] += batch[i].point;
         }
-    
+
         for (size_t k = 0; k < initNumComp; ++k) {
             if (clusterSizes[k] > 0)
                 newCentroids[k] /= clusterSizes[k];
             else
                 newCentroids[k] = centroids[k]; // fallback
         }
-    
+
         // --- Initialize GMM components from centroids ---
         for (size_t k = 0; k < initNumComp; ++k) {
             auto& component = components[k];
             component.setWeight(static_cast<float>(clusterSizes[k]) / batch.size());
             component.setMean(newCentroids[k]);
-    
+
             Eigen::MatrixXd covariance = Eigen::MatrixXd::Zero(m_dimension, m_dimension);
-    
+
             if (clusterSizes[k] > 1) {
                 for (size_t i = 0; i < batch.size(); ++i) {
                     if (clusterAssignments[i] == static_cast<int>(k)) {
@@ -775,13 +717,13 @@ public:
             } else {
                 covariance = Eigen::MatrixXd::Identity(m_dimension, m_dimension) * 1e-6;
             }
-    
+
             component.setCovariance(covariance);
         }
-    
+
         SLog(mitsuba::EInfo, "Initialized using KMeans++");
         initialized = true;
-    }    
+    }
 
     void resetComponent(GaussianComponent& component) {
         SLog(mitsuba::EInfo, "Resetting component");
@@ -796,167 +738,12 @@ public:
             compMean[d] = dist(gen);
         }
         component.setMean(compMean);
-        component.setCovariance(Eigen::MatrixXd::Identity(component.getCovariance().rows(), component.getCovariance().cols()));
+        size_t dims = component.getCovariance().rows();
+        component.setCovariance(Eigen::MatrixXd::Identity(dims, dims));
     }
 
-    bool processInChunks(const std::vector<WeightedSample>& batch) {
-        // we do not need to calculate full responsibilities matrix at once - such approach might cause bad_alloc for big batches
-        // instead, we can loop over the batch in chunks while accumulating the sufficient statistics
-        // for each component we need:
-        //      - a sum of responsibilities: N_k = sum(r_ik)
-        //      - mean: mean_k = 1/N_k * sum(r_ik * x_i)
-        //      - covariance: covaraince_k = 1/N_k * sum(r_ik * (x_i - mean_k)(x_i - mean_k)^T)
-        SLog(mitsuba::EInfo, "Starting processing in chunks");
-
-        if (!initialized)
-            init(batch);
-
-        const size_t d = batch[0].point.size();
-        const size_t chunkSize = 50000000;
-        const size_t k = components.size();
-        const size_t totalSamples = batch.size();
-
-        // create component cache so we don't recompute this a bunch of times
-        std::vector<ComponentCache> componentCache(k);
-
-        std::vector<std::thread> cacheThreads;
-        for (size_t j = 0; j < k; ++j) {
-            cacheThreads.emplace_back([&, j]() {
-                const auto& c = components[j];
-                if (c.getWeight() == 0) return;
-                componentCache[j] = {
-                    c.getInverseCovariance(),
-                    c.getMean(),
-                    -0.5f * (batch[0].point.size() * std::log(2 * M_PI) + c.getLogDetCov()),
-                    c.getWeight()
-                };
-            });
-        }
-
-        for (auto& t : cacheThreads) t.join();
-        SLog(mitsuba::EInfo, "Finished component cache");
-
-        // Allocate sufficient stats accumulators
-        std::vector<double> N_k(k, 0.0);
-        std::vector<Eigen::VectorXd> sum_x_k(k, Eigen::VectorXd::Zero(d));
-        std::vector<Eigen::MatrixXd> sum_cov_k(k, Eigen::MatrixXd::Zero(d, d));
-
-        for (size_t offset = 0; offset < totalSamples; offset += chunkSize) {
-            SLog(mitsuba::EInfo, "Next chunk");
-            size_t end = std::min(offset + chunkSize, totalSamples);
-            size_t currentSize = end - offset;
-
-            Eigen::MatrixXf R_chunk = Eigen::MatrixXf::Zero(currentSize, k);
-
-            // E-step on chunk
-            #pragma omp parallel for
-            for (size_t i = 0; i < currentSize; ++i) {
-                size_t globalIdx = offset + i;
-                const auto& sample = batch[globalIdx];
-
-                for (size_t j = 0; j < k; ++j) {
-                    const auto& c = componentCache[j];
-                    if (c.weight == 0) continue;
-                    Eigen::VectorXd diff = sample.point - c.mean;
-                    float exponent = -0.5 * diff.transpose() * c.invCov * diff;
-                    float resp = c.weight * std::exp(c.logNormConst + exponent);
-                    if (resp != resp)
-                        SLog(mitsuba::EInfo, ("responsibility nan: " + sample.toString()).c_str());
-
-                    R_chunk(i, j) = resp;
-                }
-
-                // Normalize row
-                float rowSum = R_chunk.row(i).sum();
-                if (rowSum > 0)
-                    R_chunk.row(i) /= rowSum;
-            }
-
-            // Accumulate stats for chunk
-            for (size_t i = 0; i < currentSize; ++i) {
-                size_t globalIdx = offset + i;
-                const auto& sample = batch[globalIdx];
-                for (size_t j = 0; j < k; ++j) {
-                    float r = R_chunk(i, j);
-                    float w = sample.weight;
-                    N_k[j] += r * w;
-                    sum_x_k[j] += r * w * sample.point;
-                }
-            }
-
-            for (size_t i = 0; i < currentSize; ++i) {
-                size_t globalIdx = offset + i;
-                const auto& sample = batch[globalIdx];
-                for (size_t j = 0; j < k; ++j) {
-                    float r = R_chunk(i, j);
-                    float w = sample.weight;
-                    Eigen::VectorXd mean_est = sum_x_k[j] / std::max(N_k[j], 1e-6);
-                    Eigen::VectorXd diff = sample.point - mean_est;
-                    sum_cov_k[j] += r * w * (diff * diff.transpose());
-                }
-            }
-        }
-
-        SLog(mitsuba::EInfo, "processed all chunks");
-
-        // Final M-step: update components
-        float totalWeight = totalSampleWeight(batch);
-        float totalSoftCount = 0.0;
-        for (size_t j = 0; j < k; ++j) {
-            if (components[j].getWeight() == 0 || N_k[j] < 1e-6)
-                continue;
-
-            Eigen::VectorXd newMean = sum_x_k[j] / N_k[j];
-            Eigen::MatrixXd newCov = sum_cov_k[j] / N_k[j];
-            float newWeight = N_k[j] / totalWeight;
-
-            components[j].updateComponent(N_prev, totalSamples, newMean, newCov, newWeight, alpha);
-            totalSoftCount += components[j].getSoftCount();
-        }
-
-        for (auto& c : components) {
-            if (c.getWeight() != 0)
-                c.setWeight(c.getSoftCount() / totalSoftCount);
-        }
-
-        N_prev = totalSamples;
-
-        SLog(mitsuba::EInfo, "updating responsibiliites");
-        Eigen::MatrixXd updatedResponsibilities(batch.size(), components.size());
-        computeResponsibilities(batch, updatedResponsibilities);
-
-        SLog(mitsuba::EInfo, "Splitting and merging");
-
-        splitAllComponents(batch, updatedResponsibilities);
-        mergeAllComponents();
-
-        // Prune
-        float componentsWeight = 0;
-        for (size_t i = 0; i < components.size(); ++i) {
-            if (components[i].getWeight() < 1e-6f)
-                deactivateComponent(i);
-            else
-                componentsWeight += components[i].getWeight();
-        }
-        for (auto& component : components) {
-            component.setWeight(component.getWeight() / componentsWeight);
-            component.isNew = false;
-        }
-    }
-
-    bool processBatchParallel(std::vector<WeightedSample>& batch) {
+    void processBatchParallel(std::vector<WeightedSample>& batch) {
         SLog(mitsuba::EInfo, "Starting batch processing in parallel");
-        if (batch.size() > 50000000) {
-            std::vector<WeightedSample>every_10th;
-            for (size_t i = 0; i < batch.size(); i += 10)
-                every_10th.push_back(batch[i]);
-            batch = every_10th;
-            SLog(mitsuba::EInfo, "Reduced the number of samples");
-        }
-
-
-        if (!initialized)
-            init(batch);
 
         // create component cache so we don't recompute this a bunch of times
         std::vector<ComponentCache> componentCache(components.size());
@@ -995,7 +782,6 @@ public:
             size_t endIdx = std::min(startIdx + chunkSize, batchSize);
 
             threads.emplace_back([&, startIdx, endIdx]() {
-                // SLog(mitsuba::EInfo, "Starting batch processing E-step");
                 for (size_t i = startIdx; i < endIdx; ++i) {
                     for (size_t j = 0; j < components.size(); ++j) {
                         const auto& c = componentCache[j];
@@ -1043,58 +829,23 @@ public:
 
         SLog(mitsuba::EInfo, "Finish M step");
 
-        for (const auto& sample : batch)
-            SLog(mitsuba::EInfo, "point (%f, %f, %f), weight %f", sample.point[0], sample.point[1], sample.point[2], sample.weight);
-        
-        return false; // todo: adjust
+        // for (const auto& sample : batch)
+        //     SLog(mitsuba::EInfo, "point (%f, %f, %f), weight %f", sample.point[0], sample.point[1], sample.point[2], sample.weight);
     }
 
-    void processBatch(const std::vector<WeightedSample>& batch) {
-        SLog(mitsuba::EInfo, "Start processing batch");
-        if (!initialized)
-            init(batch);
+    void processMegaBatch(std::vector<WeightedSample>& megaBatch, size_t subBatchSize = 100000) {
+        SLog(mitsuba::EInfo, "Processing mega batch of size %zu", megaBatch.size());
 
+        size_t numSubBatches = (megaBatch.size() + subBatchSize - 1) / subBatchSize;
+        for (size_t i = 0; i < numSubBatches; ++i) {
+            size_t startIdx = i * subBatchSize;
+            size_t endIdx = std::min(startIdx + subBatchSize, megaBatch.size());
+            std::vector<WeightedSample> subBatch(megaBatch.begin() + startIdx, megaBatch.begin() + endIdx);
 
-        Eigen::MatrixXd responsibilities = Eigen::MatrixXd(batch.size(), components.size());
+            SLog(mitsuba::EInfo, "Processing sub-batch %zu/%zu (%zu samples)", i + 1, numSubBatches, subBatch.size());
 
-        // E-step
-        {
-            for (size_t j = 0; j < components.size(); ++j) {
-                auto& component = components[j];
-                if (component.getWeight() == 0)
-                    continue;
-
-                // instead of calling pdf, we use eigen vector operations to make this quicker
-                Eigen::MatrixXd invCov = component.getInverseCovariance();
-                Eigen::VectorXd mean = component.getMean();
-                float logNormConst = -0.5 * (batch[0].point.size() * std::log(2 * M_PI) + component.getLogDetCov());
-                float weight = component.getWeight();
-                for (size_t i = 0; i < batch.size(); ++i) {
-                    Eigen::VectorXd diff = batch[i].point - mean;
-                    float exponent = -0.5 * diff.transpose() * invCov * diff;
-                    auto resp = weight * std::exp(logNormConst + exponent);
-                    if (resp != resp) {
-                        SLog(mitsuba::EInfo, "point (%f, %f, %f), weight %f", batch[i].point[0], batch[i].point[1], batch[i].point[2], batch[i].weight);
-                    }
-                    responsibilities(i, j) = resp; // without * batch[i].weight; - Hanebeck, Frisch - consider weights only in M step - this is an absolute game changer!
-                }
-            }
+            processBatchParallel(subBatch);
         }
-
-        SLog(mitsuba::EInfo, "Finish E step");
-
-        // Normalize responsibilities
-        for (int i = 0; i < responsibilities.rows(); ++i) { // rows is batch.size()
-            responsibilities.row(i) /= responsibilities.row(i).sum();
-        }
-        SLog(mitsuba::EInfo, "Normalized responsibilities");
-
-        // M-step
-        {
-            updateSufficientStatistics(batch, responsibilities);
-        }
-
-        SLog(mitsuba::EInfo, "Finish M step");
     }
 
     // using Inverse Transform Sampling
@@ -1134,139 +885,9 @@ public:
         return oss.str();
     }
 
-    void serialize(mitsuba::FileStream* out)const
-    {
-        // out->write(reinterpret_cast<const char*>(&alpha), sizeof(alpha));
-        // out->write(reinterpret_cast<const char*>(&splittingThreshold), sizeof(splittingThreshold));
-        // out->write(reinterpret_cast<const char*>(&mergingThreshold), sizeof(mergingThreshold));
-        // out->write(reinterpret_cast<const char*>(&minNumComp), sizeof(minNumComp));
-        // out->write(reinterpret_cast<const char*>(&maxNumComp), sizeof(maxNumComp));
-        // out->write(reinterpret_cast<const char*>(&m_dimension), sizeof(m_dimension));
-        // // out->write(reinterpret_cast<const char*>(&N_prev), sizeof(N_prev));
-        // // out->write(reinterpret_cast<const char*>(&divergeProbability), sizeof(divergeProbability));
+    void serialize(mitsuba::FileStream* out) const {}
 
-        // // Save components
-        // size_t numComponents = components.size();
-        // out->write(reinterpret_cast<const char*>(&numComponents), sizeof(numComponents));
-        // for (const auto& comp : components) {
-        //     comp.serialize(out);  // Call GaussianComponent's save method
-        // }
-    }
-
-    void deserialize(mitsuba::FileStream* in)
-    {
-        // in->read(reinterpret_cast<char*>(&alpha), sizeof(alpha));
-        // in->read(reinterpret_cast<char*>(&splittingThreshold), sizeof(splittingThreshold));
-        // in->read(reinterpret_cast<char*>(&mergingThreshold), sizeof(mergingThreshold));
-        // in->read(reinterpret_cast<char*>(&minNumComp), sizeof(minNumComp));
-        // in->read(reinterpret_cast<char*>(&maxNumComp), sizeof(maxNumComp));
-        // in->read(reinterpret_cast<char*>(&m_dimension), sizeof(m_dimension));
-        // // in->read(reinterpret_cast<char*>(&N_prev), sizeof(N_prev));
-        // // in->read(reinterpret_cast<char*>(&divergeProbability), sizeof(divergeProbability));
-
-        // // Read components
-        // size_t numComponents;
-        // in->read(reinterpret_cast<char*>(&numComponents), sizeof(numComponents));
-        // components.resize(numComponents);
-        // for (auto& comp : components) {
-        //     comp.deserialize(in);
-        // }
-    }
-
-    Eigen::VectorXd onlineEStep(const WeightedSample& sample) {
-        Eigen::VectorXd responsibilities(components.size());
-    
-        for (size_t j = 0; j < components.size(); ++j) {
-            auto& comp = components[j];
-            if (comp.getWeight() == 0.0)
-                continue;
-    
-            Eigen::VectorXd diff = sample.point - comp.getMean();
-            Eigen::MatrixXd invCov = comp.getInverseCovariance();
-            double logDet = comp.getLogDetCov();
-            double logNormConst = -0.5 * (sample.point.size() * std::log(2 * M_PI) + logDet);
-            double exponent = -0.5 * diff.transpose() * invCov * diff;
-            responsibilities[j] = comp.getWeight() * std::exp(logNormConst + exponent);
-        }
-    
-        double sum = responsibilities.sum();
-        if (sum > 0.0) {
-            responsibilities /= sum;
-        } else {
-            responsibilities.setZero();
-        }
-    
-        return responsibilities;
-    }
-
-    void onlineMStep(const WeightedSample& sample, const Eigen::VectorXd& responsibilities, float stepSize) {
-        const int dim = sample.point.size();
-        const double alpha = sample.weight; // from Hanebeck & Frisch
-    
-        for (size_t j = 0; j < components.size(); ++j) {
-            auto& comp = components[j];
-            double gamma = responsibilities[j];
-    
-            if (comp.Sk.size() == 0)
-                comp.initializeStats(dim);
-    
-            // Weighted by both sample weight and responsibility
-            double weightedGamma = gamma * alpha;
-    
-            comp.Nk = (1.0 - stepSize) * comp.Nk + stepSize * weightedGamma;
-            comp.Sk = (1.0 - stepSize) * comp.Sk + stepSize * weightedGamma * sample.point;
-            comp.Sk2 = (1.0 - stepSize) * comp.Sk2 + stepSize * weightedGamma * (sample.point * sample.point.transpose());
-        }
-    
-        // Recompute total weight for normalization
-        double totalNk = 0.0;
-        for (const auto& comp : components)
-            totalNk += comp.Nk;
-    
-        // Update parameters from sufficient statistics
-        for (auto& comp : components) {
-            if (comp.Nk <= 1e-8)
-                continue;
-    
-            double newWeight = comp.Nk / totalNk;
-            Eigen::VectorXd newMean = comp.Sk / comp.Nk;
-            Eigen::MatrixXd newCov = comp.Sk2 / comp.Nk - newMean * newMean.transpose();
-            newCov += 1e-6f * Eigen::MatrixXd::Identity(newCov.rows(), newCov.cols());
-    
-            comp.updateComponent(newWeight, newMean, newCov);
-        }
-    }  
-
-    bool processOnline(const std::vector<WeightedSample>& batch) {
-        SLog(mitsuba::EInfo, "Starting online processing");
-
-        if (!initialized)
-            init(batch);
-
-        for (const auto& sample : batch) {
-            auto responsibilities = onlineEStep(sample);
-            float stepSize = std::max(0.01, std::pow(n + 1, -alpha));
-            onlineMStep(sample, responsibilities, stepSize);
-            n++;
-        }
-
-        float componentsWeight = 0;
-        for (size_t i = 0; i < components.size(); ++i) {
-            if (components[i].getWeight() < 1e-6f)
-                deactivateComponent(i);
-            else
-                componentsWeight += components[i].getWeight();
-        }
-        for (auto& component : components) {
-            component.setWeight(component.getWeight() / componentsWeight);
-            component.isNew = false;
-        }
-
-        // for (const auto& sample : batch)
-        //     SLog(mitsuba::EInfo, "point (%f, %f, %f), weight %f", sample.point[0], sample.point[1], sample.point[2], sample.weight);
-        
-        return false;
-    }
+    void deserialize(mitsuba::FileStream* in) {}
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
