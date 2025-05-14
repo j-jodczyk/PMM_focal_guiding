@@ -258,7 +258,8 @@ public:
                 }
 
                 Log(EInfo, "Got %i non-zero samples", iterationSamples.size());
-                m_gmm.processBatchParallel(iterationSamples);
+                m_gmm.processMegaBatch(iterationSamples);
+                Log(EInfo, m_gmm.toString().c_str());
                 /// update the guiding densities
                 // diverging meaning behind the surface we are currently sampling from.
                 const Float convThreshold = m_converging.sumDensities();
@@ -497,7 +498,7 @@ public:
         assert(std::isfinite(bsdfPdf));
 
         // HERE PDF SAMPLING FROM TREE
-        gmmPdf = !isDiverging ? m_converging.splatPdf(bRec.its.p, bRec.its.toWorld(bRec.wo), m_gmm) : m_diverging.splatPdf(bRec.its.p, -bRec.its.toWorld(bRec.wo), m_gmm);
+        gmmPdf = (1 - m_divergeProbability) * m_converging.splatPdf(bRec.its.p, bRec.its.toWorld(bRec.wo), m_gmm) + m_divergeProbability * m_diverging.splatPdf(bRec.its.p, -bRec.its.toWorld(bRec.wo), m_gmm);
         assert(std::isfinite(gmmPdf));
 
         // Multiple Importance Sampling - "While our guiding density excels at sampling focal effects, its performance on other light transport can be poor.
