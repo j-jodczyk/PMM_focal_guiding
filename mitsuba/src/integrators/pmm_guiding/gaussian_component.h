@@ -7,25 +7,14 @@ namespace pmm_focal
 {
     class GaussianComponent
     {
-    public:
-
-        double Nk = 0.0;
-        Eigen::VectorXd Sk;     // running sum: ∑ γ_j * x
-        Eigen::MatrixXd Sk2;    // running sum: ∑ γ_j * x x^T
-
-        void initializeStats(int dim) {
-            Sk = Eigen::VectorXd::Zero(dim);
-            Sk2 = Eigen::MatrixXd::Zero(dim, dim);
-        }
-
     private:
         Eigen::VectorXd mean;
         Eigen::MatrixXd covariance;
         Eigen::MatrixXd inverseCovariance;
         Eigen::MatrixXd L;
-        float logDetCov;
+        float logNormConst;
         float weight;
-        float softCount;
+        size_t dims = 3;
 
     public:
         Eigen::VectorXd sum_x;
@@ -34,8 +23,6 @@ namespace pmm_focal
         float N;
         bool isNew = false;
         GaussianComponent() {
-            size_t dims = 3;
-            initializeStats(dims);
             sum_x = Eigen::VectorXd::Zero(dims);
             sum_xxT = Eigen::MatrixXd::Zero(dims, dims);
         }
@@ -47,16 +34,39 @@ namespace pmm_focal
         Eigen::MatrixXd getCovariance() const { return covariance; }
         Eigen::MatrixXd getInverseCovariance() const { return inverseCovariance; }
         Eigen::VectorXd getMean() const { return mean; }
-        float getLogDetCov() const { return logDetCov; }
+        float getLogNormConst() const { return logNormConst; }
         float getWeight() const { return weight; }
-        float getSoftCount() const { return softCount; }
 
         void setCovariance(Eigen::MatrixXd newCovariance) {
             covariance = newCovariance;
-            inverseCovariance = covariance.inverse();
-            logDetCov = std::log(covariance.determinant());
-            L = covariance.llt().matrixL();
+            // Regularize covariance to avoid numerical issues
+            covariance += 1e-5f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols());
+
+            // Check for positive definiteness
+            Eigen::LLT<Eigen::MatrixXd> llt(covariance);
+            if (llt.info() == Eigen::Success) {
+                inverseCovariance = llt.solve(Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()));
+                L = llt.matrixL();  // L is a cached Eigen::MatrixXd
+                
+            } else {
+                // Fallback: eigenvalue correction
+                Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(covariance);
+                Eigen::VectorXd eigenvalues = eig.eigenvalues();
+                for (int i = 0; i < eigenvalues.size(); ++i) {
+                    if (eigenvalues[i] < 1e-6)
+                        eigenvalues[i] = 1e-6;
+                }
+        
+                covariance = eig.eigenvectors() * eigenvalues.asDiagonal() * eig.eigenvectors().transpose();
+                // Retry LLT on corrected covariance
+                Eigen::LLT<Eigen::MatrixXd> safeLLT(covariance);
+                L = safeLLT.matrixL();  // Still cache L
+                inverseCovariance = safeLLT.solve(Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()));
+            }
+            float logDetCov = 2.0 * L.diagonal().array().log().sum();
+            logNormConst = -0.5 * (dims * std::log(2 * M_PI) + logDetCov);
         }
+
         void setMean(Eigen::VectorXd newMean) { mean = newMean; }
         void setWeight(float newWeight) { weight = newWeight; }
 
@@ -83,16 +93,7 @@ namespace pmm_focal
             mean = sum_x / r_k;
             covariance = (sum_xxT / r_k) - mean * mean.transpose();
 
-            // Regularize covariance to avoid numerical issues
-            covariance += 1e-6f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols());
-
-            // Update cached values
-            inverseCovariance = covariance.inverse();
-            logDetCov = std::log(covariance.determinant());
-        }
-
-        void updateSoftCount(float N, float N_new, float new_weight) {
-            softCount = N * weight + N_new * new_weight;
+            setCovariance(covariance);
         }
 
         // Box-Muller Transform
@@ -127,13 +128,12 @@ namespace pmm_focal
             covariance = Eigen::MatrixXd::Zero(dims, dims);
             inverseCovariance = Eigen::MatrixXd::Zero(dims, dims);
             L = Eigen::MatrixXd::Zero(dims, dims);
-            Nk = 0;
-            initializeStats(dims);
+            logNormConst = 0.0;
+            N = 0;
         }
 
         std::string toString() const {
             std::ostringstream oss;
-            // todo: apperently now this throws - wtf?
             oss << "weight = " << getWeight() << " mean = " << getMeanStr() << " covariance = " << getCovarianceStr();
             return oss.str();
         }
