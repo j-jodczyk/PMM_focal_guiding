@@ -49,6 +49,7 @@ namespace pmm_focal {
 
 MTS_NAMESPACE_BEGIN
 
+static StatsCounter avgPathLength("PathGuiding", "Average path length", EAverage);
 
 /**
  * Based on the recursive path tracer from EARS [Rath et al. 2022].
@@ -390,6 +391,8 @@ public:
                 sampler->advance();
 
                 stats.avgPathLength.add(output.averagePathLength());
+                avgPathLength.incrementBase();
+                avgPathLength += output.averagePathLength();
                 stats.numPaths.add(output.numberOfPaths());
             }
         }
