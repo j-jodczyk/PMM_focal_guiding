@@ -1,0 +1,1032 @@
+2025-05-19 18:44:12 INFO  main [mitsuba.cpp:274] Mitsuba version 0.6.0 (Linux, 64 bit), Copyright (c) 2017 Wenzel Jakob
+2025-05-19 18:44:12 INFO  main [mitsuba.cpp:377] Parsing scene description from "scene/living-room/living-room.xml" ..
+2025-05-19 18:44:12 INFO  main [scenehandler.cpp:675] In file "/mitsuba/scene/living-room/living-room.xml" (near line 17): Parsing included file "pmm_focal_recursive.xml" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/pmm_focal_recursive.so" ..
+2025-05-19 18:44:12 INFO  main [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-19 18:44:12 INFO  main [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-19 18:44:12 INFO  main [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-19 18:44:12 INFO  main [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-19 18:44:12 INFO  main [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-19 18:44:12 INFO  main [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] budget: 600
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] dumpPrimaryRays: false
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] dumpScene: false
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] gmm.alpha: 0.4
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] gmm.initMethod: KMeans
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] gmm.maxNumComp: 10
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] gmm.mergingThreshold: 0.65
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] gmm.minNumComp: 3
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] gmm.splittingThreshold: 100
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] iterationBudget: 10
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] iterationCount: 15
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] maxDepth: 40
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] minSamplesToStartFitting: 10
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] normalBinning: disabled
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] renderMaxSeconds: 36000
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] rrDepth: 14
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] samplingMode: 2
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] shouldPretrain: true
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] strictNormals: true
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] trainingSamples: 4
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] tree.threshold: 0.001
+2025-05-19 18:44:12 INFO  main [MIFocalGuidingPathTracer] unboundedSplatting: true
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/independent.so" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/box.so" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/hdrfilm.so" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/perspective.so" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/bitmap.so" ..
+2025-05-19 18:44:12 INFO  main [BitmapTexture] Loading texture "radio-dial-idea.jpg"
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/lanczos.so" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/diffuse.so" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/twosided.so" ..
+2025-05-19 18:44:12 INFO  main [BitmapTexture] Loading texture "wood4.jpg"
+2025-05-19 18:44:12 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/living-room/textures/wood4.mip" ..
+2025-05-19 18:44:12 INFO  main [PluginManager] Loading plugin "plugins/roughplastic.so" ..
+2025-05-19 18:44:12 INFO  main [BitmapTexture] Loading texture "cushion-purple-yellow-stripe.jpg"
+2025-05-19 18:44:13 INFO  main [BitmapTexture] Loading texture "cushion-green-circles.jpg"
+2025-05-19 18:44:13 INFO  main [BitmapTexture] Loading texture "cushion-stripe-purple.jpg"
+2025-05-19 18:44:13 INFO  main [BitmapTexture] Loading texture "shade-stripes.jpg"
+2025-05-19 18:44:13 INFO  main [PluginManager] Loading plugin "plugins/plastic.so" ..
+2025-05-19 18:44:13 INFO  main [BitmapTexture] Loading texture "apple.jpg"
+2025-05-19 18:44:13 INFO  main [BitmapTexture] Loading texture "book-spines.jpg"
+2025-05-19 18:44:13 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/living-room/textures/book-spines.mip" ..
+2025-05-19 18:44:14 INFO  main [PluginManager] Loading plugin "plugins/roughdielectric.so" ..
+2025-05-19 18:44:14 INFO  main [PluginManager] Loading plugin "plugins/dielectric.so" ..
+2025-05-19 18:44:14 INFO  main [PluginManager] Loading plugin "plugins/roughconductor.so" ..
+2025-05-19 18:44:14 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:14 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:14 INFO  main [BitmapTexture] Loading texture "Shade-paper.jpg"
+2025-05-19 18:44:14 INFO  main [PluginManager] Loading plugin "plugins/mask.so" ..
+2025-05-19 18:44:14 INFO  main [BitmapTexture] Loading texture "carpet-text3b.jpg"
+2025-05-19 18:44:14 INFO  main [BitmapTexture] Loading texture "picture11-vert.jpg"
+2025-05-19 18:44:14 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/living-room/textures/picture11-vert.mip" ..
+2025-05-19 18:44:14 INFO  main [BitmapTexture] Loading texture "Frame.jpg"
+2025-05-19 18:44:15 INFO  main [BitmapTexture] Loading texture "Frame.jpg"
+2025-05-19 18:44:15 INFO  main [BitmapTexture] Loading texture "Frame.jpg"
+2025-05-19 18:44:15 INFO  main [BitmapTexture] Loading texture "Frame.jpg"
+2025-05-19 18:44:15 INFO  main [BitmapTexture] Loading texture "picure4-grey.jpg"
+2025-05-19 18:44:15 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/living-room/textures/picure4-grey.mip" ..
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [PluginManager] Loading plugin "plugins/thindielectric.so" ..
+2025-05-19 18:44:16 INFO  main [PluginManager] Loading plugin "plugins/conductor.so" ..
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [BitmapTexture] Loading texture "radio-dial-idea.jpg"
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-19 18:44:16 INFO  main [PluginManager] Loading plugin "plugins/spot.so" ..
+2025-05-19 18:44:16 INFO  main [PluginManager] Loading plugin "plugins/ply.so" ..
+2025-05-19 18:44:16 INFO  main [PLYLoader] Loading geometry from "Emitter.ply" ..
+2025-05-19 18:44:16 INFO  main [PLYLoader] "Emitter": Loaded 1376 triangles, 758 vertices (39.8 KiB in 0 ms).
+2025-05-19 18:44:16 INFO  main [PLYLoader] Loading geometry from "Emitter_001.ply" ..
+2025-05-19 18:44:16 INFO  main [PLYLoader] "Emitter_001": Loaded 1376 triangles, 758 vertices (39.8 KiB in 0 ms).
+2025-05-19 18:44:16 INFO  main [PLYLoader] Loading geometry from "Emitter_002.ply" ..
+2025-05-19 18:44:16 INFO  main [PLYLoader] "Emitter_002": Loaded 1376 triangles, 758 vertices (39.8 KiB in 0 ms).
+2025-05-19 18:44:16 INFO  main [PLYLoader] Loading geometry from "Emitter_004.ply" ..
+2025-05-19 18:44:16 INFO  main [PLYLoader] "Emitter_004": Loaded 1376 triangles, 758 vertices (39.8 KiB in 0 ms).
+2025-05-19 18:44:16 INFO  main [PLYLoader] Loading geometry from "Emitter_003.ply" ..
+2025-05-19 18:44:16 INFO  main [PLYLoader] "Emitter_003": Loaded 1376 triangles, 758 vertices (39.8 KiB in 0 ms).
+2025-05-19 18:44:16 INFO  main [PluginManager] Loading plugin "plugins/obj.so" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh138.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh138: 896 triangles, 464 vertices (merged 2224 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh138.obj" (took 3 ms)
+2025-05-19 18:44:16 INFO  main [PluginManager] Loading plugin "plugins/rectangle.so" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh113.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh113: 1104 triangles, 554 vertices (merged 2758 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh113.obj" (took 3 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh087.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh087: 1200 triangles, 602 vertices (merged 2998 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh087.obj" (took 4 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh110.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh110: 1296 triangles, 650 vertices (merged 3238 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh110.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh128.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh128: 76 triangles, 126 vertices (merged 102 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh128.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh095.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh095: 768 triangles, 429 vertices (merged 1875 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh095.obj" (took 3 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh076.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh076: 1248 triangles, 682 vertices (merged 3062 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh076.obj" (took 4 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh108.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh108: 1248 triangles, 682 vertices (merged 3062 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh108.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh080.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh080: 1248 triangles, 682 vertices (merged 3062 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh080.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh166.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh166: 1248 triangles, 682 vertices (merged 3062 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh166.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh088.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh088: 4224 triangles, 2114 vertices (merged 10558 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh088.obj" (took 15 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh059.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh059: 16 triangles, 20 vertices (merged 28 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh059.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh073.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh073: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh073.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh099.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh099: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh099.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh103.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh103: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh103.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh155.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh155: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh155.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh065.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh065: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh065.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh069.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh069: 736 triangles, 790 vertices (merged 1418 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh069.obj" (took 4 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh090.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh090: 684 triangles, 808 vertices (merged 1244 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh090.obj" (took 4 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh063.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh063: 704 triangles, 704 vertices (merged 1408 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh063.obj" (took 4 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh062.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh062: 844 triangles, 908 vertices (merged 1624 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh062.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh068.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh068: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh068.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh131.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh131: 128 triangles, 256 vertices (merged 128 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh131.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh098.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh098: 128 triangles, 256 vertices (merged 128 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh098.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh056.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh056: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh056.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh077.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh077: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh077.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh055.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh055: 128 triangles, 256 vertices (merged 128 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh055.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh118.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh118: 1680 triangles, 898 vertices (merged 4142 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh118.obj" (took 7 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh064.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh064: 512 triangles, 272 vertices (merged 1264 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh064.obj" (took 2 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh052.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh052: 128 triangles, 72 vertices (merged 312 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh052.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh112.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh112: 12 triangles, 12 vertices (merged 24 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh112.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [PLYLoader] Loading geometry from "Disco.ply" ..
+2025-05-19 18:44:16 INFO  main [PLYLoader] "Disco": Loaded 12736 triangles, 6455 vertices (275.3 KiB in 3 ms).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh127.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh127: 128 triangles, 256 vertices (merged 128 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh127.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh129.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh129: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh129.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh132.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh132: 28 triangles, 46 vertices (merged 38 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh132.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh140.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh140: 28 triangles, 52 vertices (merged 32 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh140.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh156.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh156: 28 triangles, 46 vertices (merged 38 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh156.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh135.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh135: 28 triangles, 44 vertices (merged 40 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh135.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh175.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh175: 28 triangles, 48 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh175.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh136.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh136: 28 triangles, 48 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh136.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh078.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh078: 28 triangles, 46 vertices (merged 38 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh078.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh141.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh141: 28 triangles, 44 vertices (merged 40 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh141.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh147.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh147: 28 triangles, 46 vertices (merged 38 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh147.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh071.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh071: 28 triangles, 44 vertices (merged 40 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh071.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh148.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh148: 28 triangles, 44 vertices (merged 40 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh148.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh149.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh149: 28 triangles, 44 vertices (merged 40 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh149.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh150.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh150: 28 triangles, 44 vertices (merged 40 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh150.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh153.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh153: 28 triangles, 46 vertices (merged 38 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh153.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh109.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh109: 28 triangles, 44 vertices (merged 40 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh109.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh083.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh083: 28 triangles, 48 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh083.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh157.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh157: 28 triangles, 52 vertices (merged 32 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh157.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh159.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh159: 28 triangles, 48 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh159.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh161.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh161: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh161.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh143.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh143: 88 triangles, 192 vertices (merged 72 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh143.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh176.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh176: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh176.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh107.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh107: 1720 triangles, 2968 vertices (merged 2192 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh107.obj" (took 12 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh139.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh139: 88 triangles, 192 vertices (merged 72 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh139.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh162.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh162: 176 triangles, 384 vertices (merged 144 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh162.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh126.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh126: 42 triangles, 72 vertices (merged 54 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh126.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh152.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh152: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh152.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh104.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh104: 1680 triangles, 898 vertices (merged 4142 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh104.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh167.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh167: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh167.obj" (took 14 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh091.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh091: 8128 triangles, 4066 vertices (merged 20318 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh091.obj" (took 26 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh145.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh145: 14848 triangles, 7428 vertices (merged 37116 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh145.obj" (took 61 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh160.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh160: 1680 triangles, 898 vertices (merged 4142 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh160.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh171.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh171: 2816 triangles, 1485 vertices (merged 6963 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh171.obj" (took 11 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh092.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh092: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh092.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh067.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh067: 176 triangles, 384 vertices (merged 144 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh067.obj" (took 2 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh172.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh172: 108 triangles, 208 vertices (merged 116 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh172.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh173.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh173: 172 triangles, 306 vertices (merged 210 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh173.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh177.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh177: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh177.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh054.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh054: 8960 triangles, 4996 vertices (merged 21884 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh054.obj" (took 37 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh165.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh165: 972 triangles, 1189 vertices (merged 1727 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh165.obj" (took 6 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh100.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh100: 360 triangles, 208 vertices (merged 872 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh100.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh096.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh096: 128 triangles, 244 vertices (merged 140 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh096.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh169.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh169: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh169.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh085.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh085: 972 triangles, 1225 vertices (merged 1691 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh085.obj" (took 6 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh116.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh116: 360 triangles, 208 vertices (merged 872 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh116.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh105.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh105: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh105.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh170.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh170: 128 triangles, 256 vertices (merged 128 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh170.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh179.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh179: 480 triangles, 252 vertices (merged 1188 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh179.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh125.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh125: 12 triangles, 16 vertices (merged 20 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh125.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh144.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh144: 28 triangles, 50 vertices (merged 34 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh144.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh072.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh072: 56 triangles, 100 vertices (merged 68 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh072.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh124.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh124: 384 triangles, 700 vertices (merged 452 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh124.obj" (took 3 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh050.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh050: 600 triangles, 1103 vertices (merged 697 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh050.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh117.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh117: 1472 triangles, 2802 vertices (merged 1614 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh117.obj" (took 13 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh047.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh047: 256 triangles, 200 vertices (merged 568 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh047.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh046.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh046: 256 triangles, 200 vertices (merged 568 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh046.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh045.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh045: 1472 triangles, 2822 vertices (merged 1594 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh045.obj" (took 13 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh043.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh043: 600 triangles, 1082 vertices (merged 718 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh043.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh070.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh070: 384 triangles, 658 vertices (merged 494 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh070.obj" (took 3 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh042.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh042: 56 triangles, 88 vertices (merged 80 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh042.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh041.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh041: 28 triangles, 55 vertices (merged 29 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh041.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh039.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh039: 12 triangles, 16 vertices (merged 20 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh039.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh038.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh038: 480 triangles, 252 vertices (merged 1188 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh038.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh037.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh037: 480 triangles, 252 vertices (merged 1188 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh037.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh036.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh036: 12 triangles, 16 vertices (merged 20 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh036.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh034.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh034: 28 triangles, 48 vertices (merged 36 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh034.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh033.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh033: 56 triangles, 88 vertices (merged 80 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh033.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh031.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh031: 384 triangles, 640 vertices (merged 512 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh031.obj" (took 3 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh094.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh094: 600 triangles, 968 vertices (merged 832 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh094.obj" (took 5 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh102.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh102: 1472 triangles, 2630 vertices (merged 1786 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh102.obj" (took 13 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh058.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh058: 512 triangles, 288 vertices (merged 1248 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh058.obj" (took 2 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh030.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh030: 576 triangles, 300 vertices (merged 1428 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh030.obj" (took 2 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh028.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh028: 4416 triangles, 2258 vertices (merged 10990 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh028.obj" (took 16 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh027.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh027: 5184 triangles, 2642 vertices (merged 12910 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh027.obj" (took 19 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh026.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh026: 8064 triangles, 4080 vertices (merged 20112 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh026.obj" (took 29 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh097.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh097: 224 triangles, 116 vertices (merged 556 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh097.obj" (took 0 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh035.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh035: 4416 triangles, 2258 vertices (merged 10990 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh035.obj" (took 12 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh024.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh024: 6912 triangles, 3464 vertices (merged 17272 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh024.obj" (took 18 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh023.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh023: 384 triangles, 296 vertices (merged 856 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh023.obj" (took 1 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh089.obj" ..
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Mesh089: 9344 triangles, 4785 vertices (merged 23247 vertices).
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Done with "Mesh089.obj" (took 35 ms)
+2025-05-19 18:44:16 INFO  main [WavefrontOBJ] Loading geometry from "Mesh022.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh022: 14528 triangles, 7298 vertices (merged 36286 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh022.obj" (took 56 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh137.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh137: 20 triangles, 12 vertices (merged 48 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh137.obj" (took 0 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh121.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh121: 76 triangles, 128 vertices (merged 100 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh121.obj" (took 0 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh021.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh021: 172 triangles, 317 vertices (merged 199 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh021.obj" (took 1 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh115.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh115: 344 triangles, 694 vertices (merged 338 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh115.obj" (took 3 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh120.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh120: 312 triangles, 624 vertices (merged 312 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh120.obj" (took 2 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh020.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh020: 66 triangles, 48 vertices (merged 150 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh020.obj" (took 0 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh019.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh019: 66 triangles, 48 vertices (merged 150 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh019.obj" (took 0 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh017.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh017: 572 triangles, 904 vertices (merged 812 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh017.obj" (took 4 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh016.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh016: 1260 triangles, 2274 vertices (merged 1506 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh016.obj" (took 8 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh015.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh015: 1447 triangles, 1949 vertices (merged 2392 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh015.obj" (took 8 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh119.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh119: 656 triangles, 430 vertices (merged 1538 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh119.obj" (took 5 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh014.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh014: 5728 triangles, 3069 vertices (merged 14115 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh014.obj" (took 44 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh151.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh151: 656 triangles, 416 vertices (merged 1552 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh151.obj" (took 4 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh013.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh013: 5728 triangles, 2797 vertices (merged 14387 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh013.obj" (took 49 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh111.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh111: 656 triangles, 354 vertices (merged 1614 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh111.obj" (took 6 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh101.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh101: 5728 triangles, 2565 vertices (merged 14619 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh101.obj" (took 51 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh011.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh011: 972 triangles, 1139 vertices (merged 1777 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh011.obj" (took 6 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh053.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh053: 360 triangles, 208 vertices (merged 872 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh053.obj" (took 1 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh010.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh010: 14848 triangles, 7428 vertices (merged 37116 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh010.obj" (took 60 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh082.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh082: 8128 triangles, 4066 vertices (merged 20318 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh082.obj" (took 32 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh086.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh086: 4352 triangles, 2178 vertices (merged 10878 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh086.obj" (took 17 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh134.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh134: 14848 triangles, 7428 vertices (merged 37116 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh134.obj" (took 51 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh057.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh057: 8128 triangles, 4066 vertices (merged 20318 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh057.obj" (took 25 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh081.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh081: 8704 triangles, 4356 vertices (merged 21756 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh081.obj" (took 36 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh114.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh114: 1680 triangles, 898 vertices (merged 4142 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh114.obj" (took 5 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh008.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh008: 688 triangles, 375 vertices (merged 1689 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh008.obj" (took 3 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh158.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh158: 44 triangles, 96 vertices (merged 36 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh158.obj" (took 0 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh174.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh174: 172 triangles, 306 vertices (merged 210 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh174.obj" (took 1 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh079.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh079: 13568 triangles, 6788 vertices (merged 33916 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh079.obj" (took 55 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh007.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh007: 24 triangles, 48 vertices (merged 24 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh007.obj" (took 0 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh006.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh006: 1280 triangles, 672 vertices (merged 3168 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh006.obj" (took 7 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh005.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh005: 1280 triangles, 672 vertices (merged 3168 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh005.obj" (took 7 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh032.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh032: 3328 triangles, 1696 vertices (merged 8288 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh032.obj" (took 18 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh025.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh025: 384 triangles, 226 vertices (merged 926 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh025.obj" (took 1 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh168.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh168: 6592 triangles, 3345 vertices (merged 16431 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh168.obj" (took 22 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh146.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh146: 8384 triangles, 4241 vertices (merged 20911 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh146.obj" (took 28 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh049.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh049: 19648 triangles, 9950 vertices (merged 48994 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh049.obj" (took 83 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh040.obj" ..
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Mesh040: 19648 triangles, 9950 vertices (merged 48994 vertices).
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Done with "Mesh040.obj" (took 80 ms)
+2025-05-19 18:44:17 INFO  main [WavefrontOBJ] Loading geometry from "Mesh130.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh130: 186368 triangles, 94198 vertices (merged 464906 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh130.obj" (took 744 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh075.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh075: 720 triangles, 387 vertices (merged 1773 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh075.obj" (took 3 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh164.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh164: 10176 triangles, 5169 vertices (merged 25359 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh164.obj" (took 34 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh044.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh044: 4864 triangles, 2464 vertices (merged 12128 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh044.obj" (took 18 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh004.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh004: 15168 triangles, 7584 vertices (merged 37920 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh004.obj" (took 63 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh003.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh003: 9472 triangles, 4738 vertices (merged 23678 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh003.obj" (took 34 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh061.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh061: 5616 triangles, 2810 vertices (merged 14038 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh061.obj" (took 23 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh002.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh002: 29088 triangles, 14567 vertices (merged 72697 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh002.obj" (took 123 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh051.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh051: 9600 triangles, 4833 vertices (merged 23967 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh051.obj" (took 29 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh123.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh123: 1296 triangles, 650 vertices (merged 3238 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh123.obj" (took 4 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh178.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh178: 3520 triangles, 1841 vertices (merged 8719 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh178.obj" (took 15 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh084.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh084: 1408 triangles, 4156 vertices (merged 68 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh084.obj" (took 17 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh012.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh012: 4248 triangles, 4494 vertices (merged 8250 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh012.obj" (took 28 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh001.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh001: 12 triangles, 24 vertices (merged 12 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh001.obj" (took 0 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh018.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh018: 768 triangles, 448 vertices (merged 1856 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh018.obj" (took 3 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh000.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh000: 256 triangles, 192 vertices (merged 576 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh000.obj" (took 1 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh074.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh074: 768 triangles, 448 vertices (merged 1856 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh074.obj" (took 3 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh106.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh106: 960 triangles, 513 vertices (merged 2367 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh106.obj" (took 4 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh029.obj" ..
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Mesh029: 1536 triangles, 772 vertices (merged 3836 vertices).
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Done with "Mesh029.obj" (took 6 ms)
+2025-05-19 18:44:18 INFO  main [WavefrontOBJ] Loading geometry from "Mesh163.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh163: 6488 triangles, 3667 vertices (merged 15797 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh163.obj" (took 26 ms)
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Loading geometry from "Mesh154.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh154: 832 triangles, 424 vertices (merged 2072 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh154.obj" (took 3 ms)
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Loading geometry from "Mesh060.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh060: 2144 triangles, 1090 vertices (merged 5342 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh060.obj" (took 8 ms)
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Loading geometry from "Mesh048.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh048: 180 triangles, 110 vertices (merged 430 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh048.obj" (took 0 ms)
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Loading geometry from "Mesh009.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh009: 688 triangles, 353 vertices (merged 1711 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh009.obj" (took 2 ms)
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Loading geometry from "Mesh093.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh093: 1584 triangles, 876 vertices (merged 3876 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh093.obj" (took 5 ms)
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Loading geometry from "Mesh133.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh133: 5120 triangles, 2560 vertices (merged 12800 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh133.obj" (took 17 ms)
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Loading geometry from "Mesh142.obj" ..
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Mesh142: 1280 triangles, 640 vertices (merged 3200 vertices).
+2025-05-19 18:44:19 INFO  main [WavefrontOBJ] Done with "Mesh142.obj" (took 5 ms)
+2025-05-19 18:44:19 INFO  ren0 [KDTreeBase] Constructing a SAH kd-tree (617744 primitives) ..
+2025-05-19 18:44:20 INFO  ren0 [KDTreeBase] Finished -- took 1208 ms.
+2025-05-19 18:44:20 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-19 18:44:20 INFO  ren0 [octree.h:535] root weight: 4.096e-17 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:536] splitting threshold: 4.096e-20 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:551] node count: 585 -> 585 -> 585
+
+2025-05-19 18:44:20 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-19 18:44:20 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-19 18:44:20 INFO  ren0 [octree.h:535] root weight: 4.096e-17 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:536] splitting threshold: 4.096e-20 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:551] node count: 585 -> 585 -> 585
+
+2025-05-19 18:44:20 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-19 18:44:20 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-19 18:44:20 INFO  ren0 [MIFocalGuidingPathTracer] AABB3[min=[-2.59024, -0.170842, 0.361397], max=[3.15696, 3.22949, 8.19165]]
+2025-05-19 18:44:20 INFO  ren0 [MIFocalGuidingPathTracer] Starting render job (1280x720, 12 cores, SSE2 enabled) ..
+2025-05-19 18:44:20 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 0, until 10.0 seconds
+2025-05-19 18:44:36 INFO  ren0 [MIFocalGuidingPathTracer]   15.68 seconds elapsed, passes this iteration: 2, total passes: 2
+2025-05-19 18:44:36 INFO  ren0 [MIFocalGuidingPathTracer] Got 1937433 non-zero samples
+2025-05-19 18:44:36 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 1937433
+2025-05-19 18:44:36 INFO  ren0 [gaussian_mixture_model.h:550] KMeans
+2025-05-19 18:44:39 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00497151 mean = [-2.02558 1.15835 2.36328] covariance = [[0.0941035 0.0310108 0.00264605][0.0310108 0.120588 0.0129285][0.00264605 0.0129285 0.133874]]
+weight = 0.0214299 mean = [-2.17562 0.96327 3.05879] covariance = [[0.0620503 0.0814535 -0.0837015][0.0814535 0.32758 -0.248631][-0.0837015 -0.248631 0.402617]]
+weight = 0.00929122 mean = [-2.23905 0.312937 4.04227] covariance = [[1.47872e-05 6.69554e-06 -4.94133e-06][6.69554e-06 1.98058e-05 -6.68255e-06][-4.94133e-06 -6.68255e-06 1.52218e-05]]
+weight = 0.00497151 mean = [-2.22382 0.926985 2.75972] covariance = [[0.0941035 0.0310108 0.00264605][0.0310108 0.120588 0.0129285][0.00264605 0.0129285 0.133874]]
+weight = 0.000587835 mean = [-2.10799 1.73314 4.77321] covariance = [[0.00912806 0.025342 0.00417336][0.025342 0.13263 0.0252325][0.00417336 0.0252325 0.0504737]]
+weight = 0.00578675 mean = [-2.12363 1.21748 2.90878] covariance = [[0.00117454 -0.00197966 -0.00230954][-0.00197966 0.0067528 0.00326263][-0.00230954 0.00326263 0.0106796]]
+weight = 0.000192553 mean = [-2.29934 0.100669 4.02056] covariance = [[0.000618753 0.00105154 -0.000919942][0.00105154 0.00594938 0.00156243][-0.000919942 0.00156243 0.00442384]]
+weight = 0.0292852 mean = [0.879717 0.621441 5.68086] covariance = [[1.63767 -0.0575774 -0.160637][-0.0575774 0.6725 0.887184][-0.160637 0.887184 1.63504]]
+weight = 0.923483 mean = [0.138665 1.82617 2.61273] covariance = [[2.2637 0.0759534 0.530767][0.0759534 0.82836 0.0924946][0.530767 0.0924946 1.02227]]
+]
+2025-05-19 18:44:39 INFO  ren0 [octree.h:535] root weight: 4.210e+05 (420995.562500)
+2025-05-19 18:44:39 INFO  ren0 [octree.h:536] splitting threshold: 4.210e+02 (420.995575)
+2025-05-19 18:44:39 INFO  ren0 [octree.h:535] root weight: 3.399e+05 (339932.843750)
+2025-05-19 18:44:39 INFO  ren0 [octree.h:536] splitting threshold: 3.399e+02 (339.932861)
+2025-05-19 18:44:39 INFO  ren0 [octree.h:551] node count: 585 -> 709 -> 420
+
+2025-05-19 18:44:39 INFO  ren0 [octree.h:551] node count: 585 -> 726 -> 474
+
+2025-05-19 18:44:39 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 1, until 20.0 seconds
+2025-05-19 18:45:09 INFO  ren0 [MIFocalGuidingPathTracer]   49.02 seconds elapsed, passes this iteration: 1, total passes: 3
+2025-05-19 18:45:09 INFO  ren0 [MIFocalGuidingPathTracer] Got 447018 non-zero samples
+2025-05-19 18:45:09 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 447018
+2025-05-19 18:45:09 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00422315 mean = [-2.27387 0.553844 3.64673] covariance = [[0.0240522 0.00487209 -0.0345917][0.00487209 0.105012 -0.117067][-0.0345917 -0.117067 0.508669]]
+weight = 0.00422315 mean = [-2.20437 0.823226 2.64297] covariance = [[0.0240522 0.00487209 -0.0345917][0.00487209 0.105012 -0.117067][-0.0345917 -0.117067 0.508669]]
+weight = 0.0204859 mean = [-2.22639 0.814523 2.8026] covariance = [[0.0303411 0.0065978 -0.0531224][0.0065978 0.106953 -0.0911155][-0.0531224 -0.0911155 0.711687]]
+weight = 0.0204859 mean = [-2.13419 0.989935 1.61132] covariance = [[0.0303411 0.0065978 -0.0531224][0.0065978 0.106953 -0.0911155][-0.0531224 -0.0911155 0.711687]]
+weight = 0.000115974 mean = [-2.06219 1.03827 2.8985] covariance = [[0.00109688 -0.0033021 -0.00212926][-0.0033021 0.0102781 0.00687773][-0.00212926 0.00687773 0.00640384]]
+weight = 0.0639084 mean = [0.718647 1.10406 5.79979] covariance = [[2.61821 0.139391 -1.04483][0.139391 0.977846 0.379844][-1.04483 0.379844 1.88496]]
+weight = 0.886558 mean = [0.412554 1.74681 2.57897] covariance = [[2.47345 -0.28099 0.0388443][-0.28099 0.928685 -0.00997967][0.0388443 -0.00997967 1.19012]]
+]
+2025-05-19 18:45:09 INFO  ren0 [octree.h:535] root weight: 7.080e+05 (707999.312500)
+2025-05-19 18:45:09 INFO  ren0 [octree.h:536] splitting threshold: 7.080e+02 (707.999329)
+2025-05-19 18:45:09 INFO  ren0 [octree.h:535] root weight: 5.582e+05 (558157.875000)
+2025-05-19 18:45:09 INFO  ren0 [octree.h:536] splitting threshold: 5.582e+02 (558.157898)
+2025-05-19 18:45:09 INFO  ren0 [octree.h:551] node count: 420 -> 508 -> 414
+
+2025-05-19 18:45:09 INFO  ren0 [octree.h:551] node count: 474 -> 582 -> 472
+
+2025-05-19 18:45:09 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 2, until 30.0 seconds
+2025-05-19 18:45:31 INFO  ren0 [MIFocalGuidingPathTracer]   71.40 seconds elapsed, passes this iteration: 1, total passes: 4
+2025-05-19 18:45:31 INFO  ren0 [MIFocalGuidingPathTracer] Got 388147 non-zero samples
+2025-05-19 18:45:31 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 388147
+2025-05-19 18:45:32 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.180876 mean = [-0.122152 2.0872 1.96153] covariance = [[0.931766 0.0385162 0.0628018][0.0385162 1.00129 0.122409][0.0628018 0.122409 1.14696]]
+weight = 0.00484118 mean = [-2.12928 0.929613 2.51421] covariance = [[0.0671003 0.0019552 -0.0328434][0.0019552 0.0580493 -0.0273021][-0.0328434 -0.0273021 0.388999]]
+weight = 0.180876 mean = [1.18025 1.77852 1.77299] covariance = [[0.931766 0.0385162 0.0628018][0.0385162 1.00129 0.122409][0.0628018 0.122409 1.14696]]
+weight = 0.311065 mean = [0.36873 1.83589 2.78997] covariance = [[2.13748 -0.375723 -0.0920143][-0.375723 1.08036 -0.037001][-0.0920143 -0.037001 1.54478]]
+weight = 0.00484118 mean = [-2.04049 1.0016 1.6333] covariance = [[0.0671003 0.0019552 -0.0328434][0.0019552 0.0580493 -0.0273021][-0.0328434 -0.0273021 0.388999]]
+weight = 0.00643643 mean = [-2.23515 0.864344 3.58305] covariance = [[0.00841557 0.010073 -0.0211878][0.010073 0.073848 -0.108296][-0.0211878 -0.108296 0.339061]]
+weight = 0.311065 mean = [0.488528 1.59992 4.52688] covariance = [[2.13748 -0.375723 -0.0920143][-0.375723 1.08036 -0.037001][-0.0920143 -0.037001 1.54478]]
+]
+2025-05-19 18:45:32 INFO  ren0 [octree.h:535] root weight: 8.347e+05 (834714.562500)
+2025-05-19 18:45:32 INFO  ren0 [octree.h:536] splitting threshold: 8.347e+02 (834.714600)
+2025-05-19 18:45:32 INFO  ren0 [octree.h:535] root weight: 6.146e+05 (614569.125000)
+2025-05-19 18:45:32 INFO  ren0 [octree.h:536] splitting threshold: 6.146e+02 (614.569153)
+2025-05-19 18:45:32 INFO  ren0 [octree.h:551] node count: 414 -> 507 -> 430
+
+2025-05-19 18:45:32 INFO  ren0 [octree.h:551] node count: 472 -> 571 -> 477
+
+2025-05-19 18:45:32 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 3, until 40.0 seconds
+2025-05-19 18:45:55 INFO  ren0 [MIFocalGuidingPathTracer]   95.11 seconds elapsed, passes this iteration: 1, total passes: 5
+2025-05-19 18:45:55 INFO  ren0 [MIFocalGuidingPathTracer] Got 398379 non-zero samples
+2025-05-19 18:45:55 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 398379
+2025-05-19 18:45:55 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0811104 mean = [-1.6914 0.576404 1.66975] covariance = [[0.335272 0.0890099 -0.0170985][0.0890099 0.297835 0.020982][-0.0170985 0.020982 0.404289]]
+weight = 0.0811104 mean = [-0.997724 1.15098 1.73031] covariance = [[0.335272 0.0890099 -0.0170985][0.0890099 0.297835 0.020982][-0.0170985 0.020982 0.404289]]
+weight = 0.064044 mean = [0.422331 2.0549 2.50085] covariance = [[0.585715 -0.0318026 0.0746553][-0.0318026 0.602427 0.0551008][0.0746553 0.0551008 0.719408]]
+weight = 0.064044 mean = [-0.314421 1.49644 2.92752] covariance = [[0.585715 -0.0318026 0.0746553][-0.0318026 0.602427 0.0551008][0.0746553 0.0551008 0.719408]]
+weight = 0.331101 mean = [-0.0199872 1.64813 3.05662] covariance = [[1.83155 -0.181356 -0.0490616][-0.181356 0.948786 0.00624091][-0.0490616 0.00624091 1.47374]]
+weight = 0.0474893 mean = [-2.05136 0.926466 2.96811] covariance = [[0.0572704 0.00110302 0.00594208][0.00110302 0.0706676 -0.066152][0.00594208 -0.066152 0.356256]]
+weight = 0.331101 mean = [0.183936 1.5973 4.75696] covariance = [[1.83155 -0.181356 -0.0490616][-0.181356 0.948786 0.00624091][-0.0490616 0.00624091 1.47374]]
+]
+2025-05-19 18:45:55 INFO  ren0 [octree.h:535] root weight: 1.053e+06 (1052573.500000)
+2025-05-19 18:45:55 INFO  ren0 [octree.h:536] splitting threshold: 1.053e+03 (1052.573608)
+2025-05-19 18:45:55 INFO  ren0 [octree.h:535] root weight: 7.800e+05 (779995.750000)
+2025-05-19 18:45:55 INFO  ren0 [octree.h:536] splitting threshold: 7.800e+02 (779.995789)
+2025-05-19 18:45:55 INFO  ren0 [octree.h:551] node count: 430 -> 516 -> 426
+
+2025-05-19 18:45:55 INFO  ren0 [octree.h:551] node count: 477 -> 563 -> 458
+
+2025-05-19 18:45:55 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 4, until 50.0 seconds
+2025-05-19 18:46:20 INFO  ren0 [MIFocalGuidingPathTracer]   120.03 seconds elapsed, passes this iteration: 1, total passes: 6
+2025-05-19 18:46:20 INFO  ren0 [MIFocalGuidingPathTracer] Got 372581 non-zero samples
+2025-05-19 18:46:20 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 372581
+2025-05-19 18:46:20 INFO  ren0 [gaussian_mixture_model.h:550] KMeans
+2025-05-19 18:46:20 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0133879 mean = [-2.22232 0.853301 3.54667] covariance = [[0.0431468 0.00910921 -0.0306241][0.00910921 0.235359 0.0254287][-0.0306241 0.0254287 0.152941]]
+weight = 0.0491863 mean = [-1.82672 0.574467 1.89799] covariance = [[0.170504 -0.108857 -0.286303][-0.108857 0.235168 0.302567][-0.286303 0.302567 1.11742]]
+weight = 0.0133879 mean = [-2.06931 0.998656 3.03172] covariance = [[0.0431468 0.00910921 -0.0306241][0.00910921 0.235359 0.0254287][-0.0306241 0.0254287 0.152941]]
+weight = 0.0581024 mean = [-1.512 2.98461 3.32883] covariance = [[0.412545 0.0470988 -0.0825943][0.0470988 0.0950731 -0.0857028][-0.0825943 -0.0857028 1.54593]]
+weight = 0.119763 mean = [0.750707 0.660699 1.12584] covariance = [[1.31731 0.291127 -0.0283148][0.291127 0.246633 0.0260861][-0.0283148 0.0260861 0.241495]]
+weight = 0.044135 mean = [-0.196029 1.74384 7.97433] covariance = [[0.233253 0.114896 0.0790182][0.114896 0.34859 -0.0366083][0.0790182 -0.0366083 0.165569]]
+weight = 0.0745481 mean = [-0.0255286 1.75648 4.93832] covariance = [[0.116072 0.0164661 -0.302204][0.0164661 0.209638 -0.262782][-0.302204 -0.262782 1.14424]]
+weight = 0.0627549 mean = [-2.26571 1.49756 4.42907] covariance = [[0.0944069 -0.0262668 -0.0704046][-0.0262668 0.201168 0.156246][-0.0704046 0.156246 1.30551]]
+weight = 0.564734 mean = [0.818844 1.7162 3.14935] covariance = [[1.4702 0.250459 0.613443][0.250459 0.976918 -0.0850137][0.613443 -0.0850137 2.22719]]
+]
+2025-05-19 18:46:20 INFO  ren0 [octree.h:535] root weight: 1.181e+06 (1180811.125000)
+2025-05-19 18:46:20 INFO  ren0 [octree.h:536] splitting threshold: 1.181e+03 (1180.811157)
+2025-05-19 18:46:20 INFO  ren0 [octree.h:535] root weight: 8.619e+05 (861870.750000)
+2025-05-19 18:46:20 INFO  ren0 [octree.h:536] splitting threshold: 8.619e+02 (861.870789)
+2025-05-19 18:46:20 INFO  ren0 [octree.h:551] node count: 426 -> 507 -> 440
+
+2025-05-19 18:46:20 INFO  ren0 [octree.h:551] node count: 458 -> 527 -> 463
+
+2025-05-19 18:46:20 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 5, until 60.0 seconds
+2025-05-19 18:46:47 INFO  ren0 [MIFocalGuidingPathTracer]   147.45 seconds elapsed, passes this iteration: 1, total passes: 7
+2025-05-19 18:46:47 INFO  ren0 [MIFocalGuidingPathTracer] Got 376441 non-zero samples
+2025-05-19 18:46:47 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 376441
+2025-05-19 18:46:48 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0519772 mean = [-1.7457 2.82339 4.57066] covariance = [[0.479713 0.0900933 -0.10257][0.0900933 0.0801346 -0.00833441][-0.10257 -0.00833441 2.06838]]
+weight = 0.0373896 mean = [-2.16509 0.421289 1.71373] covariance = [[0.0700529 0.0400811 -0.0144785][0.0400811 0.04055 0.0246168][-0.0144785 0.0246168 0.16208]]
+weight = 0.0519772 mean = [-1.61419 2.83783 2.53778] covariance = [[0.479713 0.0900933 -0.10257][0.0900933 0.0801346 -0.00833441][-0.10257 -0.00833441 2.06838]]
+weight = 0.0105457 mean = [0.103367 1.57306 8.01417] covariance = [[0.480721 0.12543 0.0451315][0.12543 0.254559 -0.0174613][0.0451315 -0.0174613 0.0586073]]
+weight = 0.0105457 mean = [1.05256 1.98713 8.08829] covariance = [[0.480721 0.12543 0.0451315][0.12543 0.254559 -0.0174613][0.0451315 -0.0174613 0.0586073]]
+weight = 0.00285644 mean = [-2.21215 0.981974 3.50048] covariance = [[0.0567834 0.0637282 -0.050792][0.0637282 0.416169 0.0800383][-0.050792 0.0800383 0.192672]]
+weight = 0.0625758 mean = [0.340275 2.42846 3.01805] covariance = [[0.0310717 -0.0066844 -0.0538052][-0.0066844 0.165902 -0.100932][-0.0538052 -0.100932 0.299159]]
+weight = 0.0204838 mean = [-2.33271 1.41061 4.77618] covariance = [[0.0405289 0.0752307 -0.161563][0.0752307 0.482918 -0.624301][-0.161563 -0.624301 2.05179]]
+weight = 0.751648 mean = [0.740276 1.46938 2.61983] covariance = [[1.70343 -0.011093 0.38618][-0.011093 0.896331 -0.0548211][0.38618 -0.0548211 2.20463]]
+]
+2025-05-19 18:46:48 INFO  ren0 [octree.h:535] root weight: 9.962e+05 (996249.062500)
+2025-05-19 18:46:48 INFO  ren0 [octree.h:536] splitting threshold: 9.962e+02 (996.249084)
+2025-05-19 18:46:48 INFO  ren0 [octree.h:535] root weight: 7.348e+05 (734804.687500)
+2025-05-19 18:46:48 INFO  ren0 [octree.h:536] splitting threshold: 7.348e+02 (734.804749)
+2025-05-19 18:46:48 INFO  ren0 [octree.h:551] node count: 440 -> 493 -> 432
+
+2025-05-19 18:46:48 INFO  ren0 [octree.h:551] node count: 463 -> 515 -> 471
+
+2025-05-19 18:46:48 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 6, until 70.0 seconds
+2025-05-19 18:47:13 INFO  ren0 [MIFocalGuidingPathTracer]   173.57 seconds elapsed, passes this iteration: 1, total passes: 8
+2025-05-19 18:47:13 INFO  ren0 [MIFocalGuidingPathTracer] Got 563926 non-zero samples
+2025-05-19 18:47:13 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 563926
+2025-05-19 18:47:14 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0412391 mean = [-1.46307 2.93446 2.32079] covariance = [[0.292631 0.0298788 0.00432622][0.0298788 0.0321868 -0.0281158][0.00432622 -0.0281158 0.692843]]
+weight = 0.0120399 mean = [-0.248547 1.65964 7.95253] covariance = [[1.28873 0.035585 -0.0320494][0.035585 0.565414 -0.058987][-0.0320494 -0.058987 0.055821]]
+weight = 0.00173975 mean = [-1.99759 0.662867 2.16645] covariance = [[0.147728 0.079498 -0.0485175][0.079498 0.0618737 0.0252828][-0.0485175 0.0252828 0.221761]]
+weight = 0.00289713 mean = [-1.56022 2.75111 7.42782] covariance = [[0.750814 0.141798 -0.228827][0.141798 0.050017 -0.0868567][-0.228827 -0.0868567 0.661938]]
+weight = 0.0412391 mean = [-1.47206 2.98405 1.14369] covariance = [[0.292631 0.0298788 0.00432622][0.0298788 0.0321868 -0.0281158][0.00432622 -0.0281158 0.692843]]
+weight = 0.0120399 mean = [1.35584 1.74197 7.90698] covariance = [[1.28873 0.035585 -0.0320494][0.035585 0.565414 -0.058987][-0.0320494 -0.058987 0.055821]]
+weight = 0.00289713 mean = [-0.495702 2.9969 6.56504] covariance = [[0.750814 0.141798 -0.228827][0.141798 0.050017 -0.0868567][-0.228827 -0.0868567 0.661938]]
+weight = 0.0374553 mean = [-2.299 1.71257 3.99301] covariance = [[0.0318521 0.000110405 -0.195115][0.000110405 0.535801 0.466926][-0.195115 0.466926 6.26188]]
+weight = 0.848453 mean = [0.732907 1.47504 2.43099] covariance = [[1.94894 0.116696 0.29596][0.116696 0.877433 0.226031][0.29596 0.226031 2.38272]]
+]
+2025-05-19 18:47:14 INFO  ren0 [octree.h:535] root weight: 1.150e+06 (1149688.875000)
+2025-05-19 18:47:14 INFO  ren0 [octree.h:536] splitting threshold: 1.150e+03 (1149.688965)
+2025-05-19 18:47:14 INFO  ren0 [octree.h:535] root weight: 8.246e+05 (824647.312500)
+2025-05-19 18:47:14 INFO  ren0 [octree.h:536] splitting threshold: 8.246e+02 (824.647339)
+2025-05-19 18:47:14 INFO  ren0 [octree.h:551] node count: 432 -> 505 -> 425
+
+2025-05-19 18:47:14 INFO  ren0 [octree.h:551] node count: 471 -> 546 -> 478
+
+2025-05-19 18:47:14 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 7, until 80.0 seconds
+2025-05-19 18:47:39 INFO  ren0 [MIFocalGuidingPathTracer]   198.90 seconds elapsed, passes this iteration: 1, total passes: 9
+2025-05-19 18:47:39 INFO  ren0 [MIFocalGuidingPathTracer] Got 290140 non-zero samples
+2025-05-19 18:47:39 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 290140
+2025-05-19 18:47:39 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00405984 mean = [-1.62717 3.01559 3.31829] covariance = [[0.130986 0.00124408 -0.0613744][0.00124408 0.0668644 0.142504][-0.0613744 0.142504 0.741784]]
+weight = 0.000375618 mean = [-2.16245 0.467063 2.1459] covariance = [[0.116116 0.0811896 0.0051018][0.0811896 0.0819039 0.0414577][0.0051018 0.0414577 0.105824]]
+weight = 0.0169032 mean = [0.887358 2.13443 7.96077] covariance = [[1.61388 0.479818 -0.0839494][0.479818 0.595632 0.0107068][-0.0839494 0.0107068 0.057243]]
+weight = 0.0097224 mean = [-0.746966 2.95525 6.28914] covariance = [[0.480709 0.0820683 0.174616][0.0820683 0.0699992 -0.0071576][0.174616 -0.0071576 0.436133]]
+weight = 0.0289254 mean = [-1.4116 2.83777 1.52639] covariance = [[0.475087 0.0454528 0.0349034][0.0454528 0.0676541 0.0721012][0.0349034 0.0721012 0.533318]]
+weight = 0.0394275 mean = [-2.21089 2.03236 4.23435] covariance = [[0.0774698 0.0723638 -0.202604][0.0723638 0.586465 -0.00793365][-0.202604 -0.00793365 3.69727]]
+weight = 0.900586 mean = [0.68021 1.89699 2.7975] covariance = [[1.5059 0.161372 0.382137][0.161372 0.986276 0.152032][0.382137 0.152032 2.15365]]
+]
+2025-05-19 18:47:39 INFO  ren0 [octree.h:535] root weight: 1.113e+06 (1112514.875000)
+2025-05-19 18:47:39 INFO  ren0 [octree.h:536] splitting threshold: 1.113e+03 (1112.514893)
+2025-05-19 18:47:39 INFO  ren0 [octree.h:535] root weight: 7.455e+05 (745521.000000)
+2025-05-19 18:47:39 INFO  ren0 [octree.h:536] splitting threshold: 7.455e+02 (745.521057)
+2025-05-19 18:47:39 INFO  ren0 [octree.h:551] node count: 425 -> 508 -> 429
+
+2025-05-19 18:47:39 INFO  ren0 [octree.h:551] node count: 478 -> 531 -> 463
+
+2025-05-19 18:47:39 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 8, until 90.0 seconds
+2025-05-19 18:48:02 INFO  ren0 [MIFocalGuidingPathTracer]   221.88 seconds elapsed, passes this iteration: 1, total passes: 10
+2025-05-19 18:48:02 INFO  ren0 [MIFocalGuidingPathTracer] Got 454160 non-zero samples
+2025-05-19 18:48:02 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 454160
+2025-05-19 18:48:02 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1.08908e-05 mean = [-2.13341 0.3834 2.01296] covariance = [[0.000153219 -1.13359e-05 8.61707e-05][-1.13359e-05 2.10076e-05 -7.42557e-06][8.61707e-05 -7.42557e-06 7.61627e-05]]
+weight = 1.08908e-05 mean = [-2.11666 0.38197 2.02382] covariance = [[0.000153219 -1.13359e-05 8.61707e-05][-1.13359e-05 2.10076e-05 -7.42557e-06][8.61707e-05 -7.42557e-06 7.61627e-05]]
+weight = 0.00126796 mean = [-2.33314 0.160467 1.88806] covariance = [[0.00982017 0.007321 -0.0042741][0.007321 0.00733255 0.000484404][-0.0042741 0.000484404 0.0106459]]
+weight = 0.00865364 mean = [-1.82282 1.71951 8.00647] covariance = [[0.612078 0.0790344 0.00328718][0.0790344 0.554757 0.0579478][0.00328718 0.0579478 0.0174951]]
+weight = 0.0361549 mean = [1.0865 2.3615 8.06685] covariance = [[0.979481 0.20306 0.00328099][0.20306 0.4373 0.0622454][0.00328099 0.0622454 0.0352997]]
+weight = 0.0169198 mean = [-0.845177 2.57672 7.33555] covariance = [[1.6797 0.0736466 -0.0092348][0.0736466 0.0595436 -0.0873092][-0.0092348 -0.0873092 0.985174]]
+weight = 0.0055937 mean = [-1.43556 3.10721 3.45921] covariance = [[0.221265 0.0247902 0.107934][0.0247902 0.017939 0.0831432][0.107934 0.0831432 1.128]]
+weight = 0.138939 mean = [-2.13857 2.24423 3.47692] covariance = [[0.0890272 0.0436289 -0.153312][0.0436289 0.440555 -0.601798][-0.153312 -0.601798 3.0102]]
+weight = 0.79245 mean = [0.589127 1.67209 2.80172] covariance = [[1.71828 -0.0901278 0.319978][-0.0901278 0.979515 -0.155251][0.319978 -0.155251 2.20714]]
+]
+2025-05-19 18:48:02 INFO  ren0 [octree.h:535] root weight: 1.029e+06 (1029080.375000)
+2025-05-19 18:48:02 INFO  ren0 [octree.h:536] splitting threshold: 1.029e+03 (1029.080444)
+2025-05-19 18:48:02 INFO  ren0 [octree.h:535] root weight: 7.070e+05 (707001.437500)
+2025-05-19 18:48:02 INFO  ren0 [octree.h:536] splitting threshold: 7.070e+02 (707.001465)
+2025-05-19 18:48:02 INFO  ren0 [octree.h:551] node count: 429 -> 488 -> 430
+
+2025-05-19 18:48:02 INFO  ren0 [octree.h:551] node count: 463 -> 529 -> 476
+
+2025-05-19 18:48:02 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 9, until 100.0 seconds
+2025-05-19 18:48:29 INFO  ren0 [MIFocalGuidingPathTracer]   248.85 seconds elapsed, passes this iteration: 1, total passes: 11
+2025-05-19 18:48:29 INFO  ren0 [pmm_focal_guiding_recursive.cpp:220] starting iterative narrowing
+2025-05-19 18:48:29 INFO  ren0 [MIFocalGuidingPathTracer] Got 357451 non-zero samples
+2025-05-19 18:48:29 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 357451
+2025-05-19 18:48:29 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00186397 mean = [-1.10527 1.59857 7.87341] covariance = [[0.627227 0.448316 0.029331][0.448316 0.673328 0.0474377][0.029331 0.0474377 0.0366887]]
+weight = 0.0404701 mean = [1.18321 2.23673 7.37602] covariance = [[2.02561 0.0950647 -0.0112476][0.0950647 0.593199 -0.252456][-0.0112476 -0.252456 0.451219]]
+weight = 0.00812028 mean = [-1.20528 3.14377 2.93227] covariance = [[0.128189 0.00748285 0.130347][0.00748285 0.00576091 0.0382868][0.130347 0.0382868 0.940122]]
+weight = 0.00022261 mean = [-2.35198 0.144861 1.89527] covariance = [[0.000866044 0.000674527 0.00019947][0.000674527 0.000629977 0.000240028][0.00019947 0.000240028 0.000344473]]
+weight = 0.949323 mean = [0.855512 1.69724 2.41258] covariance = [[2.32112 0.19821 -0.956858][0.19821 0.972814 -0.394071][-0.956858 -0.394071 2.3698]]
+]
+2025-05-19 18:48:29 INFO  ren0 [octree.h:535] root weight: 1.120e+06 (1120418.375000)
+2025-05-19 18:48:29 INFO  ren0 [octree.h:536] splitting threshold: 1.120e+03 (1120.418457)
+2025-05-19 18:48:29 INFO  ren0 [octree.h:535] root weight: 7.318e+05 (731789.562500)
+2025-05-19 18:48:29 INFO  ren0 [octree.h:536] splitting threshold: 7.318e+02 (731.789612)
+2025-05-19 18:48:29 INFO  ren0 [octree.h:551] node count: 430 -> 497 -> 414
+
+2025-05-19 18:48:29 INFO  ren0 [octree.h:551] node count: 476 -> 529 -> 446
+
+2025-05-19 18:48:29 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 10, until 110.0 seconds
+2025-05-19 18:48:45 INFO  ren0 [MIFocalGuidingPathTracer]   264.76 seconds elapsed, passes this iteration: 1, total passes: 12
+2025-05-19 18:48:45 INFO  ren0 [MIFocalGuidingPathTracer] Got 313416 non-zero samples
+2025-05-19 18:48:45 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 313416
+2025-05-19 18:48:45 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00169766 mean = [-0.550097 1.00688 5.71059] covariance = [[0.737439 -0.0276012 -0.00564578][-0.0276012 0.497298 0.236995][-0.00564578 0.236995 0.714825]]
+weight = 0.00169766 mean = [-0.744981 1.71739 6.80453] covariance = [[0.737439 -0.0276012 -0.00564578][-0.0276012 0.497298 0.236995][-0.00564578 0.236995 0.714825]]
+weight = 0.000369652 mean = [-0.910256 1.33274 7.14879] covariance = [[0.467277 -0.0771006 0.0443692][-0.0771006 0.453567 -0.0578352][0.0443692 -0.0578352 0.303597]]
+weight = 0.000369652 mean = [-0.289347 1.94426 7.05207] covariance = [[0.467277 -0.0771006 0.0443692][-0.0771006 0.453567 -0.0578352][0.0443692 -0.0578352 0.303597]]
+weight = 0.426153 mean = [0.424365 2.32047 2.98077] covariance = [[0.0220773 0.00800734 0.00369955][0.00800734 0.0191402 0.00165164][0.00369955 0.00165164 0.0148281]]
+weight = 8.61672e-05 mean = [-1.60992 1.3026 6.08227] covariance = [[0.472407 0.0383092 0.0416631][0.0383092 0.547495 0.474444][0.0416631 0.474444 0.89223]]
+weight = 0.042617 mean = [0.424398 1.60324 2.51403] covariance = [[3.20015 -0.783686 0.24892][-0.783686 1.193 0.874453][0.24892 0.874453 4.03883]]
+weight = 0.000222412 mean = [-2.35198 0.144861 1.89527] covariance = [[0.000642953 0.000455352 0.000110866][0.000455352 0.000474531 0.000164048][0.000110866 0.000164048 0.000346257]]
+weight = 0.526786 mean = [0.622234 2.40903 2.943] covariance = [[0.395353 0.0669981 0.0381903][0.0669981 0.16547 0.0383638][0.0381903 0.0383638 0.316095]]
+]
+2025-05-19 18:48:45 INFO  ren0 [octree.h:535] root weight: 2.212e+06 (2212288.500000)
+2025-05-19 18:48:45 INFO  ren0 [octree.h:536] splitting threshold: 2.212e+03 (2212.288574)
+2025-05-19 18:48:45 INFO  ren0 [octree.h:535] root weight: 1.928e+05 (192835.265625)
+2025-05-19 18:48:45 INFO  ren0 [octree.h:536] splitting threshold: 1.928e+02 (192.835281)
+2025-05-19 18:48:45 INFO  ren0 [octree.h:551] node count: 414 -> 729 -> 588
+
+2025-05-19 18:48:45 INFO  ren0 [octree.h:551] node count: 446 -> 447 -> 322
+
+2025-05-19 18:48:45 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 11, until 120.0 seconds
+2025-05-19 18:49:07 INFO  ren0 [MIFocalGuidingPathTracer]   287.30 seconds elapsed, passes this iteration: 1, total passes: 13
+2025-05-19 18:49:07 INFO  ren0 [MIFocalGuidingPathTracer] Got 5062480 non-zero samples
+2025-05-19 18:49:08 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 5062480
+2025-05-19 18:49:12 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00192823 mean = [-0.240931 1.35224 1.74007] covariance = [[0.428166 0.150152 -0.186844][0.150152 0.352753 -0.0129646][-0.186844 -0.0129646 0.567688]]
+weight = 0.0016186 mean = [-0.0762684 1.3626 1.3564] covariance = [[0.476208 0.087514 -0.209902][0.087514 0.285655 -0.0480942][-0.209902 -0.0480942 0.488204]]
+weight = 0.00256406 mean = [-0.673437 0.922388 1.45156] covariance = [[0.0697019 0.00965835 -0.0055168][0.00965835 0.0702247 0.0859736][-0.0055168 0.0859736 0.352567]]
+weight = 0.0362077 mean = [0.811261 2.16035 2.51205] covariance = [[0.828328 -0.0650522 0.0457643][-0.0650522 0.565393 -0.297089][0.0457643 -0.297089 2.54394]]
+weight = 0.0192248 mean = [0.395884 2.35291 2.91729] covariance = [[0.0155064 0.0048734 0.00565871][0.0048734 0.0303585 0.0166841][0.00565871 0.0166841 0.0204346]]
+weight = 0.813566 mean = [0.367558 2.28444 2.96052] covariance = [[0.00538423 -0.00019638 0.00106631][-0.00019638 0.00171512 -0.00112705][0.00106631 -0.00112705 0.00354484]]
+weight = 0.119092 mean = [0.498979 2.2601 2.85282] covariance = [[0.000729839 -0.000181026 -0.000132902][-0.000181026 0.000309221 6.21982e-05][-0.000132902 6.21982e-05 0.000876418]]
+weight = 0.00579938 mean = [0.91426 2.43515 3.21077] covariance = [[0.762825 0.186519 0.278229][0.186519 0.0821233 0.0504982][0.278229 0.0504982 0.147805]]
+]
+2025-05-19 18:49:12 INFO  ren0 [octree.h:535] root weight: 1.452e+06 (1452103.500000)
+2025-05-19 18:49:12 INFO  ren0 [octree.h:536] splitting threshold: 1.452e+03 (1452.103516)
+2025-05-19 18:49:12 INFO  ren0 [octree.h:535] root weight: 5.173e+04 (51728.023438)
+2025-05-19 18:49:12 INFO  ren0 [octree.h:536] splitting threshold: 5.173e+01 (51.728027)
+2025-05-19 18:49:12 INFO  ren0 [octree.h:551] node count: 588 -> 765 -> 623
+
+2025-05-19 18:49:12 INFO  ren0 [octree.h:551] node count: 322 -> 322 -> 297
+
+2025-05-19 18:49:12 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 12, until 130.0 seconds
+2025-05-19 18:49:28 INFO  ren0 [MIFocalGuidingPathTracer]   307.79 seconds elapsed, passes this iteration: 1, total passes: 14
+2025-05-19 18:49:28 INFO  ren0 [MIFocalGuidingPathTracer] Got 12527049 non-zero samples
+2025-05-19 18:49:29 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 12527049
+2025-05-19 18:49:40 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0162261 mean = [0.215389 2.30511 2.87656] covariance = [[6.56096e-05 1.87674e-05 -2.03987e-05][1.87674e-05 7.6005e-05 2.00503e-05][-2.03987e-05 2.00503e-05 7.90106e-05]]
+weight = 0.0162261 mean = [0.213285 2.31291 2.88707] covariance = [[6.56096e-05 1.87674e-05 -2.03987e-05][1.87674e-05 7.6005e-05 2.00503e-05][-2.03987e-05 2.00503e-05 7.90106e-05]]
+weight = 0.048081 mean = [0.208323 2.32969 2.9101] covariance = [[8.79502e-05 -1.00805e-05 -8.96004e-05][-1.00805e-05 0.000124959 0.000107079][-8.96004e-05 0.000107079 0.000246161]]
+weight = 0.0202165 mean = [0.389853 2.28638 2.95965] covariance = [[0.00297925 -0.00119687 0.00227679][-0.00119687 0.000765032 -0.00133375][0.00227679 -0.00133375 0.00242178]]
+weight = 0.23565 mean = [0.304721 2.26666 2.9865] covariance = [[0.000283651 5.19649e-05 1.79642e-05][5.19649e-05 0.00043305 -0.000220198][1.79642e-05 -0.000220198 0.00036889]]
+weight = 0.186693 mean = [0.442682 2.27042 2.99522] covariance = [[0.000394823 -0.000194887 9.39922e-05][-0.000194887 0.000652222 -0.00028411][9.39922e-05 -0.00028411 0.000493402]]
+weight = 0.476908 mean = [0.425286 2.25274 2.87999] covariance = [[0.27289 -0.0539159 -0.0860057][-0.0539159 0.129611 0.0202477][-0.0860057 0.0202477 0.261551]]
+]
+2025-05-19 18:49:40 INFO  ren0 [octree.h:535] root weight: 6.415e+05 (641544.562500)
+2025-05-19 18:49:40 INFO  ren0 [octree.h:536] splitting threshold: 6.415e+02 (641.544617)
+2025-05-19 18:49:40 INFO  ren0 [octree.h:535] root weight: 1.392e+04 (13919.549805)
+2025-05-19 18:49:40 INFO  ren0 [octree.h:536] splitting threshold: 1.392e+01 (13.919551)
+2025-05-19 18:49:40 INFO  ren0 [octree.h:551] node count: 623 -> 699 -> 621
+
+2025-05-19 18:49:40 INFO  ren0 [octree.h:551] node count: 297 -> 297 -> 285
+
+2025-05-19 18:49:40 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 13, until 140.0 seconds
+2025-05-19 18:49:55 INFO  ren0 [MIFocalGuidingPathTracer]   334.74 seconds elapsed, passes this iteration: 1, total passes: 15
+2025-05-19 18:49:55 INFO  ren0 [MIFocalGuidingPathTracer] Got 10051310 non-zero samples
+2025-05-19 18:49:55 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 10051310
+2025-05-19 18:50:03 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 9.18784e-05 mean = [0.202192 2.31476 2.88804] covariance = [[7.53119e-05 7.54808e-06 -7.31599e-06][7.54808e-06 5.85493e-05 4.52966e-06][-7.31599e-06 4.52966e-06 5.8701e-05]]
+weight = 9.18784e-05 mean = [0.191278 2.31152 2.89116] covariance = [[7.53119e-05 7.54808e-06 -7.31599e-06][7.54808e-06 5.85493e-05 4.52966e-06][-7.31599e-06 4.52966e-06 5.8701e-05]]
+weight = 0.000147636 mean = [0.206584 2.31862 2.88612] covariance = [[0.000109055 1.07194e-05 -3.56401e-05][1.07194e-05 9.0587e-05 -9.99624e-06][-3.56401e-05 -9.99624e-06 0.000115293]]
+weight = 0.434349 mean = [0.467718 2.24924 2.86648] covariance = [[0.00293559 -0.000958122 0.000238082][-0.000958122 0.00101533 0.000126831][0.000238082 0.000126831 0.00129066]]
+weight = 0.434349 mean = [0.392301 2.27987 2.85963] covariance = [[0.00293559 -0.000958122 0.000238082][-0.000958122 0.00101533 0.000126831][0.000238082 0.000126831 0.00129066]]
+weight = 0.000385481 mean = [0.385171 2.27608 2.83601] covariance = [[6.87338e-05 -7.00583e-06 -1.46774e-05][-7.00583e-06 1.49578e-05 -2.10586e-06][-1.46774e-05 -2.10586e-06 1.72908e-05]]
+weight = 0.00175318 mean = [0.208237 2.32298 2.86483] covariance = [[0.000471185 0.000196222 0.000169307][0.000196222 0.000151485 6.46311e-05][0.000169307 6.46311e-05 0.000328333]]
+weight = 0.128832 mean = [0.511296 2.26423 2.85242] covariance = [[0.000163381 -0.000144269 -9.807e-05][-0.000144269 0.000169671 0.000100225][-9.807e-05 0.000100225 0.00012712]]
+]
+2025-05-19 18:50:03 INFO  ren0 [octree.h:535] root weight: 2.115e+06 (2114600.000000)
+2025-05-19 18:50:03 INFO  ren0 [octree.h:536] splitting threshold: 2.115e+03 (2114.600098)
+2025-05-19 18:50:03 INFO  ren0 [octree.h:535] root weight: 3.983e+03 (3982.561279)
+2025-05-19 18:50:03 INFO  ren0 [octree.h:536] splitting threshold: 3.983e+00 (3.982561)
+2025-05-19 18:50:03 INFO  ren0 [octree.h:551] node count: 621 -> 934 -> 675
+
+2025-05-19 18:50:03 INFO  ren0 [octree.h:551] node count: 285 -> 285 -> 279
+
+2025-05-19 18:50:03 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 14, until 150.0 seconds
+2025-05-19 18:50:14 INFO  ren0 [MIFocalGuidingPathTracer]   354.38 seconds elapsed, passes this iteration: 1, total passes: 16
+2025-05-19 18:50:14 INFO  ren0 [pmm_focal_guiding_recursive.cpp:238] final iteration
+2025-05-19 18:50:14 INFO  ren0 [MIFocalGuidingPathTracer] Got 9278163 non-zero samples
+2025-05-19 18:50:15 INFO  ren0 [gaussian_mixture_model.h:811] Processing mega batch of size 9278163
+2025-05-19 18:50:21 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0939845 mean = [0.239475 2.34908 2.92145] covariance = [[0.000309291 -4.89139e-05 5.76596e-05][-4.89139e-05 6.08535e-05 -4.30159e-05][5.76596e-05 -4.30159e-05 4.90703e-05]]
+weight = 0.0939845 mean = [0.2637 2.34383 2.92715] covariance = [[0.000309291 -4.89139e-05 5.76596e-05][-4.89139e-05 6.08535e-05 -4.30159e-05][5.76596e-05 -4.30159e-05 4.90703e-05]]
+weight = 0.0108057 mean = [0.301116 2.26484 2.97998] covariance = [[2.45145e-05 8.11491e-06 4.60529e-06][8.11491e-06 2.24474e-05 -4.03432e-07][4.60529e-06 -4.03432e-07 8.93976e-05]]
+weight = 0.153748 mean = [0.221463 2.33471 2.87923] covariance = [[0.000265244 0.000221856 4.12644e-05][0.000221856 0.00028267 3.26244e-05][4.12644e-05 3.26244e-05 0.000115395]]
+weight = 0.647477 mean = [0.393777 2.32247 2.96842] covariance = [[0.00732262 -0.000463399 0.00104597][-0.000463399 0.00107809 0.00150325][0.00104597 0.00150325 0.00654138]]
+]
+2025-05-19 18:50:21 INFO  ren0 [octree.h:535] root weight: 2.057e+06 (2057470.250000)
+2025-05-19 18:50:21 INFO  ren0 [octree.h:536] splitting threshold: 2.057e+03 (2057.470459)
+2025-05-19 18:50:21 INFO  ren0 [octree.h:535] root weight: 1.014e+03 (1014.125061)
+2025-05-19 18:50:21 INFO  ren0 [octree.h:536] splitting threshold: 1.014e+00 (1.014125)
+2025-05-19 18:50:22 INFO  ren0 [octree.h:551] node count: 675 -> 675 -> 510
+
+2025-05-19 18:50:22 INFO  ren0 [octree.h:551] node count: 279 -> 279 -> 279
+
+2025-05-19 18:50:22 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 15, until 600.0 seconds
+2025-05-19 18:54:23 INFO  ren0 [MIFocalGuidingPathTracer]   602.83 seconds elapsed, passes this iteration: 34, total passes: 50
+2025-05-19 18:54:23 INFO  ren0 [RenderJob] Render time: 10.0689m
+2025-05-19 18:54:23 INFO  ren0 [HDRFilm] Writing image to "/mitsuba/scene/living-room/living-room.exr" ..
+2025-05-19 18:54:23 INFO  main [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/conductor.so [Smooth conductor]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/mask.so [Mask BSDF]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/plastic.so [Smooth plastic BRDF]
+    -  plugins/ply.so [PLY mesh loader]
+    -  plugins/pmm_focal_recursive.so [MI focal guiding path tracer]
+    -  plugins/rectangle.so [Rectangle intersection primitive]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughdielectric.so [Rough dielectric BSDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/spot.so [Spot light]
+    -  plugins/thindielectric.so [Thin dielectric BSDF]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 274.616 M
+    -  Shadow rays traced : 267.354 M
+
+  * PathGuiding :
+    -  Average path length : 5.90 (271.95 M / 46.08 M)
+
+  * Texture system :
+    -  Cumulative MIP map memory allocations : 119.118 MiB
+    -  Filtered texture lookups : 0.00 % (0.00 of 37.52 M)
+------------------------------------------------------------

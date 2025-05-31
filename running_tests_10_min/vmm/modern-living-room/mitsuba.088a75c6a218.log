@@ -1,0 +1,1716 @@
+2025-05-16 15:09:56 INFO  main [mitsuba.cpp:274] Mitsuba version 0.6.0 (Linux, 64 bit), Copyright (c) 2017 Wenzel Jakob
+2025-05-16 15:09:56 INFO  main [mitsuba.cpp:377] Parsing scene description from "scene/modern-living-room/modern-living-room.xml" ..
+2025-05-16 15:09:56 INFO  main [scenehandler.cpp:675] In file "/mitsuba/scene/modern-living-room/modern-living-room.xml" (near line 13): Parsing included file "vmm.xml" ..
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/pathguiding.so" ..
+2025-05-16 15:09:56 INFO  main [PathGuiding] m_renderMaxSeconds is set to 300
+2025-05-16 15:09:56 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/modern-living-room/../_integrators/vmm.xml" (near line 19): Unqueried attribute "dumpPrimaryRays" in element "integrator"
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/independent.so" ..
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/box.so" ..
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/hdrfilm.so" ..
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/perspective.so" ..
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/bitmap.so" ..
+2025-05-16 15:09:56 INFO  main [BitmapTexture] Loading texture "Abstract.jpg"
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/lanczos.so" ..
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/diffuse.so" ..
+2025-05-16 15:09:56 INFO  main [PluginManager] Loading plugin "plugins/twosided.so" ..
+2025-05-16 15:09:56 INFO  main [BitmapTexture] Loading texture "WoodFloor.jpg"
+2025-05-16 15:09:56 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/modern-living-room/textures/WoodFloor.mip" ..
+2025-05-16 15:09:57 INFO  main [PluginManager] Loading plugin "plugins/roughplastic.so" ..
+2025-05-16 15:09:57 INFO  main [PluginManager] Loading plugin "plugins/dielectric.so" ..
+2025-05-16 15:09:57 INFO  main [PluginManager] Loading plugin "plugins/roughconductor.so" ..
+2025-05-16 15:09:57 INFO  main [spectrum.cpp:599] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-16 15:09:57 INFO  main [spectrum.cpp:599] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2025-05-16 15:09:57 INFO  main [BitmapTexture] Loading texture "Fabric.jpg"
+2025-05-16 15:09:57 INFO  main [PluginManager] Loading plugin "plugins/obj.so" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh019.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh019: 22528 triangles, 11268 vertices (merged 56316 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh019.obj" (took 54 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh033.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh033: 22528 triangles, 11268 vertices (merged 56316 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh033.obj" (took 66 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh020.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh020: 6784 triangles, 3425 vertices (merged 16927 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh020.obj" (took 15 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh016.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh016: 18944 triangles, 9537 vertices (merged 47295 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh016.obj" (took 41 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh017.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh017: 4864 triangles, 2434 vertices (merged 12158 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh017.obj" (took 10 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh014.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh014: 4864 triangles, 2434 vertices (merged 12158 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh014.obj" (took 10 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh025.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh025: 19456 triangles, 9730 vertices (merged 48638 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh025.obj" (took 46 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh013.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh013: 35840 triangles, 17922 vertices (merged 89598 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh013.obj" (took 88 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh021.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh021: 35840 triangles, 17922 vertices (merged 89598 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh021.obj" (took 91 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh022.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh022: 18944 triangles, 9537 vertices (merged 47295 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh022.obj" (took 50 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh015.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh015: 63488 triangles, 31752 vertices (merged 158712 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh015.obj" (took 161 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh024.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh024: 6272 triangles, 3169 vertices (merged 15647 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh024.obj" (took 15 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh026.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh026: 25088 triangles, 12609 vertices (merged 62655 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh026.obj" (took 61 ms)
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Loading geometry from "Mesh034.obj" ..
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Mesh034: 20736 triangles, 10704 vertices (merged 51504 vertices).
+2025-05-16 15:09:57 INFO  main [WavefrontOBJ] Done with "Mesh034.obj" (took 51 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh029.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh029: 4320 triangles, 2178 vertices (merged 10782 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh029.obj" (took 10 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh018.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh018: 53248 triangles, 26624 vertices (merged 133120 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh018.obj" (took 133 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh032.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh032: 30 triangles, 64 vertices (merged 26 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh032.obj" (took 0 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh035.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh035: 13312 triangles, 6656 vertices (merged 33280 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh035.obj" (took 32 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh031.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh031: 792 triangles, 1304 vertices (merged 1072 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh031.obj" (took 4 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh012.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh012: 102 triangles, 162 vertices (merged 144 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh012.obj" (took 0 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh011.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh011: 102 triangles, 162 vertices (merged 144 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh011.obj" (took 0 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh010.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh010: 102 triangles, 166 vertices (merged 140 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh010.obj" (took 0 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh028.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh028: 105472 triangles, 52738 vertices (merged 263678 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh028.obj" (took 241 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh009.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh009: 65472 triangles, 50844 vertices (merged 145572 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh009.obj" (took 197 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh007.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh007: 65472 triangles, 50844 vertices (merged 145572 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh007.obj" (took 203 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh006.obj" ..
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Mesh006: 71680 triangles, 35844 vertices (merged 179196 vertices).
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Done with "Mesh006.obj" (took 157 ms)
+2025-05-16 15:09:58 INFO  main [WavefrontOBJ] Loading geometry from "Mesh030.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh030: 27136 triangles, 13638 vertices (merged 67770 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh030.obj" (took 59 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh005.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh005: 96 triangles, 192 vertices (merged 96 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh005.obj" (took 0 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh004.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh004: 65472 triangles, 50844 vertices (merged 145572 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh004.obj" (took 203 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh023.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh023: 6912 triangles, 3458 vertices (merged 17278 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh023.obj" (took 15 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh002.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh002: 96 triangles, 192 vertices (merged 96 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh002.obj" (took 0 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh008.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh008: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh008.obj" (took 0 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh027.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh027: 8 triangles, 16 vertices (merged 8 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh027.obj" (took 0 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh003.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh003: 2 triangles, 4 vertices (merged 2 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh003.obj" (took 0 ms)
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Loading geometry from "Mesh001.obj" ..
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Mesh001: 204 triangles, 398 vertices (merged 214 vertices).
+2025-05-16 15:09:59 INFO  main [WavefrontOBJ] Done with "Mesh001.obj" (took 1 ms)
+2025-05-16 15:09:59 INFO  main [PluginManager] Loading plugin "plugins/area.so" ..
+2025-05-16 15:09:59 INFO  main [PluginManager] Loading plugin "plugins/sphere.so" ..
+2025-05-16 15:09:59 INFO  ren0 [KDTreeBase] Constructing a SAH kd-tree (786209 primitives) ..
+2025-05-16 15:10:00 INFO  ren0 [KDTreeBase] Finished -- took 723 ms.
+2025-05-16 15:10:00 INFO  ren0 [PathGuiding] GuidingField [
+  BSPTree = GuidingTree[
+  totalNumSamples = 0,
+  bound = AABB3[invalid],
+  tree = BSPTree[
+  numNodes = 1,
+],
+  nData = 0,
+  maxDepth = 0,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+],
+  factory = GuidingFieldFactory[
+  distributionFactory: GuidingDistributionFactory<VMF Mixture> [
+  vmmFactory = VMMFactory[
+properties = VMMFactoryProperties[
+  minItr = 1
+  maxItr = 100
+  relLogLikelihoodThreshold = 0.005
+  numInitialComponents = 16
+  initKappa = 5
+  maxKappa = 32768
+  vPrior = 0.01
+  rPrior = 0
+  rPriorWeight = 0.2
+]
+]
+  decayOnSpatialSplits = 0.25
+]
+  statisticsFactory: GuidingStatsFactory<PathGuidingMixtureStats> [
+  splitMinDivergence = 0.5
+  mergeMaxDivergence = 0.025
+  splitAndMerge = 1
+  minSamplesForMerging = 8192
+  minSamplesForSplitting = 4096
+  minSamplesForPostSplitFitting = 4096
+  decayOnSpatialSplit = 0.25
+  parallaxCompensation = 1
+  safetyMerge = 1
+]
+  decayOnSpatialSplit: 0.25
+],
+  iteration = 0,
+  totalSPP = 0,
+]
+2025-05-16 15:10:00 INFO  ren0 [PathGuiding] Starting training with 4spp per iteration.
+2025-05-16 15:10:00 INFO  ren0 [PathGuiding] rendering training iteration 0 with 4spp
+2025-05-16 15:10:00 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:10:08 INFO  ren0 [PathGuiding] iteration render time: 8.8939s
+2025-05-16 15:10:08 INFO  ren0 [PathGuiding] got 40290376 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:10:08 INFO  ren0 [PathGuiding] sample accumulation time: 0.0005s
+2025-05-16 15:10:08 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:10:16 INFO  ren0 [GuidingField.h:145] Tree update time: 7.8786s
+2025-05-16 15:10:16 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 40290376,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 3565,
+],
+  nData = 1783,
+  maxDepth = 12,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:10:16 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:10:16 INFO  ren0 [PathGuiding] iteration postprocessing time: 7.8795s
+2025-05-16 15:10:16 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:10:16 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 51.351 M
+    -  Shadow rays traced : 46.410 M
+
+  * PathGuiding :
+    -  Average path length : 13.93 (51.35 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.70 % (1.04 M of 18.17 M)
+------------------------------------------------------------
+2025-05-16 15:10:16 INFO  ren0 [PathGuiding] rendering training iteration 1 with 4spp
+2025-05-16 15:10:16 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:10:24 INFO  ren0 [PathGuiding] iteration render time: 7.8295s
+2025-05-16 15:10:24 INFO  ren0 [PathGuiding] got 25242621 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:10:24 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:10:24 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:10:27 INFO  ren0 [GuidingField.h:145] Tree update time: 2.9859s
+2025-05-16 15:10:27 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 65532997,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 5729,
+],
+  nData = 2865,
+  maxDepth = 13,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:10:27 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:10:27 INFO  ren0 [PathGuiding] iteration postprocessing time: 2.9865s
+2025-05-16 15:10:27 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:10:27 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 32.244 M
+    -  Shadow rays traced : 27.909 M
+
+  * PathGuiding :
+    -  Average path length : 8.75 (32.25 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 10.75 % (1.03 M of 9.62 M)
+------------------------------------------------------------
+2025-05-16 15:10:27 INFO  ren0 [PathGuiding] rendering training iteration 2 with 4spp
+2025-05-16 15:10:27 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:10:36 INFO  ren0 [PathGuiding] iteration render time: 8.8641s
+2025-05-16 15:10:36 INFO  ren0 [PathGuiding] got 25238363 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:10:36 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:10:36 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:10:39 INFO  ren0 [GuidingField.h:145] Tree update time: 2.6304s
+2025-05-16 15:10:39 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 90771360,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 6977,
+],
+  nData = 3489,
+  maxDepth = 13,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:10:39 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:10:39 INFO  ren0 [PathGuiding] iteration postprocessing time: 2.6309s
+2025-05-16 15:10:39 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:10:39 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 32.200 M
+    -  Shadow rays traced : 27.832 M
+
+  * PathGuiding :
+    -  Average path length : 8.74 (32.20 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 10.81 % (1.03 M of 9.57 M)
+------------------------------------------------------------
+2025-05-16 15:10:39 INFO  ren0 [PathGuiding] rendering training iteration 3 with 4spp
+2025-05-16 15:10:39 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:10:48 INFO  ren0 [PathGuiding] iteration render time: 9.0241s
+2025-05-16 15:10:48 INFO  ren0 [PathGuiding] got 25259957 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:10:48 INFO  ren0 [PathGuiding] sample accumulation time: 0.0003s
+2025-05-16 15:10:48 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:10:50 INFO  ren0 [GuidingField.h:145] Tree update time: 2.5027s
+2025-05-16 15:10:50 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 116031317,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 7591,
+],
+  nData = 3796,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:10:50 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:10:50 INFO  ren0 [PathGuiding] iteration postprocessing time: 2.5032s
+2025-05-16 15:10:50 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:10:50 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 32.185 M
+    -  Shadow rays traced : 27.809 M
+
+  * PathGuiding :
+    -  Average path length : 8.73 (32.19 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 10.84 % (1.04 M of 9.55 M)
+------------------------------------------------------------
+2025-05-16 15:10:50 INFO  ren0 [PathGuiding] rendering training iteration 4 with 4spp
+2025-05-16 15:10:50 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:11:00 INFO  ren0 [PathGuiding] iteration render time: 9.5789s
+2025-05-16 15:11:00 INFO  ren0 [PathGuiding] got 27770087 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:11:00 INFO  ren0 [PathGuiding] sample accumulation time: 0.0005s
+2025-05-16 15:11:00 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:11:02 INFO  ren0 [GuidingField.h:145] Tree update time: 2.5999s
+2025-05-16 15:11:02 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 143801404,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 9255,
+],
+  nData = 4628,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:11:02 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:11:02 INFO  ren0 [PathGuiding] iteration postprocessing time: 2.6006s
+2025-05-16 15:11:02 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:11:02 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 34.925 M
+    -  Shadow rays traced : 30.498 M
+
+  * PathGuiding :
+    -  Average path length : 9.47 (34.93 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 9.71 % (1.04 M of 10.67 M)
+------------------------------------------------------------
+2025-05-16 15:11:02 INFO  ren0 [PathGuiding] rendering training iteration 5 with 4spp
+2025-05-16 15:11:02 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:11:13 INFO  ren0 [PathGuiding] iteration render time: 10.3534s
+2025-05-16 15:11:13 INFO  ren0 [PathGuiding] got 30281633 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:11:13 INFO  ren0 [PathGuiding] sample accumulation time: 0.0005s
+2025-05-16 15:11:13 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:11:16 INFO  ren0 [GuidingField.h:145] Tree update time: 2.7719s
+2025-05-16 15:11:16 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 174083037,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 11041,
+],
+  nData = 5521,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:11:16 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:11:16 INFO  ren0 [PathGuiding] iteration postprocessing time: 2.7725s
+2025-05-16 15:11:16 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:11:16 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 37.687 M
+    -  Shadow rays traced : 33.216 M
+
+  * PathGuiding :
+    -  Average path length : 10.22 (37.69 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 8.77 % (1.04 M of 11.81 M)
+------------------------------------------------------------
+2025-05-16 15:11:16 INFO  ren0 [PathGuiding] rendering training iteration 6 with 4spp
+2025-05-16 15:11:16 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:11:27 INFO  ren0 [PathGuiding] iteration render time: 10.9901s
+2025-05-16 15:11:27 INFO  ren0 [PathGuiding] got 32561883 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:11:27 INFO  ren0 [PathGuiding] sample accumulation time: 0.0007s
+2025-05-16 15:11:27 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:11:29 INFO  ren0 [GuidingField.h:145] Tree update time: 2.9392s
+2025-05-16 15:11:29 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 206644920,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 12263,
+],
+  nData = 6132,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:11:29 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:11:29 INFO  ren0 [PathGuiding] iteration postprocessing time: 2.9400s
+2025-05-16 15:11:29 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:11:29 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 40.162 M
+    -  Shadow rays traced : 35.659 M
+
+  * PathGuiding :
+    -  Average path length : 10.90 (40.16 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 8.06 % (1.04 M of 12.85 M)
+------------------------------------------------------------
+2025-05-16 15:11:29 INFO  ren0 [PathGuiding] rendering training iteration 7 with 4spp
+2025-05-16 15:11:29 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:11:41 INFO  ren0 [PathGuiding] iteration render time: 11.8627s
+2025-05-16 15:11:41 INFO  ren0 [PathGuiding] got 34504199 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:11:41 INFO  ren0 [PathGuiding] sample accumulation time: 0.0003s
+2025-05-16 15:11:41 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:11:44 INFO  ren0 [GuidingField.h:145] Tree update time: 2.9648s
+2025-05-16 15:11:44 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 241149119,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 14043,
+],
+  nData = 7022,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:11:44 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:11:44 INFO  ren0 [PathGuiding] iteration postprocessing time: 2.9653s
+2025-05-16 15:11:44 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:11:44 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 42.310 M
+    -  Shadow rays traced : 37.766 M
+
+  * PathGuiding :
+    -  Average path length : 11.48 (42.31 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 7.53 % (1.04 M of 13.75 M)
+------------------------------------------------------------
+2025-05-16 15:11:44 INFO  ren0 [PathGuiding] rendering training iteration 8 with 4spp
+2025-05-16 15:11:44 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:11:57 INFO  ren0 [PathGuiding] iteration render time: 12.6194s
+2025-05-16 15:11:57 INFO  ren0 [PathGuiding] got 36201986 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:11:57 INFO  ren0 [PathGuiding] sample accumulation time: 0.0005s
+2025-05-16 15:11:57 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:12:00 INFO  ren0 [GuidingField.h:145] Tree update time: 3.1956s
+2025-05-16 15:12:00 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 277351105,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 15385,
+],
+  nData = 7693,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:12:00 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:12:00 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.1964s
+2025-05-16 15:12:00 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:12:00 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 44.159 M
+    -  Shadow rays traced : 39.590 M
+
+  * PathGuiding :
+    -  Average path length : 11.98 (44.16 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 7.13 % (1.04 M of 14.53 M)
+------------------------------------------------------------
+2025-05-16 15:12:00 INFO  ren0 [PathGuiding] rendering training iteration 9 with 4spp
+2025-05-16 15:12:00 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:12:13 INFO  ren0 [PathGuiding] iteration render time: 13.0915s
+2025-05-16 15:12:13 INFO  ren0 [PathGuiding] got 37602730 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:12:13 INFO  ren0 [PathGuiding] sample accumulation time: 0.0005s
+2025-05-16 15:12:13 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:12:16 INFO  ren0 [GuidingField.h:145] Tree update time: 3.0569s
+2025-05-16 15:12:16 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 314953835,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 17409,
+],
+  nData = 8705,
+  maxDepth = 15,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:12:16 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:12:16 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.0575s
+2025-05-16 15:12:16 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:12:16 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 45.695 M
+    -  Shadow rays traced : 41.096 M
+
+  * PathGuiding :
+    -  Average path length : 12.40 (45.70 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 6.82 % (1.04 M of 15.19 M)
+------------------------------------------------------------
+2025-05-16 15:12:16 INFO  ren0 [PathGuiding] rendering training iteration 10 with 4spp
+2025-05-16 15:12:16 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:12:29 INFO  ren0 [PathGuiding] iteration render time: 12.8279s
+2025-05-16 15:12:29 INFO  ren0 [PathGuiding] got 38843656 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:12:29 INFO  ren0 [PathGuiding] sample accumulation time: 0.0350s
+2025-05-16 15:12:29 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:12:32 INFO  ren0 [GuidingField.h:145] Tree update time: 3.1291s
+2025-05-16 15:12:32 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 353797491,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 18985,
+],
+  nData = 9493,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:12:32 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:12:32 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.1642s
+2025-05-16 15:12:32 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:12:32 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 47.068 M
+    -  Shadow rays traced : 42.446 M
+
+  * PathGuiding :
+    -  Average path length : 12.77 (47.07 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 6.57 % (1.04 M of 15.77 M)
+------------------------------------------------------------
+2025-05-16 15:12:32 INFO  ren0 [PathGuiding] rendering training iteration 11 with 4spp
+2025-05-16 15:12:32 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:12:46 INFO  ren0 [PathGuiding] iteration render time: 13.5352s
+2025-05-16 15:12:46 INFO  ren0 [PathGuiding] got 39862012 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:12:46 INFO  ren0 [PathGuiding] sample accumulation time: 0.0006s
+2025-05-16 15:12:46 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:12:49 INFO  ren0 [GuidingField.h:145] Tree update time: 3.2217s
+2025-05-16 15:12:49 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 393659503,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 21393,
+],
+  nData = 10697,
+  maxDepth = 15,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:12:49 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:12:49 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.2224s
+2025-05-16 15:12:49 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:12:49 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 48.189 M
+    -  Shadow rays traced : 43.546 M
+
+  * PathGuiding :
+    -  Average path length : 13.07 (48.19 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 6.38 % (1.04 M of 16.24 M)
+------------------------------------------------------------
+2025-05-16 15:12:49 INFO  ren0 [PathGuiding] rendering training iteration 12 with 4spp
+2025-05-16 15:12:49 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:13:03 INFO  ren0 [PathGuiding] iteration render time: 14.0641s
+2025-05-16 15:13:03 INFO  ren0 [PathGuiding] got 40782431 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:13:03 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:13:03 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:13:06 INFO  ren0 [GuidingField.h:145] Tree update time: 3.2030s
+2025-05-16 15:13:06 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 434441934,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 23083,
+],
+  nData = 11542,
+  maxDepth = 15,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:13:06 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:13:06 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.2035s
+2025-05-16 15:13:06 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:13:06 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 49.192 M
+    -  Shadow rays traced : 44.530 M
+
+  * PathGuiding :
+    -  Average path length : 13.34 (49.19 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 6.21 % (1.04 M of 16.67 M)
+------------------------------------------------------------
+2025-05-16 15:13:06 INFO  ren0 [PathGuiding] rendering training iteration 13 with 4spp
+2025-05-16 15:13:06 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:13:20 INFO  ren0 [PathGuiding] iteration render time: 14.0788s
+2025-05-16 15:13:20 INFO  ren0 [PathGuiding] got 41497834 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:13:20 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:13:20 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:13:24 INFO  ren0 [GuidingField.h:145] Tree update time: 3.1997s
+2025-05-16 15:13:24 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 475939768,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 24745,
+],
+  nData = 12373,
+  maxDepth = 15,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:13:24 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:13:24 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.2002s
+2025-05-16 15:13:24 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:13:24 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 49.970 M
+    -  Shadow rays traced : 45.302 M
+
+  * PathGuiding :
+    -  Average path length : 13.56 (49.97 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 6.09 % (1.04 M of 17.00 M)
+------------------------------------------------------------
+2025-05-16 15:13:24 INFO  ren0 [PathGuiding] rendering training iteration 14 with 4spp
+2025-05-16 15:13:24 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:13:38 INFO  ren0 [PathGuiding] iteration render time: 14.2612s
+2025-05-16 15:13:38 INFO  ren0 [PathGuiding] got 42164856 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:13:38 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:13:38 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:13:41 INFO  ren0 [GuidingField.h:145] Tree update time: 3.4965s
+2025-05-16 15:13:41 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 518104624,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 27089,
+],
+  nData = 13545,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:13:41 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:13:41 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.4970s
+2025-05-16 15:13:41 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:13:41 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 50.710 M
+    -  Shadow rays traced : 46.025 M
+
+  * PathGuiding :
+    -  Average path length : 13.76 (50.71 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.99 % (1.04 M of 17.31 M)
+------------------------------------------------------------
+2025-05-16 15:13:41 INFO  ren0 [PathGuiding] rendering training iteration 15 with 4spp
+2025-05-16 15:13:41 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:13:56 INFO  ren0 [PathGuiding] iteration render time: 14.6248s
+2025-05-16 15:13:56 INFO  ren0 [PathGuiding] got 42751575 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:13:56 INFO  ren0 [PathGuiding] sample accumulation time: 0.0006s
+2025-05-16 15:13:56 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:13:59 INFO  ren0 [GuidingField.h:145] Tree update time: 3.2591s
+2025-05-16 15:13:59 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 560856199,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 29015,
+],
+  nData = 14508,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:13:59 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:13:59 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.2598s
+2025-05-16 15:13:59 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:13:59 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 51.350 M
+    -  Shadow rays traced : 46.654 M
+
+  * PathGuiding :
+    -  Average path length : 13.93 (51.35 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.90 % (1.04 M of 17.57 M)
+------------------------------------------------------------
+2025-05-16 15:13:59 INFO  ren0 [PathGuiding] rendering training iteration 16 with 4spp
+2025-05-16 15:13:59 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:14:14 INFO  ren0 [PathGuiding] iteration render time: 14.7103s
+2025-05-16 15:14:14 INFO  ren0 [PathGuiding] got 43238164 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:14:14 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:14:14 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:14:17 INFO  ren0 [GuidingField.h:145] Tree update time: 3.2797s
+2025-05-16 15:14:17 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 604094363,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 30727,
+],
+  nData = 15364,
+  maxDepth = 14,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:14:17 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:14:17 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.2802s
+2025-05-16 15:14:17 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:14:17 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 51.882 M
+    -  Shadow rays traced : 47.175 M
+
+  * PathGuiding :
+    -  Average path length : 14.07 (51.88 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.82 % (1.04 M of 17.81 M)
+------------------------------------------------------------
+2025-05-16 15:14:17 INFO  ren0 [PathGuiding] rendering training iteration 17 with 4spp
+2025-05-16 15:14:17 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:14:32 INFO  ren0 [PathGuiding] iteration render time: 14.5052s
+2025-05-16 15:14:32 INFO  ren0 [PathGuiding] got 43695135 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:14:32 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:14:32 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:14:35 INFO  ren0 [GuidingField.h:145] Tree update time: 3.2968s
+2025-05-16 15:14:35 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 647789498,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 32921,
+],
+  nData = 16461,
+  maxDepth = 15,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:14:35 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:14:35 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.2974s
+2025-05-16 15:14:35 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:14:35 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 52.377 M
+    -  Shadow rays traced : 47.662 M
+
+  * PathGuiding :
+    -  Average path length : 14.21 (52.38 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.75 % (1.04 M of 18.01 M)
+------------------------------------------------------------
+2025-05-16 15:14:35 INFO  ren0 [PathGuiding] rendering training iteration 18 with 4spp
+2025-05-16 15:14:35 INFO  ren0 [SamplingIntegrator] Starting render job (1280x720, 4 samples, 12 cores, SSE2 enabled) ..
+2025-05-16 15:14:50 INFO  ren0 [PathGuiding] iteration render time: 15.1082s
+2025-05-16 15:14:50 INFO  ren0 [PathGuiding] got 44061066 samples with non-zero radiance and 0 zero-valued samples.
+2025-05-16 15:14:50 INFO  ren0 [PathGuiding] sample accumulation time: 0.0004s
+2025-05-16 15:14:50 INFO  ren0 [GuidingField.h:142] Begin Tree update
+2025-05-16 15:14:54 INFO  ren0 [GuidingField.h:145] Tree update time: 3.3628s
+2025-05-16 15:14:54 INFO  ren0 [GuidingField.h:147] Tree: GuidingTree[
+  totalNumSamples = 691850564,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 34809,
+],
+  nData = 17405,
+  maxDepth = 15,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+]
+
+2025-05-16 15:14:54 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:14:54 INFO  ren0 [PathGuiding] iteration postprocessing time: 3.3634s
+2025-05-16 15:14:54 INFO  ren0 [PathGuiding] iteration data export time: 0.0000s
+2025-05-16 15:14:54 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 52.781 M
+    -  Shadow rays traced : 48.051 M
+
+  * PathGuiding :
+    -  Average path length : 14.32 (52.78 M / 3.69 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.70 % (1.04 M of 18.19 M)
+------------------------------------------------------------
+2025-05-16 15:14:54 INFO  ren0 [PathGuiding] training phase finished after 32 samples per pixel in 4.9012m.
+2025-05-16 15:14:54 INFO  ren0 [PathGuiding] GuidingTree::Statistics[
+-- Nodes --
+   numNodes                         = 34809
+   sizePerNode                      = 8 B
+   usedNodeStorage                  = 271.9 KiB
+   reservedNodeStorage              = 599.4 KiB
+-- Regions --
+   numRegions                       = 17405
+   sizePerRegion                    = 2336 B
+   usedRegionStorage                = 38.8 MiB
+   reservedRegionStorage            = 85.5 MiB
+   minNumSamples                    = 177
+   maxNumSamples                    = 4493
+   avgNumSamples                    = 2531.52
+   stdNumSamples                    = 579.296
+   numEmptyRegions                  = 0
+-- EM-Fit --
+   minNumTrainingIterations         = 2
+   maxNumTrainingIterations         = 6
+   avgNumTrainingIterations         = 2.0008
+   stdNumTrainingIterations         = 0.0415068
+-- Mixtures --
+   minNumComponents                 = 6
+   maxNumComponents                 = 32
+   avgNumComponents                 = 14.2174
+   stdNumComponents                 = 3.52274
+   numRegionsWithMaxComponents      = 65
+-- TrainingSamples --
+   numTrainingSamples               = 44061064
+   sizePerTrainingSample            = 40 B
+   usedTrainingSampleStorage        = 1.6 GiB
+]
+2025-05-16 15:14:54 INFO  ren0 [PathGuiding] Hello from renderer
+2025-05-16 15:14:54 INFO  ren0 [PathGuiding] Starting render job (1280x720, -4683574730056269524 seconds, 12 cores, SSE2 enabled) ..
+2025-05-16 15:19:43 INFO  ren0 [PathGuiding] rendered 84 samples per pixel in 4.8228m.
+2025-05-16 15:19:43 INFO  ren0 [RenderJob] Render time: 9.7371m
+2025-05-16 15:19:43 INFO  ren0 [PathGuiding] iteration render time: 4.8229m
+2025-05-16 15:19:43 INFO  ren0 [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 1.117 G
+    -  Shadow rays traced : 1.018 G
+
+  * PathGuiding :
+    -  Average path length : 14.43 (1.12 G / 77.41 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.64 % (21.76 M of 385.62 M)
+------------------------------------------------------------
+2025-05-16 15:19:43 INFO  ren0 [PathGuiding] PathGuiding[
+  path tracing configuration:
+    maxDepth: 40
+    strictNormals useNee useCosineProduct guideDirectLight 
+  rr configuration:
+    rrDepth: 40
+    
+  guiding configuration:
+    bsdfProbability: 0.5
+    minSPPToTrustGuidingCaches: 12
+    minSamplesToStartFitting: 128
+    splatSamples accountForDirectLightMiWeight update 
+  import/export:
+    trainingDirectory: ./training/
+    
+]
+
+2025-05-16 15:19:43 INFO  ren0 [PathGuiding] GuidingField [
+  BSPTree = GuidingTree[
+  totalNumSamples = 691850564,
+  bound = AABB3[min=[-6.02975, -0.00717345, -6.68615], max=[0.32406, 2.72573, 0.00770017]],
+  tree = BSPTree[
+  numNodes = 34809,
+],
+  nData = 17405,
+  maxDepth = 15,
+  settings = BSPTreeSettings[
+    maxSamples = 32768
+    minSamples = 100
+    maxDepth   = 32
+    splitType  = 4
+]
+,
+],
+  factory = GuidingFieldFactory[
+  distributionFactory: GuidingDistributionFactory<VMF Mixture> [
+  vmmFactory = VMMFactory[
+properties = VMMFactoryProperties[
+  minItr = 1
+  maxItr = 100
+  relLogLikelihoodThreshold = 0.005
+  numInitialComponents = 16
+  initKappa = 5
+  maxKappa = 32768
+  vPrior = 0.01
+  rPrior = 0
+  rPriorWeight = 0.2
+]
+]
+  decayOnSpatialSplits = 0.25
+]
+  statisticsFactory: GuidingStatsFactory<PathGuidingMixtureStats> [
+  splitMinDivergence = 0.5
+  mergeMaxDivergence = 0.025
+  splitAndMerge = 1
+  minSamplesForMerging = 8192
+  minSamplesForSplitting = 4096
+  minSamplesForPostSplitFitting = 4096
+  decayOnSpatialSplit = 0.25
+  parallaxCompensation = 1
+  safetyMerge = 1
+]
+  decayOnSpatialSplit: 0.25
+],
+  iteration = 19,
+  totalSPP = 76,
+]
+2025-05-16 15:19:43 INFO  ren0 [HDRFilm] Writing image to "/mitsuba/scene/modern-living-room/modern-living-room.exr" ..
+2025-05-16 15:19:43 INFO  main [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/box.so [Box filter]
+    -  plugins/dielectric.so [Smooth dielectric BSDF]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/obj.so [OBJ triangle mesh loader]
+    -  plugins/pathguiding.so [Robust Fitting of Parallax-Aware Mixtures for Path Guiding]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/roughconductor.so [Rough conductor BRDF]
+    -  plugins/roughplastic.so [Rough plastic BRDF]
+    -  plugins/sphere.so [Sphere intersection primitive]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 1.117 G
+    -  Shadow rays traced : 1.018 G
+
+  * PathGuiding :
+    -  Average path length : 14.43 (1.12 G / 77.41 M)
+
+  * Texture system :
+    -  Filtered texture lookups : 5.64 % (21.76 M of 385.62 M)
+------------------------------------------------------------

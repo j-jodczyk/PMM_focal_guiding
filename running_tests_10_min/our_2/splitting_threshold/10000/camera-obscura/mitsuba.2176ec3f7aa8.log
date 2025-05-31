@@ -1,0 +1,787 @@
+2025-05-18 16:35:07 INFO  main [mitsuba.cpp:274] Mitsuba version 0.6.0 (Linux, 64 bit), Copyright (c) 2017 Wenzel Jakob
+2025-05-18 16:35:07 INFO  main [mitsuba.cpp:377] Parsing scene description from "scene/camera-obscura/camera-obscura.xml" ..
+2025-05-18 16:35:07 INFO  main [scenehandler.cpp:675] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 12): Parsing included file "pmm_focal_recursive.xml" ..
+2025-05-18 16:35:07 INFO  main [PluginManager] Loading plugin "plugins/pmm_focal_recursive.so" ..
+2025-05-18 16:35:07 INFO  main [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-18 16:35:07 INFO  main [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-18 16:35:07 INFO  main [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-18 16:35:07 INFO  main [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-18 16:35:07 INFO  main [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-18 16:35:07 INFO  main [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] budget: 600
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] dumpPrimaryRays: false
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] dumpScene: false
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] gmm.alpha: 0.4
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] gmm.initMethod: KMeans
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] gmm.maxNumComp: 10
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] gmm.mergingThreshold: 0.65
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] gmm.minNumComp: 3
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] gmm.splittingThreshold: 10000
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] iterationBudget: 10
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] iterationCount: 15
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] maxDepth: 40
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] minSamplesToStartFitting: 128
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] normalBinning: disabled
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] renderMaxSeconds: 36000
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] rrDepth: 14
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] samplingMode: 2
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] strictNormals: true
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] trainingSamples: 4
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] tree.threshold: 0.001
+2025-05-18 16:35:07 INFO  main [MIFocalGuidingPathTracer] unboundedSplatting: true
+2025-05-18 16:35:07 INFO  main [PluginManager] Loading plugin "plugins/independent.so" ..
+2025-05-18 16:35:07 INFO  main [PluginManager] Loading plugin "plugins/box.so" ..
+2025-05-18 16:35:07 INFO  main [PluginManager] Loading plugin "plugins/hdrfilm.so" ..
+2025-05-18 16:35:07 INFO  main [PluginManager] Loading plugin "plugins/perspective.so" ..
+2025-05-18 16:35:07 INFO  main [PluginManager] Loading plugin "plugins/bitmap.so" ..
+2025-05-18 16:35:07 INFO  main [BitmapTexture] Loading texture "Camera_01_strap_diff.png.png"
+2025-05-18 16:35:07 INFO  main [PluginManager] Loading plugin "plugins/lanczos.so" ..
+2025-05-18 16:35:08 INFO  main [PluginManager] Loading plugin "plugins/diffuse.so" ..
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 44): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [PluginManager] Loading plugin "plugins/twosided.so" ..
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "Camera_01_lens_body_diff.png.png"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 52): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 57): Unqueried attribute "eta" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "Camera_01_body_diff.png.png"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 64): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "island_tree_01_diff.png.jpg"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 72): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "island_tree_01_branches_diff.png.png"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 83): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "island_tree_02_diff.png.jpg"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 91): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "island_tree_02_branches_diff.png.png"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 102): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "jacaranda_tree_trunk_diff.png.png"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 112): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "jacaranda_tree_branches_diff.png.png"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 120): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [PluginManager] Loading plugin "plugins/blendbsdf.so" ..
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "jacaranda_tree_branches_diff.png.png"
+2025-05-18 16:35:08 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 129): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:08 INFO  main [BitmapTexture] Loading texture "dry_ground_rocks_diff_4k.jpg"
+2025-05-18 16:35:08 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/camera-obscura/textures/dry_ground_rocks_diff_4k.mip" ..
+2025-05-18 16:35:09 INFO  main [PluginManager] Loading plugin "plugins/conductor.so" ..
+2025-05-18 16:35:09 INFO  main [spectrum.cpp:599] "Au.eta.spd": loaded a spectral power distribution with 56 entries (between 298.757050 and 885.601257 nm)
+2025-05-18 16:35:09 INFO  main [spectrum.cpp:599] "Au.k.spd": loaded a spectral power distribution with 56 entries (between 298.757050 and 885.601257 nm)
+2025-05-18 16:35:09 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 169): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:09 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 175): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:09 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 181): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:09 INFO  main [PluginManager] Loading plugin "plugins/difftrans.so" ..
+2025-05-18 16:35:09 INFO  main [BitmapTexture] Loading texture "red_bricks_04_diff_4k.jpg"
+2025-05-18 16:35:09 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/camera-obscura/textures/red_bricks_04_diff_4k.mip" ..
+2025-05-18 16:35:09 INFO  main [BitmapTexture] Loading texture "plank_flooring_diff_4k.jpg"
+2025-05-18 16:35:09 INFO  main [MIPMap] Generating MIP map cache file "/mitsuba/scene/camera-obscura/textures/plank_flooring_diff_4k.mip" ..
+2025-05-18 16:35:09 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 225): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:09 INFO  main [BitmapTexture] Loading texture "potted_plant_02_pot_diff.png.001.png"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 233): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "side_table_tall_01_BaseColor.png.001.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 244): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "ceramic_vase_01_diff.png.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 252): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "ceramic_vase_04_diff.png.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 260): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "Chandelier_01_diff.png.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 268): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 274): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "GothicCabinet_01_diff.png.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 282): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "GothicCommode_01_diff.png.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 290): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "GreenChair_01_diff.png.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 298): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "sofa_03_diff.png.002.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 306): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [BitmapTexture] Loading texture "sofa_03_diff.png.002.jpg"
+2025-05-18 16:35:10 WARN  main [scenehandler.cpp:795] In file "/mitsuba/scene/camera-obscura/camera-obscura.xml" (near line 314): Unqueried attribute "specular" in element "bsdf"
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/thindielectric.so" ..
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/spot.so" ..
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/area.so" ..
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/rectangle.so" ..
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/point.so" ..
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/ply.so" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "Camera_01_strap.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "Camera_01_strap": Loaded 4668 triangles, 3628 vertices (168.1 KiB in 1 ms).
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/shapegroup.so" ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (4668 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 28 ms.
+2025-05-18 16:35:10 INFO  main [PluginManager] Loading plugin "plugins/instance.so" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "Camera_01-Camera_01_lens_body.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "Camera_01-Camera_01_lens_body": Loaded 7924 triangles, 6121 vertices (284.1 KiB in 1 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "Camera_01-Camera_01_lens.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "Camera_01-Camera_01_lens": Loaded 4826 triangles, 2987 vertices (149.9 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "Camera_01-Camera_01_body.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "Camera_01-Camera_01_body": Loaded 8217 triangles, 7523 vertices (331.4 KiB in 2 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "Camera_01-Camera_01_strap.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "Camera_01-Camera_01_strap": Loaded 1352 triangles, 1056 vertices (48.8 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (22319 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 132 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01": Loaded 34787 triangles, 20624 vertices (1.0 MiB in 6 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (34787 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 186 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_leaves_a-island_tree_01_leaves.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_leaves_a-island_tree_01_leaves": Loaded 888 triangles, 777 vertices (34.7 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_leaves_a-island_tree_01_branches.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_leaves_a-island_tree_01_branches": Loaded 380 triangles, 271 vertices (12.9 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (1268 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 5 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_leaves_c-island_tree_01_leaves.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_leaves_c-island_tree_01_leaves": Loaded 2064 triangles, 1806 vertices (80.6 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_leaves_c-island_tree_01_branches.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_leaves_c-island_tree_01_branches": Loaded 906 triangles, 638 vertices (30.6 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (2970 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 12 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_leaves_b-island_tree_01_leaves.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_leaves_b-island_tree_01_leaves": Loaded 1080 triangles, 945 vertices (42.2 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_leaves_b-island_tree_01_branches.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_leaves_b-island_tree_01_branches": Loaded 451 triangles, 321 vertices (15.3 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (1531 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 5 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_branches_c.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_branches_c": Loaded 882 triangles, 622 vertices (29.8 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (882 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 3 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_branches_a.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_branches_a": Loaded 570 triangles, 402 vertices (19.2 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (570 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 2 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_branches_d.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_branches_d": Loaded 851 triangles, 600 vertices (28.7 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (851 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 3 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_01_branches_b.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_01_branches_b": Loaded 451 triangles, 321 vertices (15.3 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (451 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 1 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_02.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_02": Loaded 27298 triangles, 15219 vertices (795.5 KiB in 5 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (27298 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 139 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_leaves_a-island_tree_02_leaves.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_leaves_a-island_tree_02_leaves": Loaded 888 triangles, 777 vertices (34.7 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_leaves_a-island_tree_02_branches.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_leaves_a-island_tree_02_branches": Loaded 380 triangles, 271 vertices (12.9 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (1268 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 4 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_leaves_b-island_tree_02_leaves.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_leaves_b-island_tree_02_leaves": Loaded 1080 triangles, 945 vertices (42.2 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_leaves_b-island_tree_02_branches.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_leaves_b-island_tree_02_branches": Loaded 451 triangles, 321 vertices (15.3 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (1531 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 5 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_leaves_c-island_tree_02_leaves.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_leaves_c-island_tree_02_leaves": Loaded 2064 triangles, 1806 vertices (80.6 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_leaves_c-island_tree_02_branches.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_leaves_c-island_tree_02_branches": Loaded 906 triangles, 638 vertices (30.6 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (2970 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 12 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_branches_c.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_branches_c": Loaded 882 triangles, 622 vertices (29.8 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (882 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 3 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_branches_d.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_branches_d": Loaded 851 triangles, 600 vertices (28.7 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (851 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 3 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_branches_a.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_branches_a": Loaded 570 triangles, 402 vertices (19.2 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (570 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 2 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "island_tree_branches_b.ply" ..
+2025-05-18 16:35:10 INFO  main [PLYLoader] "island_tree_branches_b": Loaded 451 triangles, 321 vertices (15.3 KiB in 0 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (451 primitives) ..
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Finished -- took 1 ms.
+2025-05-18 16:35:10 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_trunk.ply" ..
+2025-05-18 16:35:10 WARN  main [PLYLoader] "jacaranda_tree_trunk" [line 12] warning: property 'float32 Col_0' of element 'vertex' is not handled
+2025-05-18 16:35:10 WARN  main [PLYLoader] "jacaranda_tree_trunk" [line 13] warning: property 'float32 Col_1' of element 'vertex' is not handled
+2025-05-18 16:35:10 WARN  main [PLYLoader] "jacaranda_tree_trunk" [line 14] warning: property 'float32 Col_2' of element 'vertex' is not handled
+2025-05-18 16:35:10 INFO  main [PLYLoader] "jacaranda_tree_trunk": Loaded 115056 triangles, 92253 vertices (4.1 MiB in 29 ms).
+2025-05-18 16:35:10 INFO  main [KDTreeBase] Constructing a SAH kd-tree (115056 primitives) ..
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Finished -- took 309 ms.
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_branches.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_branches": Loaded 282836 triangles, 196596 vertices (9.2 MiB in 59 ms).
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Constructing a SAH kd-tree (282836 primitives) ..
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Finished -- took 547 ms.
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_leaves_c.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_leaves_c": Loaded 36 triangles, 36 vertices (1.5 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Constructing a SAH kd-tree (36 primitives) ..
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Finished -- took 0 ms.
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_leaves_d.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_leaves_d": Loaded 41 triangles, 37 vertices (1.6 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Constructing a SAH kd-tree (41 primitives) ..
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Finished -- took 0 ms.
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_leaves_b-jacaranda_tree_branches.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_leaves_b-jacaranda_tree_branches": Loaded 93 triangles, 71 vertices (3.3 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_leaves_b-jacaranda_tree_leaves.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_leaves_b-jacaranda_tree_leaves": Loaded 195 triangles, 185 vertices (8.1 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Constructing a SAH kd-tree (288 primitives) ..
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Finished -- took 0 ms.
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_leaves_a-jacaranda_tree_branches.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_leaves_a-jacaranda_tree_branches": Loaded 126 triangles, 96 vertices (4.5 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_leaves_a-jacaranda_tree_leaves.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_leaves_a-jacaranda_tree_leaves": Loaded 239 triangles, 221 vertices (9.7 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Constructing a SAH kd-tree (365 primitives) ..
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Finished -- took 1 ms.
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "jacaranda_tree_leaves_e.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "jacaranda_tree_leaves_e": Loaded 46 triangles, 40 vertices (1.8 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Constructing a SAH kd-tree (46 primitives) ..
+2025-05-18 16:35:11 INFO  main [KDTreeBase] Finished -- took 0 ms.
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Statue.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Statue": Loaded 266710 triangles, 133343 vertices (6.1 MiB in 38 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Floor.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Floor": Loaded 1024 triangles, 562 vertices (23.0 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_012.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_012": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_011.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_011": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_010.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_010": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_009.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_009": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_008.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_008": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_007.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_007": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_006.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_006": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_024.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_024": Loaded 68 triangles, 80 vertices (2.4 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_023.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_023": Loaded 60 triangles, 74 vertices (2.1 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_022.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_022": Loaded 36 triangles, 50 vertices (1.4 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_021.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_021": Loaded 72 triangles, 96 vertices (2.7 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_020.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_020": Loaded 12 triangles, 24 vertices (624 B in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_019.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_019": Loaded 76 triangles, 84 vertices (2.5 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Cube_002.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Cube_002": Loaded 22720 triangles, 13355 vertices (683.6 KiB in 4 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_018.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_018": Loaded 44 triangles, 58 vertices (1.6 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Plane_017.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Plane_017": Loaded 120 triangles, 144 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_035.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_035": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_034.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_034": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_033.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_033": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_032.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_032": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_031.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_031": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_030.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_030": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_029.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_029": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_028.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_028": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_027.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_027": Loaded 168 triangles, 95 vertices (4.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_026.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_026": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_025.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_025": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_023.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_023": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_022.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_022": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_021.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_021": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_020.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_020": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Circle_019.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Circle_019": Loaded 80 triangles, 40 vertices (1.9 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base-Wall_Lamp_01_metal.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base-Wall_Lamp_01_metal": Loaded 32064 triangles, 16200 vertices (882.0 KiB in 5 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base-Wall_Lamp_01_Plastic.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base-Wall_Lamp_01_Plastic": Loaded 1440 triangles, 760 vertices (40.6 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light": Loaded 1024 triangles, 678 vertices (33.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_001.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_001": Loaded 1024 triangles, 678 vertices (33.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support_001.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support_001": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 8 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth_001.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth_001": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 8 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_translucency": Loaded 384 triangles, 216 vertices (11.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency_001.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_translucency_001": Loaded 384 triangles, 216 vertices (11.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_001-Wall_Lamp_01_metal.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_001-Wall_Lamp_01_metal": Loaded 32064 triangles, 16200 vertices (882.0 KiB in 5 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_001-Wall_Lamp_01_Plastic.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_001-Wall_Lamp_01_Plastic": Loaded 1440 triangles, 760 vertices (40.6 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_002.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_002": Loaded 1024 triangles, 678 vertices (33.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_003.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_003": Loaded 1024 triangles, 678 vertices (33.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support_002.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support_002": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_base_Light_Support_003.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_base_Light_Support_003": Loaded 1632 triangles, 1025 vertices (51.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth_002.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth_002": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 8 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_Cloth_003.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_Cloth_003": Loaded 45792 triangles, 26871 vertices (1.3 MiB in 8 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency_002.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_translucency_002": Loaded 384 triangles, 216 vertices (11.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Wall_Lamp_01_translucency_003.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Wall_Lamp_01_translucency_003": Loaded 384 triangles, 216 vertices (11.2 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Walls.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Walls": Loaded 48 triangles, 72 vertices (2.0 KiB in 0 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Walls_Plate_smallest.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Walls_Plate_smallest": Loaded 5728 triangles, 3861 vertices (157.6 KiB in 1 ms).
+2025-05-18 16:35:11 INFO  main [PLYLoader] Loading geometry from "Walls_Top.ply" ..
+2025-05-18 16:35:11 INFO  main [PLYLoader] "Walls_Top": Loaded 300 triangles, 199 vertices (7.4 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "Walls_Bottom.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "Walls_Bottom": Loaded 300 triangles, 200 vertices (7.4 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "Walls_W_Outer.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "Walls_W_Outer": Loaded 12 triangles, 12 vertices (384 B in 0 ms).
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "Walls_W_Ceiling.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "Walls_W_Ceiling": Loaded 2 triangles, 4 vertices (104 B in 0 ms).
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "Walls_W_Floor.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "Walls_W_Floor": Loaded 2 triangles, 4 vertices (104 B in 0 ms).
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "potted_plant_02_pot_001.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "potted_plant_02_pot_001": Loaded 5184 triangles, 2840 vertices (149.5 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (5184 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 29 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "potted_plant_02_leaves_001.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "potted_plant_02_leaves_001": Loaded 10692 triangles, 7348 vertices (354.9 KiB in 2 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (10692 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 54 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "potted_plant_02_dirt_001.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "potted_plant_02_dirt_001": Loaded 53930 triangles, 34606 vertices (1.7 MiB in 10 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (53930 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 572 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "side_table_tall_01.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "side_table_tall_01": Loaded 6408 triangles, 5235 vertices (238.7 KiB in 1 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (6408 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 37 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "ceramic_vase_01.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "ceramic_vase_01": Loaded 10296 triangles, 6590 vertices (326.6 KiB in 2 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (10296 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 55 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "ceramic_vase_04.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "ceramic_vase_04": Loaded 9000 triangles, 5804 vertices (286.8 KiB in 2 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (9000 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 46 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCabinet_01_cabinet.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCabinet_01_cabinet": Loaded 3718 triangles, 3814 vertices (162.8 KiB in 1 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (3718 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 23 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCabinet_01_door4.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCabinet_01_door4": Loaded 2111 triangles, 2225 vertices (94.3 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (2111 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 8 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCabinet_01_door3.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCabinet_01_door3": Loaded 2115 triangles, 2225 vertices (94.3 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (2115 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 8 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCabinet_01_door2.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCabinet_01_door2": Loaded 2111 triangles, 2227 vertices (94.3 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (2111 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 8 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCabinet_01_door1.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCabinet_01_door1": Loaded 2115 triangles, 2227 vertices (94.4 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (2115 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 8 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCommode_01.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCommode_01": Loaded 1518 triangles, 1690 vertices (70.6 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (1518 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 9 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCommode_01_door03.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCommode_01_door03": Loaded 628 triangles, 458 vertices (21.7 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (628 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 2 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCommode_01_door02.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCommode_01_door02": Loaded 628 triangles, 458 vertices (21.7 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (628 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 2 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GothicCommode_01_door01.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GothicCommode_01_door01": Loaded 1123 triangles, 819 vertices (38.8 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (1123 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 5 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "GreenChair_01.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "GreenChair_01": Loaded 4213 triangles, 2928 vertices (140.9 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (4213 primitives) ..
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Finished -- took 25 ms.
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "sofa_03_001-sofa_03.001.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "sofa_03_001-sofa_03.001": Loaded 6994 triangles, 4393 vertices (219.2 KiB in 1 ms).
+2025-05-18 16:35:12 INFO  main [PLYLoader] Loading geometry from "sofa_03_001-sofa_03_fringe.001.ply" ..
+2025-05-18 16:35:12 INFO  main [PLYLoader] "sofa_03_001-sofa_03_fringe.001": Loaded 1010 triangles, 1148 vertices (47.7 KiB in 0 ms).
+2025-05-18 16:35:12 INFO  main [KDTreeBase] Constructing a SAH kd-tree (8004 primitives) ..
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Finished -- took 58 ms.
+2025-05-18 16:35:13 INFO  main [PLYLoader] Loading geometry from "ND-Filter.ply" ..
+2025-05-18 16:35:13 INFO  main [PLYLoader] "ND-Filter": Loaded 2 triangles, 4 vertices (104 B in 0 ms).
+2025-05-18 16:35:13 INFO  main [PLYLoader] Loading geometry from "calathea_orbifolia_01_a.ply" ..
+2025-05-18 16:35:13 INFO  main [PLYLoader] "calathea_orbifolia_01_a": Loaded 23616 triangles, 14199 vertices (720.5 KiB in 4 ms).
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Constructing a SAH kd-tree (23616 primitives) ..
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Finished -- took 187 ms.
+2025-05-18 16:35:13 INFO  main [PLYLoader] Loading geometry from "calathea_orbifolia_01_b.ply" ..
+2025-05-18 16:35:13 WARN  main [PLYLoader] "calathea_orbifolia_01_b" [line 12] warning: property 'float32 Col_0' of element 'vertex' is not handled
+2025-05-18 16:35:13 WARN  main [PLYLoader] "calathea_orbifolia_01_b" [line 13] warning: property 'float32 Col_1' of element 'vertex' is not handled
+2025-05-18 16:35:13 WARN  main [PLYLoader] "calathea_orbifolia_01_b" [line 14] warning: property 'float32 Col_2' of element 'vertex' is not handled
+2025-05-18 16:35:13 INFO  main [PLYLoader] "calathea_orbifolia_01_b": Loaded 13784 triangles, 8345 vertices (422.3 KiB in 3 ms).
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Constructing a SAH kd-tree (13784 primitives) ..
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Finished -- took 80 ms.
+2025-05-18 16:35:13 INFO  main [PLYLoader] Loading geometry from "calathea_orbifolia_01_c.ply" ..
+2025-05-18 16:35:13 INFO  main [PLYLoader] "calathea_orbifolia_01_c": Loaded 14168 triangles, 8529 vertices (432.6 KiB in 2 ms).
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Constructing a SAH kd-tree (14168 primitives) ..
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Finished -- took 82 ms.
+2025-05-18 16:35:13 INFO  main [PLYLoader] Loading geometry from "calathea_orbifolia_01_d.ply" ..
+2025-05-18 16:35:13 INFO  main [PLYLoader] "calathea_orbifolia_01_d": Loaded 7208 triangles, 4417 vertices (222.5 KiB in 1 ms).
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Constructing a SAH kd-tree (7208 primitives) ..
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Finished -- took 40 ms.
+2025-05-18 16:35:13 INFO  main [PLYLoader] Loading geometry from "calathea_orbifolia_01_e.ply" ..
+2025-05-18 16:35:13 INFO  main [PLYLoader] "calathea_orbifolia_01_e": Loaded 7976 triangles, 4825 vertices (244.2 KiB in 2 ms).
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Constructing a SAH kd-tree (7976 primitives) ..
+2025-05-18 16:35:13 INFO  main [KDTreeBase] Finished -- took 44 ms.
+2025-05-18 16:35:13 INFO  ren0 [KDTreeBase] Constructing a SAH kd-tree (570383 primitives) ..
+2025-05-18 16:35:14 INFO  ren0 [KDTreeBase] Finished -- took 879 ms.
+2025-05-18 16:35:14 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-18 16:35:14 INFO  ren0 [octree.h:535] root weight: 4.096e-17 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:536] splitting threshold: 4.096e-20 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:551] node count: 585 -> 585 -> 585
+
+2025-05-18 16:35:14 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-18 16:35:14 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-18 16:35:14 INFO  ren0 [octree.h:535] root weight: 4.096e-17 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:536] splitting threshold: 4.096e-20 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:551] node count: 585 -> 585 -> 585
+
+2025-05-18 16:35:14 INFO  ren0 [octree.h:535] root weight: 8.000e-20 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:536] splitting threshold: 8.000e-23 (0.000000)
+2025-05-18 16:35:14 INFO  ren0 [octree.h:551] node count: 1 -> 585 -> 585
+
+2025-05-18 16:35:14 INFO  ren0 [MIFocalGuidingPathTracer] AABB3[min=[-20.041, -1.91388, -38.4137], max=[20.041, 19.3144, 5.96173]]
+2025-05-18 16:35:14 INFO  ren0 [MIFocalGuidingPathTracer] Starting render job (1280x720, 12 cores, SSE2 enabled) ..
+2025-05-18 16:35:14 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 0, until 10.0 seconds
+2025-05-18 16:35:25 INFO  ren0 [MIFocalGuidingPathTracer]   10.77 seconds elapsed, passes this iteration: 4, total passes: 4
+2025-05-18 16:35:25 INFO  ren0 [MIFocalGuidingPathTracer] Got 18695737 non-zero samples
+2025-05-18 16:35:26 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 18695737
+2025-05-18 16:35:27 INFO  ren0 [gaussian_mixture_model.h:547] KMeans
+2025-05-18 16:35:44 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00728243 mean = [1.19361 1.37908 2.15433] covariance = [[0.966582 0.0194529 -0.0518768][0.0194529 0.391542 -0.0513731][-0.0518768 -0.0513731 0.833479]]
+weight = 0.0232887 mean = [1.47208 1.93452 -2.06056] covariance = [[1.21452 -0.0337504 0.0345085][-0.0337504 0.375063 -0.0818462][0.0345085 -0.0818462 1.17555]]
+weight = 0.381554 mean = [-2.24145 1.44717 -2.38635] covariance = [[0.0180691 -0.00124932 -0.0104492][-0.00124932 0.20027 -0.012343][-0.0104492 -0.012343 0.0157696]]
+weight = 0.00760488 mean = [-2.0287 0.914688 -3.12574] covariance = [[1.1974 -0.00252179 0.594563][-0.00252179 0.359421 0.0358452][0.594563 0.0358452 1.53477]]
+weight = 0.168144 mean = [-2.10295 0.109958 -2.11138] covariance = [[0.0773754 0.00967834 -0.0182726][0.00967834 0.0146244 0.00950483][-0.0182726 0.00950483 0.0754332]]
+weight = 0.00728243 mean = [1.63268 1.25549 3.35075] covariance = [[0.966582 0.0194529 -0.0518768][0.0194529 0.391542 -0.0513731][-0.0518768 -0.0513731 0.833479]]
+weight = 0.0232887 mean = [2.31361 2.03039 -3.32556] covariance = [[1.21452 -0.0337504 0.0345085][-0.0337504 0.375063 -0.0818462][0.0345085 -0.0818462 1.17555]]
+weight = 0.381554 mean = [-2.23953 0.814401 -2.34431] covariance = [[0.0180691 -0.00124932 -0.0104492][-0.00124932 0.20027 -0.012343][-0.0104492 -0.012343 0.0157696]]
+]
+2025-05-18 16:35:44 INFO  ren0 [octree.h:535] root weight: 2.000e+04 (19996.453125)
+2025-05-18 16:35:44 INFO  ren0 [octree.h:536] splitting threshold: 2.000e+01 (19.996454)
+2025-05-18 16:35:44 INFO  ren0 [octree.h:535] root weight: 2.716e-01 (0.271635)
+2025-05-18 16:35:44 INFO  ren0 [octree.h:536] splitting threshold: 2.716e-04 (0.000272)
+2025-05-18 16:35:44 INFO  ren0 [octree.h:551] node count: 585 -> 974 -> 938
+
+2025-05-18 16:35:44 INFO  ren0 [octree.h:551] node count: 585 -> 585 -> 577
+
+2025-05-18 16:35:44 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 1, until 20.0 seconds
+2025-05-18 16:35:53 INFO  ren0 [MIFocalGuidingPathTracer]   39.39 seconds elapsed, passes this iteration: 1, total passes: 5
+2025-05-18 16:35:53 INFO  ren0 [MIFocalGuidingPathTracer] Got 3865692 non-zero samples
+2025-05-18 16:35:54 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 3865692
+2025-05-18 16:35:57 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00226482 mean = [-1.75661 0.553794 -2.31147] covariance = [[0.743157 -0.0163525 0.0994017][-0.0163525 0.438255 -0.155128][0.0994017 -0.155128 0.823668]]
+weight = 0.00226482 mean = [-2.3954 0.935163 -3.45527] covariance = [[0.743157 -0.0163525 0.0994017][-0.0163525 0.438255 -0.155128][0.0994017 -0.155128 0.823668]]
+weight = 0.000787915 mean = [-2.07674 0.919111 -3.67214] covariance = [[0.632657 0.0601486 0.101358][0.0601486 0.358316 -0.0268005][0.101358 -0.0268005 1.16115]]
+weight = 0.139685 mean = [-2.10569 1.27026 -2.37732] covariance = [[0.0114924 -0.0146535 0.00358119][-0.0146535 0.0949082 -0.0429639][0.00358119 -0.0429639 0.0372873]]
+weight = 0.260826 mean = [-2.0306 0.0640981 -2.41242] covariance = [[0.0565594 -0.00090921 -0.0161155][-0.00090921 0.0225238 0.00296871][-0.0161155 0.00296871 0.091483]]
+weight = 0.00390013 mean = [1.44353 1.31592 2.99235] covariance = [[0.867179 -0.0607898 0.163386][-0.0607898 0.365619 -0.0593239][0.163386 -0.0593239 1.42847]]
+weight = 0.0697616 mean = [1.43188 1.97788 -2.10722] covariance = [[1.33888 -0.143691 -0.404871][-0.143691 0.421356 0.00588108][-0.404871 0.00588108 1.70406]]
+weight = 0.52051 mean = [-2.31755 1.38282 -2.29042] covariance = [[0.00744395 0.0041544 -0.000983326][0.0041544 0.294039 0.000419314][-0.000983326 0.000419314 0.00398376]]
+]
+2025-05-18 16:35:57 INFO  ren0 [octree.h:535] root weight: 1.512e+04 (15122.622070)
+2025-05-18 16:35:57 INFO  ren0 [octree.h:536] splitting threshold: 1.512e+01 (15.122622)
+2025-05-18 16:35:57 INFO  ren0 [octree.h:535] root weight: 4.804e-01 (0.480440)
+2025-05-18 16:35:57 INFO  ren0 [octree.h:536] splitting threshold: 4.804e-04 (0.000480)
+2025-05-18 16:35:57 INFO  ren0 [octree.h:551] node count: 938 -> 1096 -> 1026
+
+2025-05-18 16:35:57 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:35:57 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 2, until 30.0 seconds
+2025-05-18 16:36:07 INFO  ren0 [MIFocalGuidingPathTracer]   52.95 seconds elapsed, passes this iteration: 1, total passes: 6
+2025-05-18 16:36:07 INFO  ren0 [MIFocalGuidingPathTracer] Got 3850609 non-zero samples
+2025-05-18 16:36:07 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 3850609
+2025-05-18 16:36:10 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0177159 mean = [-1.69188 0.394481 -1.94886] covariance = [[0.73079 0.270586 0.255051][0.270586 0.388063 -0.0679894][0.255051 -0.0679894 0.991148]]
+weight = 0.0791767 mean = [1.74128 1.85472 -2.68701] covariance = [[1.12059 -0.0188567 0.0480445][-0.0188567 0.492496 -0.317238][0.0480445 -0.317238 1.73795]]
+weight = 0.0199467 mean = [-0.0973275 1.33561 -0.15898] covariance = [[2.75667 0.733003 3.22102][0.733003 0.922998 0.490815][3.22102 0.490815 6.25836]]
+weight = 0.883161 mean = [-2.27539 1.02955 -2.30142] covariance = [[0.0368932 -0.0150059 -0.00511798][-0.0150059 0.417942 -0.0374069][-0.00511798 -0.0374069 0.0198494]]
+]
+2025-05-18 16:36:10 INFO  ren0 [octree.h:535] root weight: 1.247e+04 (12468.916992)
+2025-05-18 16:36:10 INFO  ren0 [octree.h:536] splitting threshold: 1.247e+01 (12.468918)
+2025-05-18 16:36:10 INFO  ren0 [octree.h:535] root weight: 6.566e-01 (0.656589)
+2025-05-18 16:36:10 INFO  ren0 [octree.h:536] splitting threshold: 6.566e-04 (0.000657)
+2025-05-18 16:36:10 INFO  ren0 [octree.h:551] node count: 1026 -> 1160 -> 1111
+
+2025-05-18 16:36:10 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:36:10 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 3, until 40.0 seconds
+2025-05-18 16:36:17 INFO  ren0 [MIFocalGuidingPathTracer]   63.25 seconds elapsed, passes this iteration: 1, total passes: 7
+2025-05-18 16:36:17 INFO  ren0 [MIFocalGuidingPathTracer] Got 4164875 non-zero samples
+2025-05-18 16:36:17 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 4164875
+2025-05-18 16:36:20 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.105681 mean = [-1.95871 0.112212 -2.15695] covariance = [[0.106714 -0.00339366 -0.0223117][-0.00339366 0.0368074 0.00250141][-0.0223117 0.00250141 0.0862608]]
+weight = 0.0222662 mean = [-1.60208 0.719939 -2.53653] covariance = [[1.67365 0.0463422 0.377819][0.0463422 0.526276 -0.330902][0.377819 -0.330902 1.16594]]
+weight = 0.00827147 mean = [1.65974 1.39712 1.45318] covariance = [[1.72421 -0.0254123 -0.802544][-0.0254123 0.597751 -0.411383][-0.802544 -0.411383 3.96806]]
+weight = 0.143642 mean = [1.50377 1.81171 -2.42066] covariance = [[0.34634 0.00172678 -0.0955362][0.00172678 0.142959 0.0129932][-0.0955362 0.0129932 0.459696]]
+weight = 0.00468265 mean = [-1.67571 0.90167 -2.38077] covariance = [[0.178904 0.0762902 -0.00493851][0.0762902 0.0516353 -0.0100515][-0.00493851 -0.0100515 0.0146611]]
+weight = 0.715456 mean = [-2.31929 1.18445 -2.31345] covariance = [[0.011544 -0.00546401 -0.00340676][-0.00546401 0.290033 -0.0178344][-0.00340676 -0.0178344 0.00646877]]
+]
+2025-05-18 16:36:21 INFO  ren0 [octree.h:535] root weight: 1.677e+04 (16768.558594)
+2025-05-18 16:36:21 INFO  ren0 [octree.h:536] splitting threshold: 1.677e+01 (16.768559)
+2025-05-18 16:36:21 INFO  ren0 [octree.h:535] root weight: 7.504e-01 (0.750416)
+2025-05-18 16:36:21 INFO  ren0 [octree.h:536] splitting threshold: 7.504e-04 (0.000750)
+2025-05-18 16:36:21 INFO  ren0 [octree.h:551] node count: 1111 -> 1294 -> 1038
+
+2025-05-18 16:36:21 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:36:21 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 4, until 50.0 seconds
+2025-05-18 16:36:29 INFO  ren0 [MIFocalGuidingPathTracer]   75.15 seconds elapsed, passes this iteration: 1, total passes: 8
+2025-05-18 16:36:29 INFO  ren0 [MIFocalGuidingPathTracer] Got 4330066 non-zero samples
+2025-05-18 16:36:29 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 4330066
+2025-05-18 16:36:33 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00147348 mean = [1.4803 4.28045 0.8624] covariance = [[0.0814044 0.000340812 -0.0101177][0.000340812 0.873932 0.531928][-0.0101177 0.531928 0.387556]]
+weight = 0.0278841 mean = [-2.01005 0.346208 -2.15727] covariance = [[1.24115 0.365659 0.0357432][0.365659 0.537136 -0.134896][0.0357432 -0.134896 0.957899]]
+weight = 0.0278841 mean = [-0.477517 1.00982 -2.23628] covariance = [[1.24115 0.365659 0.0357432][0.365659 0.537136 -0.134896][0.0357432 -0.134896 0.957899]]
+weight = 0.066787 mean = [-0.196803 1.12695 -2.13572] covariance = [[1.90425 0.510707 -0.135598][0.510707 0.692226 -0.0695144][-0.135598 -0.0695144 1.33182]]
+weight = 0.121145 mean = [-0.000254705 1.3976 -2.49679] covariance = [[0.117007 0.00918982 -0.00974911][0.00918982 0.00220869 -0.00229168][-0.00974911 -0.00229168 0.00509801]]
+weight = 0.00981632 mean = [1.45361 1.32441 2.73422] covariance = [[1.28581 0.0585176 0.336905][0.0585176 0.406269 -0.114414][0.336905 -0.114414 1.56138]]
+weight = 0.0661624 mean = [-0.527227 1.36113 -2.44597] covariance = [[1.79581e-05 3.86838e-07 -8.06499e-07][3.86838e-07 9.76046e-06 4.28738e-07][-8.06499e-07 4.28738e-07 9.23789e-06]]
+weight = 0.066787 mean = [1.70105 1.82481 -2.52388] covariance = [[1.90425 0.510707 -0.135598][0.510707 0.692226 -0.0695144][-0.135598 -0.0695144 1.33182]]
+weight = 0.61206 mean = [-2.23859 0.798423 -2.29534] covariance = [[0.0245817 -0.0361648 -0.00603557][-0.0361648 0.488518 -0.0284195][-0.00603557 -0.0284195 0.0134]]
+]
+2025-05-18 16:36:33 INFO  ren0 [octree.h:535] root weight: 1.917e+04 (19165.849609)
+2025-05-18 16:36:33 INFO  ren0 [octree.h:536] splitting threshold: 1.917e+01 (19.165850)
+2025-05-18 16:36:33 INFO  ren0 [octree.h:535] root weight: 5.897e-01 (0.589665)
+2025-05-18 16:36:33 INFO  ren0 [octree.h:536] splitting threshold: 5.897e-04 (0.000590)
+2025-05-18 16:36:33 INFO  ren0 [octree.h:551] node count: 1038 -> 1243 -> 1167
+
+2025-05-18 16:36:33 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:36:33 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 5, until 60.0 seconds
+2025-05-18 16:36:45 INFO  ren0 [MIFocalGuidingPathTracer]   91.11 seconds elapsed, passes this iteration: 1, total passes: 9
+2025-05-18 16:36:45 INFO  ren0 [MIFocalGuidingPathTracer] Got 4605031 non-zero samples
+2025-05-18 16:36:45 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 4605031
+2025-05-18 16:36:49 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.00860316 mean = [0.828723 1.63326 -2.58708] covariance = [[1.15064 -0.21057 0.115342][-0.21057 0.694897 0.33412][0.115342 0.33412 1.03793]]
+weight = 0.000477424 mean = [0.458114 1.70843 -1.9295] covariance = [[1.24885 -0.0951185 0.288193][-0.0951185 0.294386 0.0188824][0.288193 0.0188824 0.944782]]
+weight = 0.00264337 mean = [-0.0288057 0.848859 -0.0839143] covariance = [[0.467662 0.203636 0.382741][0.203636 0.183417 0.216952][0.382741 0.216952 0.624547]]
+weight = 0.000477424 mean = [-0.991218 1.81576 -2.79109] covariance = [[1.24885 -0.0951185 0.288193][-0.0951185 0.294386 0.0188824][0.288193 0.0188824 0.944782]]
+weight = 0.027778 mean = [-1.988 0.343009 -2.16373] covariance = [[0.419009 -0.0244132 0.058622][-0.0244132 0.1782 -0.116169][0.058622 -0.116169 0.629713]]
+weight = 0.0288855 mean = [0.212678 3.0858 1.29234] covariance = [[2.11951 -1.37668 1.57448][-1.37668 1.85802 -1.6604][1.57448 -1.6604 2.12246]]
+weight = 0.36867 mean = [-0.349743 3.44601 -0.514908] covariance = [[1.95581 -1.08157 -1.42285][-1.08157 1.06267 1.10632][-1.42285 1.10632 1.95544]]
+weight = 0.562465 mean = [-2.24971 0.904514 -2.32456] covariance = [[0.0254435 -0.0329014 -0.0120486][-0.0329014 0.476898 -0.00225405][-0.0120486 -0.00225405 0.0150436]]
+]
+2025-05-18 16:36:49 INFO  ren0 [octree.h:535] root weight: 1.504e+04 (15043.058594)
+2025-05-18 16:36:49 INFO  ren0 [octree.h:536] splitting threshold: 1.504e+01 (15.043059)
+2025-05-18 16:36:49 INFO  ren0 [octree.h:535] root weight: 3.563e-01 (0.356271)
+2025-05-18 16:36:49 INFO  ren0 [octree.h:536] splitting threshold: 3.563e-04 (0.000356)
+2025-05-18 16:36:49 INFO  ren0 [octree.h:551] node count: 1167 -> 1267 -> 1111
+
+2025-05-18 16:36:49 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:36:49 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 6, until 70.0 seconds
+2025-05-18 16:36:59 INFO  ren0 [MIFocalGuidingPathTracer]   105.02 seconds elapsed, passes this iteration: 1, total passes: 10
+2025-05-18 16:36:59 INFO  ren0 [MIFocalGuidingPathTracer] Got 3833979 non-zero samples
+2025-05-18 16:36:59 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 3833979
+2025-05-18 16:37:03 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 0.0572489 mean = [1.15479 3.54034 -0.0160097] covariance = [[2.75732 -0.652418 -0.290548][-0.652418 3.23813 0.840804][-0.290548 0.840804 4.29861]]
+weight = 0.000129051 mean = [-4.55813 1.30399 -4.81502] covariance = [[0.238187 0.144618 0.156364][0.144618 0.646379 -0.247192][0.156364 -0.247192 0.634399]]
+weight = 0.039915 mean = [1.71131 2.02719 -2.02786] covariance = [[0.160226 -0.00893361 0.0428801][-0.00893361 0.217342 0.0134672][0.0428801 0.0134672 0.305261]]
+weight = 0.00129798 mean = [-4.69873 1.10717 -6.6177] covariance = [[0.497561 0.267843 0.235077][0.267843 1.14668 0.325773][0.235077 0.325773 0.659454]]
+weight = 0.0331325 mean = [-1.76936 0.73189 -2.38738] covariance = [[0.69156 -0.0930905 0.328003][-0.0930905 0.344404 -0.137054][0.328003 -0.137054 1.25005]]
+weight = 0.211426 mean = [-2.16309 0.0614966 -2.23934] covariance = [[0.0576907 -0.00281399 -0.000264745][-0.00281399 0.013004 0.0040746][-0.000264745 0.0040746 0.0736743]]
+weight = 0.0572489 mean = [1.98385 1.93564 -2.5802] covariance = [[2.75732 -0.652418 -0.290548][-0.652418 3.23813 0.840804][-0.290548 0.840804 4.29861]]
+weight = 0.599601 mean = [-2.29514 1.07951 -2.351] covariance = [[0.0126787 -0.00115766 -0.00526784][-0.00115766 0.33187 -0.0196371][-0.00526784 -0.0196371 0.0120177]]
+]
+2025-05-18 16:37:03 INFO  ren0 [octree.h:535] root weight: 1.269e+04 (12690.694336)
+2025-05-18 16:37:03 INFO  ren0 [octree.h:536] splitting threshold: 1.269e+01 (12.690695)
+2025-05-18 16:37:03 INFO  ren0 [octree.h:535] root weight: 4.921e-01 (0.492112)
+2025-05-18 16:37:03 INFO  ren0 [octree.h:536] splitting threshold: 4.921e-04 (0.000492)
+2025-05-18 16:37:03 INFO  ren0 [octree.h:551] node count: 1111 -> 1221 -> 1178
+
+2025-05-18 16:37:03 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:03 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 7, until 80.0 seconds
+2025-05-18 16:37:13 INFO  ren0 [MIFocalGuidingPathTracer]   119.15 seconds elapsed, passes this iteration: 1, total passes: 11
+2025-05-18 16:37:13 INFO  ren0 [MIFocalGuidingPathTracer] Got 4004058 non-zero samples
+2025-05-18 16:37:13 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 4004058
+2025-05-18 16:37:16 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-2.22881 1.15355 -2.36221] covariance = [[0.0186412 0.0104087 -0.011602][0.0104087 0.200905 -0.0260953][-0.011602 -0.0260953 0.0166478]]
+]
+2025-05-18 16:37:16 INFO  ren0 [octree.h:535] root weight: 1.107e+04 (11069.666016)
+2025-05-18 16:37:16 INFO  ren0 [octree.h:536] splitting threshold: 1.107e+01 (11.069667)
+2025-05-18 16:37:16 INFO  ren0 [octree.h:535] root weight: 4.405e-01 (0.440549)
+2025-05-18 16:37:16 INFO  ren0 [octree.h:536] splitting threshold: 4.405e-04 (0.000441)
+2025-05-18 16:37:16 INFO  ren0 [octree.h:551] node count: 1178 -> 1289 -> 1190
+
+2025-05-18 16:37:16 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:16 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 8, until 90.0 seconds
+2025-05-18 16:37:20 INFO  ren0 [MIFocalGuidingPathTracer]   125.76 seconds elapsed, passes this iteration: 1, total passes: 12
+2025-05-18 16:37:20 INFO  ren0 [MIFocalGuidingPathTracer] Got 3739895 non-zero samples
+2025-05-18 16:37:20 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 3739895
+2025-05-18 16:37:21 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-1.5936 1.25176 -2.27708] covariance = [[1.61295 0.29765 0.180594][0.29765 0.522491 -0.0146787][0.180594 -0.0146787 0.747853]]
+]
+2025-05-18 16:37:21 INFO  ren0 [octree.h:535] root weight: 1.069e+04 (10686.418945)
+2025-05-18 16:37:21 INFO  ren0 [octree.h:536] splitting threshold: 1.069e+01 (10.686419)
+2025-05-18 16:37:21 INFO  ren0 [octree.h:535] root weight: 6.234e-01 (0.623353)
+2025-05-18 16:37:21 INFO  ren0 [octree.h:536] splitting threshold: 6.234e-04 (0.000623)
+2025-05-18 16:37:22 INFO  ren0 [octree.h:551] node count: 1190 -> 1280 -> 1203
+
+2025-05-18 16:37:22 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:22 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 9, until 100.0 seconds
+2025-05-18 16:37:25 INFO  ren0 [MIFocalGuidingPathTracer]   130.99 seconds elapsed, passes this iteration: 1, total passes: 13
+2025-05-18 16:37:25 INFO  ren0 [pmm_focal_guiding_recursive.cpp:214] starting iterative narrowing
+2025-05-18 16:37:25 INFO  ren0 [MIFocalGuidingPathTracer] Got 4001309 non-zero samples
+2025-05-18 16:37:25 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 4001309
+2025-05-18 16:37:27 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-1.55642 1.22295 -2.29203] covariance = [[1.80128 0.277149 0.0264532][0.277149 0.589474 0.0934148][0.0264532 0.0934148 0.790202]]
+]
+2025-05-18 16:37:27 INFO  ren0 [octree.h:535] root weight: 1.004e+04 (10038.162109)
+2025-05-18 16:37:27 INFO  ren0 [octree.h:536] splitting threshold: 1.004e+01 (10.038162)
+2025-05-18 16:37:27 INFO  ren0 [octree.h:535] root weight: 6.733e-01 (0.673342)
+2025-05-18 16:37:27 INFO  ren0 [octree.h:536] splitting threshold: 6.733e-04 (0.000673)
+2025-05-18 16:37:27 INFO  ren0 [octree.h:551] node count: 1203 -> 1319 -> 1230
+
+2025-05-18 16:37:27 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:27 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 10, until 110.0 seconds
+2025-05-18 16:37:30 INFO  ren0 [MIFocalGuidingPathTracer]   136.50 seconds elapsed, passes this iteration: 1, total passes: 14
+2025-05-18 16:37:30 INFO  ren0 [MIFocalGuidingPathTracer] Got 4343504 non-zero samples
+2025-05-18 16:37:31 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 4343504
+2025-05-18 16:37:32 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-2.34537 1.30961 -2.28403] covariance = [[0.00153319 -0.00509879 -3.01197e-05][-0.00509879 0.169361 -0.00734705][-3.01197e-05 -0.00734705 0.00137279]]
+]
+2025-05-18 16:37:32 INFO  ren0 [octree.h:535] root weight: 4.389e+03 (4389.258301)
+2025-05-18 16:37:32 INFO  ren0 [octree.h:536] splitting threshold: 4.389e+00 (4.389258)
+2025-05-18 16:37:32 INFO  ren0 [octree.h:535] root weight: 1.683e-01 (0.168338)
+2025-05-18 16:37:32 INFO  ren0 [octree.h:536] splitting threshold: 1.683e-04 (0.000168)
+2025-05-18 16:37:33 INFO  ren0 [octree.h:551] node count: 1230 -> 1310 -> 1167
+
+2025-05-18 16:37:33 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:33 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 11, until 120.0 seconds
+2025-05-18 16:37:36 INFO  ren0 [MIFocalGuidingPathTracer]   142.33 seconds elapsed, passes this iteration: 1, total passes: 15
+2025-05-18 16:37:36 INFO  ren0 [MIFocalGuidingPathTracer] Got 3946287 non-zero samples
+2025-05-18 16:37:36 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 3946287
+2025-05-18 16:37:38 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-1.63214 0.804234 -2.20144] covariance = [[1.31166 0.31442 -0.0435212][0.31442 0.573153 -0.0736554][-0.0435212 -0.0736554 0.462666]]
+]
+2025-05-18 16:37:38 INFO  ren0 [octree.h:535] root weight: 2.667e+03 (2667.283447)
+2025-05-18 16:37:38 INFO  ren0 [octree.h:536] splitting threshold: 2.667e+00 (2.667284)
+2025-05-18 16:37:38 INFO  ren0 [octree.h:535] root weight: 4.208e-02 (0.042084)
+2025-05-18 16:37:38 INFO  ren0 [octree.h:536] splitting threshold: 4.208e-05 (0.000042)
+2025-05-18 16:37:39 INFO  ren0 [octree.h:551] node count: 1167 -> 1344 -> 1188
+
+2025-05-18 16:37:39 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:39 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 12, until 130.0 seconds
+2025-05-18 16:37:41 INFO  ren0 [MIFocalGuidingPathTracer]   147.58 seconds elapsed, passes this iteration: 1, total passes: 16
+2025-05-18 16:37:41 INFO  ren0 [MIFocalGuidingPathTracer] Got 3288193 non-zero samples
+2025-05-18 16:37:42 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 3288193
+2025-05-18 16:37:43 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-1.80467 0.854812 -2.25843] covariance = [[1.36448 0.245414 -0.252036][0.245414 0.492954 -0.0864204][-0.252036 -0.0864204 0.290679]]
+]
+2025-05-18 16:37:43 INFO  ren0 [octree.h:535] root weight: 2.991e+03 (2991.357666)
+2025-05-18 16:37:43 INFO  ren0 [octree.h:536] splitting threshold: 2.991e+00 (2.991358)
+2025-05-18 16:37:43 INFO  ren0 [octree.h:535] root weight: 1.052e-02 (0.010521)
+2025-05-18 16:37:43 INFO  ren0 [octree.h:536] splitting threshold: 1.052e-05 (0.000011)
+2025-05-18 16:37:44 INFO  ren0 [octree.h:551] node count: 1188 -> 1376 -> 1238
+
+2025-05-18 16:37:44 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:44 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 13, until 140.0 seconds
+2025-05-18 16:37:47 INFO  ren0 [MIFocalGuidingPathTracer]   152.77 seconds elapsed, passes this iteration: 1, total passes: 17
+2025-05-18 16:37:47 INFO  ren0 [MIFocalGuidingPathTracer] Got 2912086 non-zero samples
+2025-05-18 16:37:47 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 2912086
+2025-05-18 16:37:48 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-2.1944 0.850746 -2.23886] covariance = [[0.0328388 -0.0357268 -0.001783][-0.0357268 0.25617 -0.0346051][-0.001783 -0.0346051 0.020793]]
+]
+2025-05-18 16:37:48 INFO  ren0 [octree.h:535] root weight: 2.900e+03 (2899.623535)
+2025-05-18 16:37:48 INFO  ren0 [octree.h:536] splitting threshold: 2.900e+00 (2.899624)
+2025-05-18 16:37:48 INFO  ren0 [octree.h:535] root weight: 2.630e-03 (0.002630)
+2025-05-18 16:37:48 INFO  ren0 [octree.h:536] splitting threshold: 2.630e-06 (0.000003)
+2025-05-18 16:37:48 INFO  ren0 [octree.h:551] node count: 1238 -> 1423 -> 1280
+
+2025-05-18 16:37:48 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:48 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 14, until 150.0 seconds
+2025-05-18 16:37:52 INFO  ren0 [MIFocalGuidingPathTracer]   157.64 seconds elapsed, passes this iteration: 1, total passes: 18
+2025-05-18 16:37:52 INFO  ren0 [pmm_focal_guiding_recursive.cpp:232] final iteration
+2025-05-18 16:37:52 INFO  ren0 [MIFocalGuidingPathTracer] Got 2626252 non-zero samples
+2025-05-18 16:37:52 INFO  ren0 [gaussian_mixture_model.h:808] Processing mega batch of size 2626252
+2025-05-18 16:37:53 INFO  ren0 [MIFocalGuidingPathTracer] GMM[
+weight = 1 mean = [-2.12395 0.658468 -2.15864] covariance = [[0.0438955 -0.0723406 0.00575884][-0.0723406 0.419161 -0.0985072][0.00575884 -0.0985072 0.0570904]]
+]
+2025-05-18 16:37:53 INFO  ren0 [octree.h:535] root weight: 3.558e+03 (3558.203125)
+2025-05-18 16:37:53 INFO  ren0 [octree.h:536] splitting threshold: 3.558e+00 (3.558203)
+2025-05-18 16:37:53 INFO  ren0 [octree.h:535] root weight: 6.577e-04 (0.000658)
+2025-05-18 16:37:53 INFO  ren0 [octree.h:536] splitting threshold: 6.577e-07 (0.000001)
+2025-05-18 16:37:53 INFO  ren0 [octree.h:551] node count: 1280 -> 1280 -> 1101
+
+2025-05-18 16:37:53 INFO  ren0 [octree.h:551] node count: 577 -> 577 -> 577
+
+2025-05-18 16:37:53 INFO  ren0 [MIFocalGuidingPathTracer] ITERATION 15, until 600.0 seconds
+2025-05-18 16:45:16 INFO  ren0 [MIFocalGuidingPathTracer]   601.88 seconds elapsed, passes this iteration: 151, total passes: 169
+2025-05-18 16:45:16 INFO  ren0 [RenderJob] Render time: 10.0471m
+2025-05-18 16:45:16 INFO  ren0 [HDRFilm] Writing image to "/mitsuba/scene/camera-obscura/camera-obscura.exr" ..
+2025-05-18 16:45:16 INFO  main [statistics.cpp:142] Statistics:
+------------------------------------------------------------
+ * Loaded plugins :
+    -  plugins/area.so [Area light]
+    -  plugins/bitmap.so [Bitmap texture]
+    -  plugins/blendbsdf.so [Blend BSDF]
+    -  plugins/box.so [Box filter]
+    -  plugins/conductor.so [Smooth conductor]
+    -  plugins/difftrans.so [Diffuse transmitter]
+    -  plugins/diffuse.so [Smooth diffuse BRDF]
+    -  plugins/hdrfilm.so [High dynamic range film]
+    -  plugins/independent.so [Independent sampler]
+    -  plugins/instance.so [Instanced geometry]
+    -  plugins/lanczos.so [Lanczos Sinc filter]
+    -  plugins/perspective.so [Perspective camera]
+    -  plugins/ply.so [PLY mesh loader]
+    -  plugins/pmm_focal_recursive.so [MI focal guiding path tracer]
+    -  plugins/point.so [Point emitter]
+    -  plugins/rectangle.so [Rectangle intersection primitive]
+    -  plugins/shapegroup.so [Grouped geometry for instancing]
+    -  plugins/spot.so [Spot light]
+    -  plugins/thindielectric.so [Thin dielectric BSDF]
+    -  plugins/twosided.so [Two-sided BRDF adapter]
+
+  * General :
+    -  Normal rays traced : 542.908 M
+    -  Shadow rays traced : 405.357 M
+
+  * PathGuiding :
+    -  Average path length : 3.19 (497.16 M / 155.75 M)
+
+  * Texture system :
+    -  Cumulative MIP map memory allocations : 544.006 MiB
+    -  Filtered texture lookups : 0.00 % (0.00 of 156.00 M)
+------------------------------------------------------------
