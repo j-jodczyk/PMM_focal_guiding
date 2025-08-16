@@ -39,17 +39,16 @@ namespace pmm_focal
 
         void setCovariance(Eigen::MatrixXd newCovariance) {
             covariance = newCovariance;
-            // Regularize covariance to avoid numerical issues
+            // regulatization
             covariance += 1e-5f * Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols());
 
-            // Check for positive definiteness
             Eigen::LLT<Eigen::MatrixXd> llt(covariance);
             if (llt.info() == Eigen::Success) {
                 inverseCovariance = llt.solve(Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()));
                 L = llt.matrixL();  // L is a cached Eigen::MatrixXd
                 
             } else {
-                // Fallback: eigenvalue correction
+                // fallback - eigenvalue correction
                 Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(covariance);
                 Eigen::VectorXd eigenvalues = eig.eigenvalues();
                 for (int i = 0; i < eigenvalues.size(); ++i) {
@@ -58,7 +57,6 @@ namespace pmm_focal
                 }
         
                 covariance = eig.eigenvectors() * eigenvalues.asDiagonal() * eig.eigenvectors().transpose();
-                // Retry LLT on corrected covariance
                 Eigen::LLT<Eigen::MatrixXd> safeLLT(covariance);
                 L = safeLLT.matrixL();  // Still cache L
                 inverseCovariance = safeLLT.solve(Eigen::MatrixXd::Identity(covariance.rows(), covariance.cols()));
@@ -171,30 +169,8 @@ namespace pmm_focal
             return oss.str();
         }
 
-        void serialize(mitsuba::FileStream* out) const {
-            // size_t meanSize = mean.size();
-            // size_t covSize = covariance.rows();
+        void serialize(mitsuba::FileStream* out) const {}
 
-            // out->write(reinterpret_cast<const char*>(&weight), sizeof(weight));
-            // out->write(reinterpret_cast<const char*>(&meanSize), sizeof(meanSize));
-            // out->write(reinterpret_cast<const char*>(mean.data()), meanSize * sizeof(float));
-
-            // out->write(reinterpret_cast<const char*>(&covSize), sizeof(covSize));
-            // out->write(reinterpret_cast<const char*>(covariance.data()), covSize * covSize * sizeof(float));
-        }
-
-        void deserialize(mitsuba::FileStream* in) {
-            // size_t meanSize, covSize;
-
-            // in->read(reinterpret_cast<char*>(&weight), sizeof(weight));
-
-            // in->read(reinterpret_cast<char*>(&meanSize), sizeof(meanSize));
-            // mean.resize(meanSize);
-            // in->read(reinterpret_cast<char*>(mean.data()), meanSize * sizeof(float));
-
-            // in->read(reinterpret_cast<char*>(&covSize), sizeof(covSize));
-            // covariance.resize(covSize, covSize);
-            // in->read(reinterpret_cast<char*>(covariance.data()), covSize * covSize * sizeof(float));
-        }
+        void deserialize(mitsuba::FileStream* in) {}
     };
 }

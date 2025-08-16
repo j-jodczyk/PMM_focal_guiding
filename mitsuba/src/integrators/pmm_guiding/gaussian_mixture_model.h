@@ -263,7 +263,7 @@ private:
     }
 
     void mergeAllComponents() {
-        int maxMergeCount = maxNumComp; // todo: think through / parametrize
+        int maxMergeCount = maxNumComp;
         // table of bhattacharyya coefficients between all components
         // the closer BC is to 1 the more similar the distributions are
         Eigen::MatrixXd bhattacharyyaCoefficients(components.size(), components.size());
@@ -655,8 +655,6 @@ public:
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        // --- KMeans++ Initialization ---
-        // 1. First centroid picked randomly
         std::uniform_int_distribution<> uniDist(0, batch.size() - 1);
         centroids.push_back(batch[uniDist(gen)].point);
 
@@ -674,7 +672,6 @@ public:
             centroids.push_back(batch[weightedDist(gen)].point);
         }
 
-        // --- One iteration of KMeans (assign points and compute means) ---
         std::vector<int> clusterSizes(initNumComp, 0);
         std::vector<Eigen::VectorXd> newCentroids(initNumComp, Eigen::VectorXd::Zero(m_dimension));
 
@@ -702,7 +699,6 @@ public:
                 newCentroids[k] = centroids[k]; // fallback
         }
 
-        // --- Initialize GMM components from centroids ---
         for (size_t k = 0; k < initNumComp; ++k) {
             auto& component = components[k];
             component.setWeight(static_cast<float>(clusterSizes[k]) / batch.size());
@@ -839,13 +835,11 @@ public:
 
     // using Inverse Transform Sampling
     Eigen::VectorXd sample(mitsuba::RadianceQueryRecord &rRec) const {
-        // Compute total weight
         float totalWeight = 0;
         for (const auto& component : components) {
             totalWeight += component.getWeight();
         }
 
-        // Sample a component directly using a cumulative sum
         float randWeight = rRec.nextSample1D() * totalWeight;
         float cumulativeWeight = 0;
 

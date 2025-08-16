@@ -125,7 +125,6 @@ public:
         m_gmm.setMaxNumComp(props.getInteger("gmm.maxNumComp", 15));
         m_gmm.setInitMethod(props.getString("gmm.initMethod", "Random"));
 
-        // print all properties to logs (and hence EXRs), useful for making sense of old renders.
         for (const auto &name : props.getPropertyNames()) {
             Log(EInfo, "%s: %s", name.c_str(), props.getAsString(name).c_str());
         }

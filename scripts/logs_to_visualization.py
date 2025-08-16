@@ -1,8 +1,5 @@
 from log_parser import parse_log_file
 from gmm_on_img import plot_gmm_on_image_2d, plot_gaussians_3d
-from points_on_img import plot_points_in_itration
-from rays_on_image import plot_rays_on_image
-from octree_on_img import plot_octree_on_image
 import os
 from datetime import datetime
 import argparse
