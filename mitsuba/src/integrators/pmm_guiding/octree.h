@@ -151,7 +151,6 @@ public:
             return;
 
         Traversal traversal{*this, origin, direction};
-        // SLog(mitsuba::EInfo, "contribution: %f, pdf: %f", contribution, pdf);
 
         distance = std::min(distance, traversal.maxT());
 

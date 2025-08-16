@@ -58,7 +58,9 @@ RUN apt-get update && \
         libglew-dev \
         libpcrecpp0v5 \
         libeigen3-dev \
-        libfftw3-dev && \
+        libfftw3-dev  \
+        valgrind \
+        time && \
     apt-get clean && \
     apt-get autoclean && \
     apt-get autoremove

@@ -97,6 +97,22 @@ OCTREE_PATTERN = re.compile(r'Octree\[')
 AABB_PATTERN = re.compile(r'AABB3\[min=\[([^\]]+)\], max=\[([^\]]+)\]\]')
 INDEX_ZERO_PATTERN = re.compile(r'Index:\s*0')
 
+def parse_aabb(message):
+    match = re.search(AABB_PATTERN, message)
+    result = {}
+
+    if match:
+        min_str, max_str = match.groups()
+        min_vals = [float(x.strip()) for x in min_str.split(',')]
+        max_vals = [float(x.strip()) for x in max_str.split(',')]
+        
+        result = {
+            'min': min_vals,
+            'max': max_vals
+        }
+
+    return result
+
 def parse_octree(message):
     lines = message.splitlines()
     result = {
@@ -124,6 +140,7 @@ def parse_octree(message):
 
 def parse_log_file(log_file_path):
     GMMs = []
+    AABB = {}
     valid_samples = []
     intersection_data = []
     previous_entry = None
@@ -133,6 +150,8 @@ def parse_log_file(log_file_path):
 
     for entry in log_entry_generator(log_file_path):
         message = entry["message"]
+        if 'AABB' in message:
+            AABB = parse_aabb(message)
         if 'Octree[' in message:
             octree = parse_octree(message)
             if octree:
@@ -171,4 +190,4 @@ def parse_log_file(log_file_path):
                     valid_samples.append(current_valid_samples)
                     current_valid_samples = None
 
-    return (GMMs, valid_samples, intersection_data, octrees)
+    return (GMMs, valid_samples, intersection_data, octrees, AABB)

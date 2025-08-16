@@ -99,6 +99,7 @@ def plot_gmm_on_image_2d(gmm, image_path, AABB, output_path, should_show=False):
     ax.spines['top'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     plot_gaussians_2d(ax, gmm, [min_x, max_x, min_y, max_y], alpha=0.5)
-    # plt.show()
-
-    plt.savefig(output_path, bbox_inches='tight')
+    if should_show:
+        plt.show()
+    else:
+        plt.savefig(output_path, bbox_inches='tight')

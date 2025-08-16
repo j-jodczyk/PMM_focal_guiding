@@ -112,8 +112,13 @@ public:
         m_budget = props.getFloat("budget", 120.0f);
         m_iterationBudget = props.getFloat("iterationBudget", 6.0f);
         m_iterationCount = props.getInteger("iterationCount", 15);
+        m_finalSpp = props.getInteger("finalSpp", 0);
+        m_shouldPretrain = props.getBoolean("shouldPretrain", false);
 
-        m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.25));
+        if (m_finalSpp > 0)
+            Log(EInfo, "Final render will have %d spp, m_budget will not be taken into account.", m_finalSpp);
+
+        m_gmm.setAlpha(props.getFloat("gmm.alpha", 0.5));
         m_gmm.setSplittingThreshold(props.getFloat("gmm.splittingThreshold", 7.0));
         m_gmm.setMergingThreshold(props.getFloat("gmm.mergingThreshold", 0.25));
         m_gmm.setMinNumComp(props.getInteger("gmm.minNumComp", 10));
@@ -169,7 +174,8 @@ public:
 
             const Float progress = computeElapsedSeconds(m_startTime);
             m_progress->update(progress);
-            if (progress > until) {
+            // if m_finalSpp is set and it's the final iteration, we should not break before we reach m_finalSpp count
+            if (progress > until && !(m_iteration == m_iterationCount && m_finalSpp > 0) || (m_iteration == m_iterationCount && m_finalSpp > 0 && passesRenderedLocal >= m_finalSpp)) {
                 break;
             }
 
@@ -245,20 +251,56 @@ public:
                 const size_t numValidSamples = std::accumulate(perThreadSamples.begin(), perThreadSamples.end(), 0UL,
                     [](size_t sum, const IterableBlockedVector<pmm_focal::WeightedSample>& samples) -> size_t { return sum+samples.size(); });
 
+                Log(EInfo, "Got %i non-zero samples", numValidSamples);
+
                 if (numValidSamples < 128) {
                     Log(EInfo, "skipping fit due to insufficient sample data (got %zu/%d valid samples).", numValidSamples, 128);
                     return true;
                 }
 
+                const int restartGMM = m_iterationCount / 3;
+                if (m_shouldPretrain)
+                    Log(EInfo, "Resetting after %d iteration", restartGMM);
+                if (m_iteration == restartGMM && m_shouldPretrain) {
+                    m_gmm.reset();
+                }
                 std::vector<pmm_focal::WeightedSample> iterationSamples;
-                // reserve to prevent bad alloc
-                iterationSamples.reserve(numValidSamples);
+                // if (numValidSamples > 100000000) {
+                //     Log(EInfo, "Downsizing batch");
+                //     for (auto& vec : perThreadSamples) {
+                //         std::sort(vec.begin(), vec.end(), [](const pmm_focal::WeightedSample& a, const pmm_focal::WeightedSample& b) {
+                //             return a.weight > b.weight;
+                //         });
+                //         size_t retain_count = std::max<size_t>(1, vec.size() / 10); // leave 10%
+                //         vec.resize(retain_count);
+                //         iterationSamples.insert(iterationSamples.end(), vec.begin(), vec.end());
+                //         vec.clear();
+                // }
+                // } else {
+                //     for (auto& vec : perThreadSamples) {
+                //         iterationSamples.insert(iterationSamples.end(), vec.begin(), vec.end());
+                //         vec.clear();
+                //     }
+                // }
+                
+                Log(EInfo, "Downsizing batch");
+                // first, compose the big vector
                 for (auto& vec : perThreadSamples) {
                     iterationSamples.insert(iterationSamples.end(), vec.begin(), vec.end());
                     vec.clear();
                 }
 
-                Log(EInfo, "Got %i non-zero samples", iterationSamples.size());
+                size_t minSize = 128;
+                size_t newSize = std::max(minSize, static_cast<size_t>(std::ceil(iterationSamples.size() * 0.1)));
+                if (iterationSamples.size() >= 128 && newSize >= 128) {
+                    // then sort
+                    std::sort(iterationSamples.begin(), iterationSamples.end(), [](const pmm_focal::WeightedSample& a, const pmm_focal::WeightedSample& b) {
+                        return a.weight > b.weight;
+                    });
+                    // then filter out 10%
+                    iterationSamples.resize(newSize);
+                }
+
                 m_gmm.processMegaBatch(iterationSamples);
                 Log(EInfo, m_gmm.toString().c_str());
                 /// update the guiding densities
@@ -309,6 +351,8 @@ public:
         m_diverging.clear();
         m_gmm.setAABB(scene->getAABB());
         m_divergeProbability = 0.5f;
+
+        Log(EInfo, scene->getAABB().toString().c_str());
 
         m_startTime = std::chrono::steady_clock::now();
 
@@ -920,6 +964,9 @@ private:
     /// Whether to dump the geometry of the scene for visualization purposes.
     bool m_dumpScene;
 
+    /// If set m_budget is disregarded and this final count of SPP of the final image
+    int m_finalSpp;
+
     /**
      * The converging guiding distribution handles cases where the focal point lies in positive direction of the ray.
      * Some focal points can only be converging (e.g., occlusion focal points), while others can also occur in negative direction
@@ -945,6 +992,8 @@ private:
      * This variable contains the probability of sampling the diverging guiding distribution.
      */
     Float m_divergeProbability;
+
+    bool m_shouldPretrain;
 
     mutable std::unique_ptr<ProgressReporter> m_progress;
     std::chrono::steady_clock::time_point m_startTime;

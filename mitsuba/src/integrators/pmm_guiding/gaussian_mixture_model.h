@@ -212,7 +212,11 @@ private:
 
         SLog(mitsuba::EDebug, "Splitting and merging");
 
+        SLog(mitsuba::EInfo, "Before splitting");
+        SLog(mitsuba::EInfo, this->toString().c_str());
         splitAllComponents(batch, updatedResponsibilities);
+        SLog(mitsuba::EInfo, "Before merging");
+        SLog(mitsuba::EInfo, this->toString().c_str());
         mergeAllComponents();
 
         // prune too small weights
@@ -301,7 +305,7 @@ private:
 
             bhattacharyyaCoefficients.maxCoeff(&i, &j);
             maxBC = bhattacharyyaCoefficients(i, j);
-            SLog(mitsuba::EInfo, "merge maxBC = %f", maxBC);
+            // SLog(mitsuba::EInfo, "merge maxBC = %f", maxBC);
         } while(maxBC > mergingThreshold && mergeCount < maxMergeCount);
         SLog(mitsuba::EDebug, "components after the merge: %d, merged %d component", getNumActiveComponents(), mergeCount);
     }
@@ -370,7 +374,7 @@ private:
         for (size_t i = 0; i < components.size(); ++i) {
             if (getNumActiveComponents() >= maxNumComp) break;
             float jsplit = computeChiSquareDivergence(i, batch, responsibilities, 0);
-            SLog(mitsuba::EInfo, "split score: %f", jsplit);
+            // SLog(mitsuba::EInfo, "split score: %f", jsplit);
             if (jsplit < splittingThreshold) continue;
             splitComponent(i);
         }
@@ -476,6 +480,12 @@ private:
     }
 
 public:
+    void reset() {
+        SLog(mitsuba::EInfo, "Resetting mixture");
+        initialized = false;
+        for (size_t i=0; i < maxNumComp; ++i)
+            deactivateComponent(i);
+    }
     GaussianMixtureModel(): prng() {}
     GaussianMixtureModel(std::istream& in) {
         deserialize(in);
@@ -547,19 +557,22 @@ public:
         SLog(mitsuba::EInfo, initMethod.c_str());
         if (initMethod == "KMeans") {
             initKMeans(batch);
+            SLog(mitsuba::EInfo, this->toString().c_str());
             return;
         }
 
         if (initMethod == "Uniform") {
             initUniform(batch);
+            SLog(mitsuba::EInfo, this->toString().c_str());
             return;
         }
 
         initRandom(batch);
+        SLog(mitsuba::EInfo, this->toString().c_str());
     }
 
     void initUniform(const std::vector<WeightedSample>& batch) {
-        SLog(mitsuba::EInfo, "Starting uniform initialization");
+        // SLog(mitsuba::EInfo, "Starting uniform initialization");
 
         m_dimension = batch[0].point.size();
 
@@ -602,8 +615,6 @@ public:
                 }
             }
         }
-
-        SLog(mitsuba::EInfo, this->toString().c_str());
 
         initialized = true;
     }
@@ -776,7 +787,7 @@ public:
         }
 
         for (auto& t : threads) t.join();
-        SLog(mitsuba::EInfo, "Finish E step");
+        // SLog(mitsuba::EInfo, "Finish E step");
 
         // normalize responsibilities
         std::vector<std::thread> normThreads;
@@ -800,7 +811,7 @@ public:
         // M-step
         updateSufficientStatistics(batch, responsibilities);
 
-        SLog(mitsuba::EInfo, "Finish M step");
+        // SLog(mitsuba::EInfo, "Finish M step");
 
         // for (const auto& sample : batch)
         //     SLog(mitsuba::EInfo, "point (%f, %f, %f), weight %f", sample.point[0], sample.point[1], sample.point[2], sample.weight);
@@ -814,12 +825,13 @@ public:
         std::shuffle(megaBatch.begin(), megaBatch.end(), gen);
 
         size_t numSubBatches = (megaBatch.size() + subBatchSize - 1) / subBatchSize;
+        SLog(mitsuba::EInfo, "will process %d batches", numSubBatches);
         for (size_t i = 0; i < numSubBatches; ++i) {
             size_t startIdx = i * subBatchSize;
             size_t endIdx = std::min(startIdx + subBatchSize, megaBatch.size());
             std::vector<WeightedSample> subBatch(megaBatch.begin() + startIdx, megaBatch.begin() + endIdx);
 
-            SLog(mitsuba::EInfo, "Processing sub-batch %zu/%zu (%zu samples)", i + 1, numSubBatches, subBatch.size());
+            // SLog(mitsuba::EInfo, "Processing sub-batch %zu/%zu (%zu samples)", i + 1, numSubBatches, subBatch.size());
 
             processBatchParallel(subBatch);
         }

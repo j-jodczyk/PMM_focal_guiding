@@ -1,7 +1,7 @@
 <scene version="0.6.0">
 	<default name="maxDepth" value="40" />
 
-	<default name="budget" value="900" /> <!---->
+	<default name="budget" value="600" /> 
 	<default name="treeThreshold" value="0.001" />
 
 	<default name="trainingIterations" value="15" />
@@ -14,9 +14,9 @@
 	<default name="samplingMode" value="2" />
 	<default name="trainingSamples" value="4" />
 
-	<default name="gmmAlpha" value="0.4" />
-	<default name="gmmSplittingThreshold" value="100" />
-	<default name="gmmMergingThreshold" value="0.8" />
+	<default name="gmmAlpha" value="0.5" />
+	<default name="gmmSplittingThreshold" value="10000" />
+	<default name="gmmMergingThreshold" value="0.5" />
 	<default name="gmmMinNumComp" value="3" />
 	<default name="gmmMaxNumComp" value="10" />
 	<default name="bsdfMISFraction" value="0.5" />
@@ -27,11 +27,14 @@
 		<boolean name="strictNormals" value="true" />
 		<integer name="maxDepth" value="$maxDepth" />
 		<integer name="rrDepth" value="14" />
-		<integer name="minSamplesToStartFitting" value="128" />
+		<integer name="minSamplesToStartFitting" value="10" />
 		<default name="samplesPerIteration" value="4" />
 		<integer name="trainingSamples" value="$trainingSamples" />
 		<float name="budget" value="$budget" />
 		<integer name="iterationCount" value="$trainingIterations" />
+		<!-- <integer name="finalSpp" value="64" /> -->
+		
+		<boolean name="shouldPretrain" value="false" />
 
 		<string name="normalBinning" value="$normalBinning" />
 		<boolean name="dumpScene" value="$dumpScene" />
@@ -45,7 +48,7 @@
 		<float name="gmm.mergingThreshold" value="$gmmMergingThreshold" />
 		<integer name="gmm.minNumComp" value="$gmmMinNumComp" />
 		<integer name="gmm.maxNumComp" value="$gmmMaxNumComp" />
-		<string name="gmm.initMethod" value="Uniform" />
+		<string name="gmm.initMethod" value="KMeans" />
 
 		<float name="tree.threshold" value="$treeThreshold" />
 	</integrator>
